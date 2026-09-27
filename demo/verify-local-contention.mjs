@@ -1035,6 +1035,40 @@ assert.equal(
 );
 assert.equal(timeline.restorationStartedAtMs, 60_750, "Q7: when restoration began");
 
+// An admission is observed at its response headers, not its completion. The
+// fixed-burst-v2 seed-3 pilot reported 62_340.7 (completion) for a request
+// Tyr had admitted before its 60_158 stats sample.
+const decisionAt = (phaseSamples, localRejectSnapshots = []) => summarizeDemandTransitions({
+  samples: timelineSamples,
+  trace: timelineTrace,
+  loadgenSummary: {
+    config: { interactiveResumeStartMs: 60_000, interactiveResumeDurationMs: 25_000 },
+    classes: { interactive: { localRejectSnapshots, phaseSamples } },
+  },
+});
+const admitted = { arrivalMs: 60_000, responseHeadersAtMs: 60_110.4, completedAtMs: 62_340.7 };
+assert.equal(decisionAt([admitted]).tyrFirstDecisionAtMs, 60_110.4, "Q2: an admission is seen at its headers");
+assert.equal(decisionAt([admitted]).tyrFirstDecisionWasRejection, false);
+assert.equal(
+  decisionAt([admitted], [{ rejectedAtMs: 61_000 }]).tyrFirstDecisionAtMs,
+  60_110.4,
+  "an admission that completes after a later refusal still came first",
+);
+assert.equal(decisionAt([admitted], [{ rejectedAtMs: 61_000 }]).tyrFirstDecisionWasRejection, false);
+// Summaries without header offsets must not fall back to completion.
+const headerless = { arrivalMs: 60_000, completedAtMs: 62_340.7 };
+assert.equal(decisionAt([headerless]).tyrFirstDecisionAtMs, null, "an unobserved admission is unknown");
+assert.equal(
+  decisionAt([headerless], [{ rejectedAtMs: 61_000 }]).tyrFirstDecisionAtMs,
+  null,
+  "a refusal is not first when an earlier arrival's admission time is unknown",
+);
+assert.equal(
+  decisionAt([{ ...headerless, arrivalMs: 61_500 }], [{ rejectedAtMs: 61_000 }]).tyrFirstDecisionAtMs,
+  61_000,
+  "an admission arriving after the refusal cannot precede it",
+);
+
 // A class whose floor is whole and unencroached at the mark never had to wait,
 // and no restoration event may be manufactured for it.
 const nothingToRestore = summarizeDemandTransitions({

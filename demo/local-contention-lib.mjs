@@ -1866,8 +1866,12 @@ export function summarizeDemandTransitions({
   const generatorResumedAtMs =
     traceArrivals.find((arrivalMs) => arrivalMs >= resumeStartMs) ?? null;
 
-  // Tyr's own record of the first decision it made about the resumed class,
-  // whichever way it went. A refusal is an observation of demand.
+  // The generator's first observation of a Tyr decision about the resumed
+  // class, whichever way it went: a refusal's response, or an admission's 2xx
+  // headers. A refusal is an observation of demand. Completion is a whole
+  // request latency after admission and is never a decision time; summaries
+  // without header offsets leave the answer unknown if an admission could
+  // have come first.
   const classSummary = loadgenSummary?.classes?.[admissionClass] ?? null;
   const rejectSnapshots = (Array.isArray(classSummary?.localRejectSnapshots)
     ? classSummary.localRejectSnapshots
@@ -1875,17 +1879,22 @@ export function summarizeDemandTransitions({
   )
     .map((snapshot) => Number(snapshot?.rejectedAtMs))
     .filter((value) => Number.isFinite(value) && value >= resumeStartMs);
-  const successArrivals = (Array.isArray(classSummary?.phaseSamples)
+  const admissions = (Array.isArray(classSummary?.phaseSamples)
     ? classSummary.phaseSamples
     : []
-  )
-    .filter((entry) => Number(entry?.arrivalMs) >= resumeStartMs)
-    .map((entry) => Number(entry?.completedAtMs))
+  ).filter((entry) => Number(entry?.arrivalMs) >= resumeStartMs);
+  const admissionObservations = admissions
+    .map((entry) => Number(entry?.responseHeadersAtMs))
     .filter(Number.isFinite);
-  const tyrFirstDecisionAtMs =
-    rejectSnapshots.length + successArrivals.length === 0
-      ? null
-      : Math.min(...[...rejectSnapshots, ...successArrivals]);
+  const decisions = [...rejectSnapshots, ...admissionObservations];
+  const earliestObservedDecisionAtMs = decisions.length === 0 ? null : Math.min(...decisions);
+  const unobservedAdmissionMayBeFirst = admissions.some(
+    (entry) =>
+      !Number.isFinite(Number(entry?.responseHeadersAtMs)) &&
+      (earliestObservedDecisionAtMs === null ||
+        !(Number(entry.arrivalMs) > earliestObservedDecisionAtMs)),
+  );
+  const tyrFirstDecisionAtMs = unobservedAdmissionMayBeFirst ? null : earliestObservedDecisionAtMs;
 
   // The benchmark's own view, on the sampled grid.
   const activeSample = granted.find(

@@ -1,5 +1,20 @@
 # MoFlux Bench verification
 
+## 0.47.1 Tyr first-decision timing
+
+`demo/verify-local-contention.mjs` checks the following:
+- an admission is observed at its response headers, not at its completion
+  (the pilot's 62,340.7ms);
+- an admission that completes after a later refusal still counts as first;
+- an admission without a header time returns `null`, and so does a later
+  refusal that such an admission could precede;
+- an admission arriving after a refusal cannot precede it.
+
+`load/verify-summary-percentiles.mjs` now sends headers before holding the
+body. It checks that every `phaseSamples` header time falls between arrival and
+completion, and that a 400ms body hold does not move it. No inference was run.
+
+
 ## 0.47.0 backend availability experiment
 
 `npm run verify:backend-availability` covers grant sampling bounds, sustained

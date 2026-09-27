@@ -105,7 +105,7 @@ async function freePort() {
   return port;
 }
 
-/** Holds each slow request for SLOW_MS before its first byte; answers the rest at once. */
+/** Sends headers at once and holds each slow request's body for SLOW_MS; answers the rest at once. */
 function startOrigin(onSlowDone) {
   const sockets = new Set();
   let slowDone = 0;
@@ -113,8 +113,9 @@ function startOrigin(onSlowDone) {
     req.resume();
     req.on("end", () => {
       const slow = SLOW_IDS.has(req.headers["x-bench-request-id"]);
+      res.writeHead(200, { "content-type": "text/event-stream", connection: "close" });
+      res.flushHeaders();
       setTimeout(() => {
-        res.writeHead(200, { "content-type": "text/event-stream", connection: "close" });
         res.end(
           `data: ${JSON.stringify({ choices: [{ delta: { content: "hello" } }] })}\n\n` +
           `data: ${JSON.stringify({ choices: [{ delta: {} }], usage: { completion_tokens: 8 } })}\n\n` +
@@ -246,6 +247,20 @@ try {
     if (emitPhaseSamples) {
       const samples = interactive.phaseSamples ?? [];
       check("phaseSamples holds every completion", samples.length === TRACE.entries.length, `${samples.length}`);
+      check(
+        "phaseSamples observe admission at response headers, between arrival and completion",
+        samples.every((sample) => Number.isFinite(sample.responseHeadersAtMs) &&
+          sample.arrivalMs <= sample.responseHeadersAtMs && sample.responseHeadersAtMs <= sample.completedAtMs),
+        JSON.stringify(samples.map(({ arrivalMs, responseHeadersAtMs, completedAtMs }) =>
+          ({ arrivalMs, responseHeadersAtMs, completedAtMs }))),
+      );
+      const held = samples.filter((sample) => sample.latencyMs >= SLOW_MS / 2);
+      check(
+        "a held body does not delay the observed admission",
+        held.length === SLOW_IDS.size &&
+          held.every((sample) => sample.completedAtMs - sample.responseHeadersAtMs >= SLOW_MS - 5),
+        JSON.stringify(held),
+      );
       for (const key of ["latencyMs", "ttftMs"]) {
         const expected = Object.fromEntries(
           [["p50", 0.5], ["p95", 0.95], ["p99", 0.99]].map(([name, p]) => [

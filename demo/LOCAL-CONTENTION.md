@@ -199,8 +199,13 @@ sampler's clock. When that skew is unknown the shifted values are `null` rather
 than aligned by assumption. The object answers, from the summary alone:
 
 - `generatorResumedAtMs` — when interactive demand actually resumed
-- `tyrFirstDecisionAtMs` / `tyrFirstDecisionWasRejection` — when Tyr first
-  decided anything about it, and which way
+- `tyrFirstDecisionAtMs` / `tyrFirstDecisionWasRejection` — when the generator
+  first saw Tyr decide anything about it, and which way: a refusal's response
+  or an admission's 2xx headers. This is an upper bound on the decision, and
+  an admission's headers can include upstream header latency. It is never a
+  completion time. It is `null` when an admission that may have come first
+  has no recorded header time, as in summaries written before 0.47.1. Admitted
+  attempts that later fail are not counted.
 - `benchmarkMarkedActiveAtMs` / `benchmarkMarkedActiveEvidence` — when this
   benchmark called the class active, and what proved it
 - `capacityLentAtMark` / `lentConcurrentAtMark` — whether its floor was lent

@@ -426,7 +426,7 @@ function markSuccess(cls) {
   if (s.firstSuccessAtMs === null) s.firstSuccessAtMs = +offsetMs().toFixed(1);
 }
 
-function record(cls, arrivalMs, latencyMs, ttftMs) {
+function record(cls, arrivalMs, latencyMs, ttftMs, responseHeadersAtMs) {
   const s = stats[cls];
   const completedAtMs = +offsetMs().toFixed(1);
   const sample = {
@@ -435,6 +435,12 @@ function record(cls, arrivalMs, latencyMs, ttftMs) {
     // callers that used phaseSamples before trace-arrival attribution existed.
     offsetMs: completedAtMs,
     arrivalMs: Number.isFinite(arrivalMs) ? +Number(arrivalMs).toFixed(1) : null,
+    // When the generator first saw the admission: the successful attempt's 2xx
+    // headers, on the same offset clock. An upper bound on the admission decision
+    // that can include upstream header latency, never the request's completion.
+    responseHeadersAtMs: Number.isFinite(responseHeadersAtMs)
+      ? +(responseHeadersAtMs - startedAtMonotonic).toFixed(1)
+      : null,
     completedAtMs,
     latencyMs,
     ttftMs,
@@ -1132,7 +1138,8 @@ async function issue(entry) {
           s.inputTokens += inputTokens;
           s.inputTokensReported += 1;
         }
-        record(cls, entry.arrivalMs, performance.now() - logicalStart, ttftMs ?? performance.now() - logicalStart);
+        record(cls, entry.arrivalMs, performance.now() - logicalStart, ttftMs ?? performance.now() - logicalStart,
+          responseHeadersAtMs);
         return;
       } catch {
         if (runAbort.signal.aborted) return;

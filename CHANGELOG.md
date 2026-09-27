@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.47.1 - 2026-09-27
+
+### Fixed
+
+- `demandReturn.tyrFirstDecisionAtMs` used an admitted request's completion
+  time as Tyr's decision time. In the `fixed-burst-v2` seed-3 pilot it reported
+  62.3s for a request that Tyr's stats already showed in flight at 60.16s.
+  The load generator now records each completion's `responseHeadersAtMs` in
+  `phaseSamples`, and the timeline uses it for admissions, the same way it uses
+  a refusal's response time. Summaries without header times report `null`
+  whenever an admission could have been first. The field is diagnostic only,
+  so no gate, hypothesis or availability episode changes. Saved results are
+  not rewritten.
+
 ## 0.47.0 - 2026-09-27
 
 ### Added
