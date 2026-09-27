@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.47.0 - 2026-09-27
+
+### Added
+
+- Opt-in grant-to-backend availability experiment for vLLM Metal long-context
+  contention. Observe the first planned returning interactive request at engine
+  enqueue and first scheduler token allocation, correlated with Tyr's sampled
+  grant transition and sustained KV pressure at restoration.
+- Raw per-attempt timestamps, first content-token observations including failed
+  streams, monotonic/epoch diagnostics, scheduler JSONL provenance, and separate
+  result namespaces. Existing workload and hypothesis thresholds are unchanged.
+- Lending-reopening diagnostics correlate post-restoration floor reductions
+  with borrowed admission occupancy and fresh KV-pressure samples.
+- Per-arm p50/p90/p95/p99 measurement bounds and empirical CDFs, preserving
+  negative gaps, failures, censored observations and inconclusive trials. The
+  default 30-seed sweep is a distribution pilot, not a precise p99 estimate.
+- `demo:vllm:metal:availability` commands and `verify:backend-availability`.
+  See [experiment methodology](demo/BACKEND-AVAILABILITY.md). No real recovery
+  distribution is claimed or bundled in this version.
+- `fixed-burst-v2` availability protocol: a priming batch request at 25s,
+  a three-request batch burst 12s before the fixed 60s interactive return,
+  and its own results namespace. The lead comes from the seed-3 pilot's scheduler
+  step timing, so the grant restoration window falls inside decode rather than
+  at the end of the last prefill step.
+
+### Fixed
+
+- Scheduler events and grant samples now use the shared host wall clock, and
+  episodes reject clock steps over 5ms inside the measured interval. Episodes
+  are no longer rejected for monotonic-to-epoch drift accumulated across an
+  arm (about 16–19ms in the seed-3 pilot) that cannot bias a gap. Client
+  attempts carry wall-clock stamps for diagnostics.
+- The scheduler observer mis-joined requests when vLLM's random request-ID
+  suffix began with `a` and a digit (`...-a1-a0173829`): 18 of 106 scheduled
+  requests in the seed-3 pilot, each of which would make a selected request
+  look unscheduled.
+- Availability runs sample grants every 250ms rather than 1s, so the
+  restoration bracket can order early service. `served_before_restoration`
+  episodes count as valid and are reported in `proof` alongside observed gaps.
+
 ## 0.46.0 - 2026-09-25
 
 ### Added

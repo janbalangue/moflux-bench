@@ -52,6 +52,10 @@ const required = [
   "demo/vllm-contention-lib.mjs",
   "demo/verify-vllm-contention.mjs",
   "demo/VLLM-CONTENTION.md",
+  "demo/BACKEND-AVAILABILITY.md",
+  "demo/backend-availability-lib.mjs",
+  "demo/backend-probe/sitecustomize.py",
+  "demo/verify-backend-availability.mjs",
 ];
 const ignoredDirectories = new Set([".git", "node_modules", "coverage", ".tmp", "tmp"]);
 const forbiddenNames = new Set([".DS_Store", "Thumbs.db"]);
@@ -530,8 +534,8 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.46.0") {
-  findings.push("package.json: the current benchmark release must be version 0.46.0");
+if (pkg.version !== "0.47.0") {
+  findings.push("package.json: the current benchmark release must be version 0.47.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.

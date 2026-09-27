@@ -175,6 +175,7 @@ const CONFIG = Object.freeze({
    * summary does not already carry asks for the samples.
    */
   emitPhaseSamples: bool("emit-phase-samples", false),
+  backendAvailability: bool("backend-availability", false),
   traceFile: str("trace-file", ""),
   traceOut: str("trace-out", ""),
   out: str("out", ""),
@@ -334,6 +335,7 @@ for (const cls of classes) {
      * set; that flag only controls whether it is written out.
      */
     phaseSamples: [],
+    attemptSamples: [],
     retryHints: {
       received: 0, // rejections that carried a usable hint
       applied: 0, // hints that moved the wait off blind backoff
@@ -706,6 +708,16 @@ async function issue(entry) {
       markAttempt(cls);
       progress.attempt = attempt;
       touch("request");
+      // *EpochMs fields read the host wall clock the scheduler probe and grant
+      // sampler use; the monotonic offsets remain for within-run durations.
+      const attemptSample = CONFIG.backendAvailability ? {
+        requestId: `moflux-bench-${entry.id}-a${attempt + 1}`,
+        sentAtMs: offsetMs(), sentAtEpochMs: Date.now(),
+        firstTokenAtMs: null, firstTokenAtEpochMs: null,
+        endedAtMs: null, endedAtEpochMs: null,
+        httpStatus: null, outcome: "failed",
+      } : null;
+      if (attemptSample) s.attemptSamples.push(attemptSample);
       let response;
       // Declared at attempt scope so the catch below can attribute a torn
       // stream to an expired borrowed-slot deadline. Admission happens
@@ -726,7 +738,8 @@ async function issue(entry) {
               // upstream-invalid request property.
               metadata: { user_id: `moflux-bench:${providerSeed}` },
             }
-          : { ...baseBody, seed: providerSeed };
+          : { ...baseBody, seed: providerSeed,
+              ...(attemptSample ? { request_id: attemptSample.requestId } : {}) };
         response = await fetch(`${target}${PROVIDER_PATH}`, {
           method: "POST",
           headers: {
@@ -748,6 +761,7 @@ async function issue(entry) {
           signal: runAbort.signal,
         });
 
+        if (attemptSample) attemptSample.httpStatus = response.status;
         progress.lastStatus = response.status;
         const responseAdmissionClass = response.headers.get("x-admission-class") ?? "unclassified";
         s.admissionClassResponses[responseAdmissionClass] =
@@ -1037,7 +1051,13 @@ async function issue(entry) {
                 ? openAIContent
                 : anthropicContent;
               if (typeof content === "string" && content.length > 0) {
-                if (ttftMs === null) ttftMs = performance.now() - logicalStart;
+                if (ttftMs === null) {
+                  ttftMs = performance.now() - logicalStart;
+                  if (attemptSample) {
+                    attemptSample.firstTokenAtMs = offsetMs();
+                    attemptSample.firstTokenAtEpochMs = Date.now();
+                  }
+                }
                 outputTokens += content.length / 4;
               }
               if (parsed?.usage?.completion_tokens !== undefined) {
@@ -1104,6 +1124,7 @@ async function issue(entry) {
           }
           continue;
         }
+        if (attemptSample) attemptSample.outcome = "completed";
         s.success += 1;
         markSuccess(cls);
         s.outputTokens += outputTokens;
@@ -1172,6 +1193,12 @@ async function issue(entry) {
         if (attempt + 1 < CONFIG.maxAttempts) {
           touch("backoff");
           await backoff(s, entry, attempt, undefined);
+        }
+      } finally {
+        if (attemptSample) {
+          attemptSample.endedAtMs = offsetMs();
+          attemptSample.endedAtEpochMs = Date.now();
+          if (runAbort.signal.aborted && attemptSample.outcome !== "completed") attemptSample.outcome = "censored";
         }
       }
     }
@@ -1465,16 +1492,17 @@ if (activeIssues.size > 0) {
     ...stragglers.map((line) => `  ${line}`),
   ].join("\n");
 
-  // A lack-of-progress timeout is still a broken run. Censoring is only for a
-  // hard wall-clock ceiling reached by work that remains alive/progressing.
-  if (drainStalled || CONFIG.drainTimeoutMode !== "censor") {
+  // Ordinary benchmarks fail lack-of-progress timeouts. The opt-in backend
+  // experiment retains stalled requests as censored evidence instead of
+  // aborting the arm and deleting its tail.
+  if ((drainStalled && !CONFIG.backendAvailability) || CONFIG.drainTimeoutMode !== "censor") {
     runAbort.abort(new Error(detail));
     await Promise.allSettled([...activeIssues]);
     throw new Error(detail);
   }
 
   drainOutcome = "censored";
-  drainCause = "hard_max";
+  drainCause = drainStalled ? "idle_stall" : "hard_max";
   for (const snapshot of drainCensoredRequests) {
     const s = stats[snapshot.class];
     if (!s) continue;
@@ -1543,6 +1571,7 @@ const summary = {
   generatorSaturated,
   startedAt: new Date(startedAt).toISOString(),
   startedAtEpochMs: startedAt,
+  ...(CONFIG.backendAvailability ? { backendClockErrorMs: Date.now() - (startedAt + offsetMs()) } : {}),
   wallClockMs: Date.now() - startedAt,
   trace: {
     version: TRACE.version,
@@ -1615,6 +1644,7 @@ for (const cls of classes) {
     // windows above are pre-cut at fixed trace offsets; this is what a reader
     // needs to compute a distribution the windows do not already carry.
     ...(CONFIG.emitPhaseSamples ? { phaseSamples: s.phaseSamples } : {}),
+    ...(CONFIG.backendAvailability ? { attemptSamples: s.attemptSamples } : {}),
     retryHints: {
       received: s.retryHints.received,
       applied: s.retryHints.applied,

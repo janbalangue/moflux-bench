@@ -175,6 +175,9 @@ See the [vLLM Metal installation](https://docs.vllm.ai/projects/vllm-metal/en/la
 and [configuration](https://docs.vllm.ai/projects/vllm-metal/en/latest/configuration/)
 guides.
 
+For the opt-in request-level grant-to-scheduler experiment introduced in 0.47.0,
+see [Backend availability](BACKEND-AVAILABILITY.md).
+
 ### Long-context KV pressure on Apple Silicon
 
 `metal-balanced-v1` never pressures the KV cache: its requests are tiny, and the

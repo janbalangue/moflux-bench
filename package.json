@@ -1,6 +1,6 @@
 {
   "name": "moflux-bench",
-  "version": "0.46.0",
+  "version": "0.47.0",
   "description": "Synthetic, self-hosted, GPU-backed vLLM and live-provider benchmark harness for LLM admission control, including reproducible simulator sweeps, dynamic fleet-membership checks, local workload-contention benchmarks, and budget-capped OpenAI experiments.",
   "license": "Apache-2.0",
   "type": "module",
@@ -101,7 +101,11 @@
     "demo:local:contention:unlent:single": "node demo/local-contention-unlent.mjs --seeds=7",
     "demo:local:contention:unlent:dry-run": "node demo/local-contention-unlent.mjs --dry-run",
     "verify:local:contention:unlent": "node demo/verify-local-contention-unlent.mjs",
-    "verify:vllm": "node demo/verify-vllm-contention.mjs"
+    "verify:vllm": "node demo/verify-vllm-contention.mjs",
+    "demo:vllm:metal:availability:dry-run": "node demo/vllm-contention.mjs --backend=metal --workload=metal-long-context-v1 --backend-availability --seeds=1-30 --dry-run",
+    "demo:vllm:metal:availability:single": "node demo/vllm-contention.mjs --backend=metal --workload=metal-long-context-v1 --backend-availability --seeds=3",
+    "demo:vllm:metal:availability": "node demo/vllm-contention.mjs --backend=metal --workload=metal-long-context-v1 --backend-availability --seeds=1-30",
+    "verify:backend-availability": "node demo/verify-backend-availability.mjs"
   },
   "keywords": [
     "llm",

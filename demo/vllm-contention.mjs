@@ -125,6 +125,7 @@ import {
   vllmWorkloadForBackend,
 } from "./vllm-contention-lib.mjs";
 
+import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, VALID_AVAILABILITY_STATUSES, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { summarizeBorrowAccounting, correlateReturnEvidence } from "./vllm-reporting-lib.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -226,7 +227,7 @@ try {
     telemetryIntervalMs: num("telemetry-interval-ms", DEFAULT_SAMPLING.vllmIntervalMs),
     managedTelemetryIntervalMs: num(
       "managed-telemetry-interval-ms",
-      DEFAULT_SAMPLING.managedIntervalMs,
+      flag("backend-availability") ? AVAILABILITY_MANAGED_INTERVAL_MS : DEFAULT_SAMPLING.managedIntervalMs,
     ),
     platformTelemetryIntervalMs: num(
       "platform-telemetry-interval-ms",
@@ -237,6 +238,7 @@ try {
       "gpu-memory-utilization",
       vllmGpuMemoryUtilizationForBackend(backend),
     ),
+    backendAvailability: flag("backend-availability"),
     requireProof: flag("require-proof"),
     keepStack: flag("keep-stack"),
     dryRun: flag("dry-run"),
@@ -244,6 +246,9 @@ try {
     runId: str("run-id", newRunId()),
     out: args.has("out") ? path.resolve(str("out", "")) : null,
   });
+  if (OPT.backendAvailability && (OPT.backend !== "metal" || !DEFAULT_WORKLOAD.engine)) {
+    throw new Error("--backend-availability requires --backend=metal --workload=metal-long-context-v1");
+  }
   if (!["nvidia", "metal"].includes(OPT.backend)) {
     throw new Error("--backend must be nvidia or metal");
   }
@@ -301,7 +306,8 @@ const SAMPLING = Object.freeze({
   platformIntervalMs: OPT.platformTelemetryIntervalMs,
 });
 const IS_METAL = OPT.backend === "metal";
-const SWEEP_NAME = vllmSweepNameFor(OPT.backend, WORKLOAD, OPT.policyProfile);
+const SWEEP_NAME = vllmSweepNameFor(OPT.backend, WORKLOAD, OPT.policyProfile) +
+  (OPT.backendAvailability ? `-backend-availability-${AVAILABILITY_PROTOCOL}` : "");
 /** Engine flags that pin the scheduler's KV pool, when the workload declares one. */
 const KV_POOL_ARGS = WORKLOAD.engine
   ? ["--block-size", String(WORKLOAD.engine.blockSize), "--num-gpu-blocks-override", String(WORKLOAD.engine.kvCacheBlocks)]
@@ -369,6 +375,8 @@ const plan = {
   gpuIndex: IS_METAL ? "not-applicable" : OPT.gpuIndex,
   arms: OPT.arms.join(","),
   seeds: OPT.seeds.join(","),
+  backendAvailability: OPT.backendAvailability,
+  availabilityProtocol: OPT.backendAvailability ? AVAILABILITY_PROTOCOL : null,
   workloadProfile: WORKLOAD.profile,
   policyProfile: POLICY.profile,
   interactiveUnlentConcurrent: POLICY.unlentProtectedConcurrent.interactive,
@@ -405,6 +413,8 @@ let env = { ...process.env };
 let ADMIN_TOKEN = process.env.LATCHFLO_ADMIN_TOKEN ?? null;
 let identity = null;
 let metalProcess = null;
+let backendEventsFile = null;
+let samplerClockOrigin = { epoch: Date.now(), mono: performance.now() };
 let metalRuntime = null;
 let dockerVmMemoryBytes = null;
 let metalLaunchCount = 0;
@@ -706,6 +716,7 @@ async function collectControlPlaneEvidence(arm, startedAtMs) {
 }
 
 async function sampleManagedArm(arm, startedAt) {
+  const sampleStartedAtMs = Date.now() - startedAt;
   const [pool, controller] = await Promise.all([readPoolStats(arm), readControllerDemand(arm)]);
   const at = Date.now();
   const controllerClasses = new Map(
@@ -739,6 +750,8 @@ async function sampleManagedArm(arm, startedAt) {
     }),
   );
   return {
+    sampleStartedAtMs,
+    clockErrorMs: Date.now() - (samplerClockOrigin.epoch + performance.now() - samplerClockOrigin.mono),
     offsetMs: +(at - startedAt),
     observedAt: new Date(at).toISOString(),
     pool: {
@@ -1194,9 +1207,10 @@ function runLoadgen({ arm, seed, traceFile, outFile }) {
         ]
       : []),
     "--emit-phase-samples=true",
+    ...(OPT.backendAvailability ? ["--backend-availability=true"] : []),
     `--drain-idle-ms=${WORKLOAD.drainIdleMs}`,
     `--drain-max-ms=${WORKLOAD.drainMaxMs}`,
-    `--drain-timeout-mode=${arm.managed ? "fail" : "censor"}`,
+    `--drain-timeout-mode=${arm.managed && !OPT.backendAvailability ? "fail" : "censor"}`,
     `--trace-file=${traceFile}`,
     "--metrics-port=0",
     `--out=${outFile}`,
@@ -1229,6 +1243,8 @@ async function recreateVllm(arm) {
     runOutputDir,
     `vllm-metal-${String(metalLaunchCount).padStart(2, "0")}-${arm.id}.log`,
   );
+  backendEventsFile = OPT.backendAvailability
+    ? path.join(runOutputDir, `backend-events-${metalLaunchCount}-${arm.id}.jsonl`) : null;
   metalProcess = launchCommand(
     `vllm-metal-${arm.id}`,
     OPT.metalBin,
@@ -1237,6 +1253,10 @@ async function recreateVllm(arm) {
       cwd: ROOT,
       env: {
         ...env,
+        ...(backendEventsFile ? {
+          MOFLUX_BACKEND_EVENTS: backendEventsFile,
+          PYTHONPATH: [path.join(ROOT, "demo", "backend-probe"), env.PYTHONPATH].filter(Boolean).join(path.delimiter),
+        } : {}),
         VLLM_METAL_USE_PAGED_ATTENTION: "1",
         VLLM_METAL_MEMORY_FRACTION: "auto",
       },
@@ -1260,6 +1280,7 @@ let stackStarted = false;
 let caughtError = null;
 let resolvedRevision = null;
 const rows = [];
+const availabilityTrials = [];
 
 try {
   assertDockerAvailable();
@@ -1382,7 +1403,8 @@ try {
 
     for (const [seedIndex, seed] of OPT.seeds.entries()) {
       const order = ORDER_PLAN[seedIndex].order;
-      const trace = buildTrace({ ...WORKLOAD, seed });
+      const baseTrace = buildTrace({ ...WORKLOAD, seed });
+      const trace = OPT.backendAvailability ? availabilityTrace(baseTrace, WORKLOAD) : baseTrace;
       const traceFile = path.join(runOutputDir, `trace-seed-${seed}.json`);
       writeFileSync(traceFile, `${JSON.stringify(trace, null, 2)}\n`);
       const arms = {};
@@ -1390,6 +1412,9 @@ try {
 
       for (const armId of order) {
         const arm = vllmArm(armId);
+        const availabilityTrial = OPT.backendAvailability && arm.managed
+          ? { seed, arm: armId, episode: null } : null;
+        if (availabilityTrial) availabilityTrials.push(availabilityTrial);
         console.log(`\nseed ${seed} arm ${armId}: recreate vLLM (${arm.schedulingPolicy})`);
         await recreateVllm(arm);
         await waitFor(`${VLLM_ORIGIN}/health`, {
@@ -1410,7 +1435,9 @@ try {
         const startingGrant = arm.managed
           ? await waitForUsableGrant(arm, { interactiveFloor: true })
           : null;
-        const startedAt = Date.now();
+        // Do not charge this arm for clock drift during setup or previous arms.
+        samplerClockOrigin = { epoch: Date.now(), mono: performance.now() };
+        const startedAt = samplerClockOrigin.epoch;
         const managedInitial = arm.managed ? await sampleManagedArm(arm, startedAt) : null;
         const managedSampler = arm.managed
           ? startManagedSampler(arm, startedAt, managedInitial)
@@ -1489,6 +1516,9 @@ try {
             nominalGrant: NOMINAL_CLASS_GRANT,
           });
           const controlPlane = await collectControlPlaneEvidence(arm, startedAt);
+          const backendEvents = OPT.backendAvailability && existsSync(backendEventsFile)
+            ? readFileSync(backendEventsFile, "utf8").trim().split("\n").filter(Boolean).map(JSON.parse) : [];
+
           evidence[armId] = {
             lending: summarizeLendingEpisodes(managed.samples, {
               restorationSloMs: POLICY.lending.restorationSloMs,
@@ -1496,6 +1526,18 @@ try {
             }),
             recovery: summarizeManagedRecovery(managed.samples, WORKLOAD, demandReturn, POLICY),
             demandReturn,
+            ...(OPT.backendAvailability ? { backendAvailability: backendAvailabilityEpisode({
+              seed, arm: armId, trace, loadgen: loadgenSummary,
+              events: backendEvents,
+              samples: managed.samples, demandReturn, startedAtEpochMs: startedAt,
+              workload: WORKLOAD, nominalFloor: NOMINAL_CLASS_GRANT.interactive.protectedConcurrent,
+              cacheConfig: armSummary.vllm.cacheConfig,
+            }) } : {}),
+            ...(OPT.backendAvailability ? { lendingReopenings: lendingReopenings({
+              samples: managed.samples, events: backendEvents,
+              restoredAtMs: demandReturn.floorRestoredAtMs, startedAtEpochMs: startedAt,
+              nominalFloor: NOMINAL_CLASS_GRANT.interactive.protectedConcurrent,
+            }) } : {}),
             engineCorrelation: correlateReturnEvidence(measured.raw.vllmSamples, managed.samples, demandReturn),
             controlPlane,
             criticalWindow: criticalWindowDigest(managed.samples, {
@@ -1506,6 +1548,7 @@ try {
           };
         }
 
+        if (availabilityTrial) availabilityTrial.episode = evidence[armId]?.backendAvailability ?? null;
         writeFileSync(
           path.join(runOutputDir, `${armId}-telemetry-seed-${seed}.json`),
           `${JSON.stringify({
@@ -1586,6 +1629,18 @@ if (OPT.doctor) {
     armOrder: ORDER_PLAN,
     requiredSeeds: VLLM_PUBLICATION_SEED_COUNT,
   });
+  const allAvailabilityEpisodes = availabilityTrials.map((t) => t.episode ?? {
+    seed: t.seed, arm: t.arm, status: "inconclusive", reasons: ["arm_did_not_finish"],
+  });
+  const availabilityEpisodes = allAvailabilityEpisodes.filter((e) => e.arm === "moflux");
+  const availabilityProof = OPT.backendAvailability ? {
+    passed: availabilityEpisodes.filter((e) => e.status === "observed").length >= 30,
+    requiredObservedEpisodes: 30,
+    observedEpisodes: availabilityEpisodes.filter((e) => e.status === "observed").length,
+    validEpisodes: availabilityEpisodes.filter((e) => VALID_AVAILABILITY_STATUSES.includes(e.status)).length,
+    servedBeforeRestoration: availabilityEpisodes.filter((e) => e.status === "served_before_restoration").length,
+    note: "Pilot distribution gate; does not establish a precise p99 or an improvement over controls.",
+  } : null;
   const summary = {
     schemaVersion: 1,
     reportingVersion: 2,
@@ -1652,8 +1707,20 @@ if (OPT.doctor) {
         { name: "drain", fromMs: WORKLOAD.batchStartMs + WORKLOAD.batchDurationMs, toMs: WORKLOAD.durationMs },
       ],
     },
+    ...(OPT.backendAvailability ? { backendAvailability: {
+      protocol: AVAILABILITY_PROTOCOL,
+      schemaVersion: 2,
+      clockBasis: "host wall clock shared by the scheduler probe and grant sampler; episodes reject clock steps over 5ms inside the measured interval",
+      burst: AVAILABILITY_BURST,
+      grantSampleIntervalMs: SAMPLING.managedIntervalMs,
+      endpoint: "first scheduler step allocating KV capacity and scheduling tokens for the first planned returning interactive request",
+      physicalReclamationClaim: false,
+      proof: availabilityProof,
+      byArm: Object.fromEntries(MANAGED_ARMS.filter((a) => OPT.arms.includes(a.id)).map((a) => [a.id,
+        availabilityDistribution(allAvailabilityEpisodes.filter((e) => e.arm === a.id))])),
+    } } : {}),
     proof,
-    passed: proof.passed,
+    passed: proof.passed && (!availabilityProof || availabilityProof.passed),
     evidenceLimits: EVIDENCE_LIMITS,
     results: rows,
     ...(caughtError ? { error: caughtError.message } : {}),
@@ -1667,7 +1734,7 @@ if (OPT.doctor) {
     );
   }
   console.log(`\nwrote ${repoRelative(summaryFile, ROOT)} (${proof.status})`);
-  if (caughtError || (OPT.requireProof && !proof.passed)) process.exitCode = 1;
+  if (caughtError || (OPT.requireProof && (!proof.passed || (availabilityProof && !availabilityProof.passed)))) process.exitCode = 1;
 } else {
   process.exitCode = 1;
 }

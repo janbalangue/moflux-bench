@@ -1778,3 +1778,10 @@ This license covers the harness only. Tyr is also Apache-2.0, but it is a
 separate project ([mofluxhq/tyr-admission-controller](https://github.com/mofluxhq/tyr-admission-controller)) and is not included
 here. Latchflo is proprietary, is not included here, and is licensed separately;
 no license in this repository or in Tyr grants rights to it.
+
+### Grant-to-backend availability experiment (0.47.0)
+
+The opt-in [backend availability experiment](demo/BACKEND-AVAILABILITY.md) correlates
+grant restoration with request-level scheduler service under sustained KV pressure.
+It retains timing bounds, tail percentiles, empirical CDFs, failures and censoring.
+Start with `npm run demo:vllm:metal:availability:dry-run`.

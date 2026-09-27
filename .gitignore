@@ -77,3 +77,7 @@ demo/vllm/runtime/
 demo/.DS_Store
 demo/moflux/.env
 results/runs/
+
+# Python scheduler observer bytecode
+__pycache__/
+*.pyc

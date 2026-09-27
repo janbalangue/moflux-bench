@@ -1,5 +1,19 @@
 # MoFlux Bench verification
 
+## 0.47.0 backend availability experiment
+
+`npm run verify:backend-availability` covers grant sampling bounds, sustained
+KV-pressure qualification, missing clock evidence, in-window clock steps versus
+accumulated drift and gradual slew, rejection of schema-1 probe events, vLLM
+request-ID suffixes that resemble attempt numbers, the `fixed-burst-v2` trace,
+wall-clock attempt stamps, negative gaps,
+failures/censoring, distribution denominators, reopening with borrowed occupancy,
+HTTP request-ID propagation and partial first tokens, and the Python scheduler
+observer against a scheduler double. `npm run verify:all` includes this test.
+A separate installed-vLLM import smoke test confirms the hook can attach without
+loading a model. Neither test establishes an actual backend latency distribution.
+
+
 ## 0.46.0 two-slot interactive reserve profile
 
 `demo/verify-vllm-contention.mjs` requires the following of
