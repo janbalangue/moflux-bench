@@ -29,17 +29,20 @@ environment failure rather than an experiment result.
 The sweep retains the four counterbalanced FCFS, priority, static and MoFlux
 arms, fresh engines, immutable model revision, excluded warmup, and the `metal-long-context-v1` request sizes: long batch requests, 320 scheduler KV blocks
 of 16 tokens, prefix caching disabled. Results have a separate
-`-backend-availability-fixed-burst-v2` namespace under `results/runs/`. The two-slot reserve
+`-backend-availability-fixed-burst-v3` namespace under `results/runs/`. The two-slot reserve
 can be tested with `--policy-profile=unlent-concurrency-2`, kept in its own
 corpus, but it cannot pass the pressure gate with this workload: with two slots
 never lent, MoFlux admits at most two long batch requests, about 64% of the
-pool. This is an intervention on the scheduler pool, not host memory pressure.
+pool. Both five-seed `unlent-concurrency-2` sweeps peaked at 65–71% KV usage in
+the MoFlux arm. This is an intervention on the scheduler pool, not host memory
+pressure.
 
-The `fixed-burst-v2` availability protocol replaces pre-return random batch
+The `fixed-burst-v3` availability protocol replaces pre-return random batch
 arrivals with a priming request at 25 seconds (to establish batch demand),
-then three requests at 48.0, 48.1 and 48.2 seconds and fixes the first
-returning interactive arrival at 60 seconds. Later arrivals retain the seeded
-trace. All arms replay the same trace and its recomputed hash. This creates a
+then three requests at 48.0, 48.1 and 48.2 seconds, and fixes the first
+returning interactive arrival at 60 seconds with a 2,000-character prompt.
+Later arrivals, including the other returning interactive requests, retain the
+seeded trace and the 400-character class size. All arms replay the same trace and its recomputed hash. This creates a
 repeatable pressure opportunity; it does not guarantee residency or relax the
 90% gate. The protocol is reported in the plan and summary and uses a separate
 results namespace from the original random-arrival pilot. Keep these corpora
@@ -54,6 +57,22 @@ requests stay resident for roughly another 7.5s. A 12-second lead puts the
 return and its ~1s grant restoration inside decode on that host. `fixed-burst-v1`
 (a 10-second lead, which left under a second before the pressure window) has
 no completed run and is superseded.
+
+The larger return prompt is what v3 adds, and it comes from the `fixed-burst-v2`
+seed-3 pilot's request sizes and scheduler events, not its latency. That pilot
+reached the pressure gate (nine samples at 96–97%), but its selected request
+needed only 8 blocks, fit beside the three resident batch requests, and was
+scheduled 0.28ms after enqueue. With no request waiting when the grant came
+back, the episode was inconclusive (gap −234…+39ms), and every seed would
+behave the same way. vLLM reported 118 prompt tokens for the 400-character
+interactive prompt and 1,607 for the 7,100-character batch prompt: about 29
+template tokens plus 0.222 per character. Three resident batch requests hold
+101–105 blocks each, so at most 17 of the 320 blocks are free. A 2,000-character
+prompt is about 474 tokens, or 30 blocks. The installed vLLM scheduler admits a
+waiting request only when its full prompt fits (`scheduler_reserve_full_isl`)
+and never preempts running work to place a waiting request, so the selected
+request stays in the engine queue until a resident request finishes. The v2
+pilot stays in its own namespace; v2 is superseded.
 
 Do the one-seed pilot first. A 30-seed, four-arm sweep is substantial local
 inference work. A seed is not replaced just because it fails the pressure gate;
@@ -78,6 +97,9 @@ using observed latency outcomes.
    attempt and the scheduler. Enqueue-to-schedule latency and dispatch timing
    expose admission/demand delay that would otherwise be mistaken for KV wait.
    First content-token arrival is retained even if the stream later fails.
+   `freeBlocksBeforeEnqueue` reports free KV blocks at the last scheduler
+   pressure sample before enqueue, with its age and waiting-queue length. It is
+   a diagnostic, not a gate.
 5. Scheduler events (probe schema 2) and grant samples read the same host
    wall clock, so there is no cross-process mapping to drift. Each source also
    records wall time minus its own monotonic clock. Ordinary NTP frequency
@@ -151,19 +173,39 @@ hypotheses and thresholds remain unchanged; they do not prove this new endpoint.
 
 ### Expected MoFlux outcome for the selected request
 
-With the one-slot profile, the first returning request is admitted into the
-never-lent interactive slot. Three resident batch requests hold 303–315 of 320
-blocks, so an eight-block interactive prompt fits for most of their decode.
-In the random-arrival pilot, where pressure had already ended, it was
-scheduled 6ms after dispatch, before the ~1s restoration bracket opened. Expect `served_before_restoration`, or an
-inconclusive overlap if restoration is unusually fast. That is valid evidence
-that the reserve served returning work under pressure without waiting for
-restoration, but it is not a post-restoration gap. Latchflo runs with no
-admission queue (`maxQueuePerAgent: 0`) and retries are excluded, so demand
-beyond the reserve is rejected at arrival rather than left pending at
-restoration. A post-restoration latency distribution therefore needs a
-preregistered design change, such as a reserve-exceeding request that may
-wait at admission. Tuning the burst cannot produce one.
+This prediction for `fixed-burst-v3` was written before any v3 run. With the
+one-slot profile the selected request is admitted into the never-lent
+interactive slot, as in v2, and reaches the engine within about 100ms. Its 30
+blocks do not fit beside three resident batch requests, so it waits in the
+engine queue until one of them finishes. On the pilot host's step timing that
+is roughly 3–4 seconds after the grant bracket, which v2 placed at 60.0–60.3s.
+Expect `observed` episodes with positive gaps of that order, `engineQueueMs`
+close to the gap, and `freeBlocksBeforeEnqueue` below 30. The request's own
+arrival signals returning demand, so it reaches the engine close to the grant
+bracket, and `pendingInEngineAtRestoration` can go either way.
+
+The gap is the time from grant restoration until the backend had KV capacity
+for this request. It is mostly the remaining decode of the resident batch
+requests, which the burst timing sets, so it is a measurement under this
+protocol rather than a general recovery time. It does not identify which
+request released blocks, and it is not physical memory reclamation.
+
+Outcomes that contradict the prediction are reported, not tuned away.
+`served_before_restoration` or an inconclusive overlap means the request fit or
+restoration came late. An increase in the arm's vLLM preemption counter with an
+engine wait near zero means the scheduler preempted batch work rather than
+leaving the request waiting.
+
+Latchflo still runs with no admission queue (`maxQueuePerAgent: 0`) and retries
+are excluded, so later returning requests beyond the reserve are rejected at
+arrival. v3 measures waiting in the engine, not at admission. The static arm
+runs one batch request at a time, so the selected request fits there and static
+remains `not_applicable`. The direct vLLM arms also leave it waiting on KV, but
+they have no grant transition; their records are controls.
+
+Seeds 1–30 pass the distribution gate only if every seed yields an observed
+episode. After the one-seed pilot, check the yield on three to five seeds and
+extend the preregistered seed range if it is below 100%.
 
 ## Lending reopening diagnostic
 

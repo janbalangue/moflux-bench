@@ -11,8 +11,19 @@ const first = (events, type, id) => events.find((e) => e.event === type && e.req
 // requests stay resident for roughly another 7.5s. Twelve seconds places the
 // return and its ~1s grant restoration inside decode rather than at the end of
 // the last prefill step, where a 50s burst left under a second of margin.
-export const AVAILABILITY_PROTOCOL = "fixed-burst-v2";
+// v3 keeps that burst and enlarges only the selected return request. In the v2
+// seed-3 pilot it was admitted through the never-lent slot, needed 8 KV blocks,
+// fit beside the three resident burst requests, and was scheduled 0.28ms after
+// enqueue, so no request was waiting when the grant came back. vLLM reported 118 prompt
+// tokens for 400 characters and 1,607 for 7,100: about 29 template tokens plus
+// 0.222 per character. Three resident burst requests hold 101-105 blocks each,
+// leaving at most 17 of 320 free, and 2,000 characters is about 474 tokens, or
+// 30 blocks. The installed scheduler admits a waiting request only when its
+// full prompt fits and never preempts running work to make room for it, so the
+// request waits in the engine until a resident request finishes.
+export const AVAILABILITY_PROTOCOL = "fixed-burst-v3";
 export const AVAILABILITY_BURST = Object.freeze({ leadMs: 12_000, spacingMs: 100, requests: 3 });
+export const AVAILABILITY_RETURN_REQUEST = Object.freeze({ inputChars: 2_000 });
 /**
  * Grant sampling for this experiment. The Metal default of 1s makes the grant
  * bracket about a second wide, which cannot order a request scheduled within
@@ -26,10 +37,12 @@ export function availabilityTrace(trace, workload) {
   const entries = trace.entries.filter((e) => e.class !== "batch" ||
     e.arrivalMs >= workload.interactiveResumeStartMs).map((e) => ({ ...e }));
   const selected = returning.sort((a, b) => a.arrivalMs - b.arrivalMs)[0];
-  if (selected) entries.find((e) => e.id === selected.id).arrivalMs = workload.interactiveResumeStartMs;
+  // Only the selected request is enlarged; later returns keep the class size.
+  if (selected) Object.assign(entries.find((e) => e.id === selected.id), {
+    arrivalMs: workload.interactiveResumeStartMs, inputChars: AVAILABILITY_RETURN_REQUEST.inputChars });
   else entries.push({ id: "interactive-resume-1", class: "interactive",
-    arrivalMs: workload.interactiveResumeStartMs, retryJitter: [1],
-    targetSlots: [0], providerSeeds: [trace.workload.seed] });
+    arrivalMs: workload.interactiveResumeStartMs, inputChars: AVAILABILITY_RETURN_REQUEST.inputChars,
+    retryJitter: [1], targetSlots: [0], providerSeeds: [trace.workload.seed] });
   // Establish batch demand early enough for the controller to lend idle slots.
   entries.push({ id: "batch-prime-1", class: "batch", arrivalMs: workload.batchStartMs,
     retryJitter: [1], targetSlots: [0], providerSeeds: [trace.workload.seed] });
@@ -116,6 +129,14 @@ export function backendAvailabilityEpisode({ seed, arm, trace, loadgen, events, 
   result.request = request ?? null;
   result.enqueuedAtEpochMs = enqueued?.atEpochMs ?? null;
   result.scheduledAtEpochMs = scheduled?.atEpochMs ?? null;
+  // Diagnostic only: whether free KV was below the enlarged request when it
+  // reached the engine, from the last scheduler pressure sample before enqueue.
+  const lastPressure = enqueued && ordered.filter((e) => e.event === "pressure" &&
+    e.atEpochMs <= enqueued.atEpochMs).at(-1);
+  result.freeBlocksBeforeEnqueue = lastPressure && finite(lastPressure.kvUsage) && finite(cacheConfig?.numGpuBlocks)
+    ? { blocks: Math.round((1 - lastPressure.kvUsage) * cacheConfig.numGpuBlocks),
+        sampleAgeMs: enqueued.atEpochMs - lastPressure.atEpochMs, waiting: lastPressure.waiting ?? null }
+    : null;
   if (!request || !finite(request.sentAtMs) || !finite(request.endedAtMs)) reject("request_attempt_missing");
   if (ordered.filter((e) => e.event === "first_scheduled" && e.requestId === result.requestId).length > 1) reject("duplicate_first_schedule_event");
   if (scheduled && (!enqueued || enqueued.atEpochMs > scheduled.atEpochMs || !(scheduled.scheduledTokens > 0))) {

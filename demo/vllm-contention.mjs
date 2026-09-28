@@ -125,7 +125,7 @@ import {
   vllmWorkloadForBackend,
 } from "./vllm-contention-lib.mjs";
 
-import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, VALID_AVAILABILITY_STATUSES, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
+import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, AVAILABILITY_RETURN_REQUEST, VALID_AVAILABILITY_STATUSES, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { summarizeBorrowAccounting, correlateReturnEvidence } from "./vllm-reporting-lib.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -377,6 +377,7 @@ const plan = {
   seeds: OPT.seeds.join(","),
   backendAvailability: OPT.backendAvailability,
   availabilityProtocol: OPT.backendAvailability ? AVAILABILITY_PROTOCOL : null,
+  availabilityReturnInputChars: OPT.backendAvailability ? AVAILABILITY_RETURN_REQUEST.inputChars : null,
   workloadProfile: WORKLOAD.profile,
   policyProfile: POLICY.profile,
   interactiveUnlentConcurrent: POLICY.unlentProtectedConcurrent.interactive,
@@ -1712,6 +1713,7 @@ if (OPT.doctor) {
       schemaVersion: 2,
       clockBasis: "host wall clock shared by the scheduler probe and grant sampler; episodes reject clock steps over 5ms inside the measured interval",
       burst: AVAILABILITY_BURST,
+      returnRequest: AVAILABILITY_RETURN_REQUEST,
       grantSampleIntervalMs: SAMPLING.managedIntervalMs,
       endpoint: "first scheduler step allocating KV capacity and scheduling tokens for the first planned returning interactive request",
       physicalReclamationClaim: false,

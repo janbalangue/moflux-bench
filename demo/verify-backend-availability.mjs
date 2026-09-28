@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { AVAILABILITY_BURST, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
+import { AVAILABILITY_BURST, AVAILABILITY_RETURN_REQUEST, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { buildTrace, validateTrace } from "../load/trace-lib.mjs";
 import { VLLM_METAL_LONG_CONTEXT_WORKLOAD } from "./vllm-contention-lib.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,7 +41,11 @@ assert.equal(observed.engineQueueMs, 550);
 assert.equal(observed.clientFirstTokenAfterGrantMs, 400);
 assert.equal(observed.dispatchToScheduleMs, 600);
 assert.deepEqual([observed.clock.engineStepMs, observed.clock.samplerStepMs], [0, 0]);
+// Free KV from the last pressure sample before enqueue: 2% of 320 blocks, 50ms old.
+assert.deepEqual(observed.freeBlocksBeforeEnqueue, { blocks: 6, sampleAgeMs: 50, waiting: null });
 const change = (mutate) => { const f = fixture(); mutate(f); return backendAvailabilityEpisode(f); };
+assert.equal(change((f) => f.events = f.events.filter((e) => e.event !== "pressure" || e.atEpochMs > 10950))
+  .freeBlocksBeforeEnqueue, null);
 assert.equal(change((f) => f.events = []).status, "inconclusive");
 assert.equal(change((f) => f.events.find((e) => e.event === "pressure").kvUsage = 0.2).status, "inconclusive");
 // Client offsets are diagnostics; the gap uses engine and sampler wall time only.
@@ -104,9 +108,14 @@ for (let seed = 1; seed <= 30; seed += 1) {
   assert.notEqual(trace.hash, base.hash);
   assert.deepEqual(trace.entries.filter((e) => e.id.startsWith("batch-pressure-")).map((e) => e.arrivalMs), [48000, 48100, 48200]);
   assert.equal(AVAILABILITY_BURST.leadMs, 12000);
-  assert.equal(trace.availabilityProtocol, "fixed-burst-v2");
+  assert.equal(AVAILABILITY_RETURN_REQUEST.inputChars, 2000);
+  assert.equal(trace.availabilityProtocol, "fixed-burst-v3");
   assert.equal(trace.entries.find((e) => e.id === "batch-prime-1").arrivalMs, 25000);
-  assert.equal(trace.entries.find((e) => e.class === "interactive" && e.arrivalMs >= 60000).arrivalMs, 60000);
+  const selected = trace.entries.find((e) => e.class === "interactive" && e.arrivalMs >= 60000);
+  assert.equal(selected.arrivalMs, 60000);
+  // Only the selected return is enlarged; every other request keeps its class size.
+  assert.equal(selected.inputChars, AVAILABILITY_RETURN_REQUEST.inputChars);
+  assert.deepEqual(trace.entries.filter((e) => e.inputChars !== undefined).map((e) => e.id), [selected.id]);
 }
 
 // Exercise the actual load generator over HTTP: request IDs and partial tokens

@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.48.0 - 2026-09-27
+
+### Changed
+
+- The vLLM Metal availability experiment moves to a `fixed-burst-v3`
+  protocol. Only its first planned returning interactive request changes: its
+  prompt grows from 400 to 2,000 characters, about 30 KV blocks where three
+  resident batch requests leave at most 17 free. It is still admitted through
+  the never-lent slot, but vLLM can place it only after a resident request
+  finishes, so it is waiting in the engine when the grant is restored.
+  - In the `fixed-burst-v2` seed-3 pilot, the selected request needed 8
+    blocks and was scheduled 0.28ms after enqueue. Its episode was
+    inconclusive, and every seed would have ended the same way. The burst,
+    arms, gates, thresholds and 30-observation distribution gate are unchanged.
+  - The size comes from the pilot's reported prompt tokens (118 for 400
+    characters, 1,607 for 7,100), not from latency outcomes.
+  - The installed scheduler admits a waiting request only once its full
+    prompt fits and never preempts running work to place one.
+  - Results go to `results/runs/vllm-metal-long-context-backend-availability-fixed-burst-v3/`.
+    The v2 pilot stays in its own namespace, and v2 is superseded.
+  - [BACKEND-AVAILABILITY.md](demo/BACKEND-AVAILABILITY.md) records the
+    expected outcome before any v3 run.
+
+### Added
+
+- Availability episodes report `freeBlocksBeforeEnqueue`: free KV blocks at
+  the last scheduler pressure sample before the selected request's enqueue,
+  with the sample's age and waiting-queue length. Diagnostic only.
+- The run plan and summary record the return request size
+  (`availabilityReturnInputChars`, `backendAvailability.returnRequest`).
+- The 0.47.1 repeat of the five-seed `unlent-concurrency-2` sweep is published
+  as `results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1`, beside the
+  0.46.0 corpus rather than over it, and is protected as reviewed evidence. It
+  used the same traces, Tyr, Latchflo, vLLM and model revision, and passed
+  again. H2's median again sat exactly on its −0.04 req/s margin, and one seed
+  moved by 0.28 req/s between the two runs. MoFlux completed 91 interactive and
+  27 batch requests against static's 90 and 23. The MoFlux arm's KV usage
+  peaked at 65–71%.
+
 ## 0.47.1 - 2026-09-27
 
 ### Fixed

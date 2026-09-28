@@ -1,5 +1,19 @@
 # MoFlux Bench verification
 
+## 0.48.0 fixed-burst-v3 return request
+
+`npm run verify:backend-availability` now checks, for seeds 1–30:
+- the trace is `fixed-burst-v3`;
+- only the selected return request at 60s carries a size, 2,000 characters;
+- every other request keeps its class size.
+
+It also checks `freeBlocksBeforeEnqueue`, including `null` when no pressure
+sample precedes enqueue, and that the backend-availability dry-run still
+passes. The claims that the prompt cannot fit and that the scheduler waits
+rather than preempts come from the pilot's token counts and the installed
+vLLM source, not from a v3 run. No inference was run.
+
+
 ## 0.47.1 Tyr first-decision timing
 
 `demo/verify-local-contention.mjs` checks the following:
