@@ -1,5 +1,21 @@
 # MoFlux Bench verification
 
+## 0.49.0 selectable availability protocol
+
+`npm run verify:backend-availability` checks that the dry-run defaults to
+`fixed-burst-v3` and plans a separate `fixed-burst-v2` namespace with
+`--availability-protocol=fixed-burst-v2`. It also checks that an unknown
+protocol, or a protocol without `--backend-availability`, is refused.
+
+For seeds 1–30, the v2 trace:
+- has no size key on any entry;
+- has the same request IDs and arrivals as v3;
+- passes trace validation.
+
+Seed 3 reproduces the v2 pilot's recorded trace hash, `d67e425b…`. No inference
+was run.
+
+
 ## 0.48.0 fixed-burst-v3 return request
 
 `npm run verify:backend-availability` now checks, for seeds 1–30:

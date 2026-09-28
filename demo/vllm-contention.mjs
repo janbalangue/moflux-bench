@@ -125,7 +125,7 @@ import {
   vllmWorkloadForBackend,
 } from "./vllm-contention-lib.mjs";
 
-import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, AVAILABILITY_RETURN_REQUEST, VALID_AVAILABILITY_STATUSES, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
+import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, VALID_AVAILABILITY_STATUSES, availabilityProtocol, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { summarizeBorrowAccounting, correlateReturnEvidence } from "./vllm-reporting-lib.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -239,6 +239,7 @@ try {
       vllmGpuMemoryUtilizationForBackend(backend),
     ),
     backendAvailability: flag("backend-availability"),
+    availabilityProtocol: str("availability-protocol", AVAILABILITY_PROTOCOL),
     requireProof: flag("require-proof"),
     keepStack: flag("keep-stack"),
     dryRun: flag("dry-run"),
@@ -249,6 +250,10 @@ try {
   if (OPT.backendAvailability && (OPT.backend !== "metal" || !DEFAULT_WORKLOAD.engine)) {
     throw new Error("--backend-availability requires --backend=metal --workload=metal-long-context-v1");
   }
+  if (args.has("availability-protocol") && !OPT.backendAvailability) {
+    throw new Error("--availability-protocol requires --backend-availability");
+  }
+  availabilityProtocol(OPT.availabilityProtocol);
   if (!["nvidia", "metal"].includes(OPT.backend)) {
     throw new Error("--backend must be nvidia or metal");
   }
@@ -307,7 +312,10 @@ const SAMPLING = Object.freeze({
 });
 const IS_METAL = OPT.backend === "metal";
 const SWEEP_NAME = vllmSweepNameFor(OPT.backend, WORKLOAD, OPT.policyProfile) +
-  (OPT.backendAvailability ? `-backend-availability-${AVAILABILITY_PROTOCOL}` : "");
+  (OPT.backendAvailability ? `-backend-availability-${OPT.availabilityProtocol}` : "");
+/** The selected return request's prompt size: enlarged under v3, class size under v2. */
+const AVAILABILITY_RETURN_INPUT_CHARS =
+  availabilityProtocol(OPT.availabilityProtocol).returnRequest?.inputChars ?? WORKLOAD.interactiveInputChars;
 /** Engine flags that pin the scheduler's KV pool, when the workload declares one. */
 const KV_POOL_ARGS = WORKLOAD.engine
   ? ["--block-size", String(WORKLOAD.engine.blockSize), "--num-gpu-blocks-override", String(WORKLOAD.engine.kvCacheBlocks)]
@@ -376,8 +384,8 @@ const plan = {
   arms: OPT.arms.join(","),
   seeds: OPT.seeds.join(","),
   backendAvailability: OPT.backendAvailability,
-  availabilityProtocol: OPT.backendAvailability ? AVAILABILITY_PROTOCOL : null,
-  availabilityReturnInputChars: OPT.backendAvailability ? AVAILABILITY_RETURN_REQUEST.inputChars : null,
+  availabilityProtocol: OPT.backendAvailability ? OPT.availabilityProtocol : null,
+  availabilityReturnInputChars: OPT.backendAvailability ? AVAILABILITY_RETURN_INPUT_CHARS : null,
   workloadProfile: WORKLOAD.profile,
   policyProfile: POLICY.profile,
   interactiveUnlentConcurrent: POLICY.unlentProtectedConcurrent.interactive,
@@ -1405,7 +1413,8 @@ try {
     for (const [seedIndex, seed] of OPT.seeds.entries()) {
       const order = ORDER_PLAN[seedIndex].order;
       const baseTrace = buildTrace({ ...WORKLOAD, seed });
-      const trace = OPT.backendAvailability ? availabilityTrace(baseTrace, WORKLOAD) : baseTrace;
+      const trace = OPT.backendAvailability
+        ? availabilityTrace(baseTrace, WORKLOAD, OPT.availabilityProtocol) : baseTrace;
       const traceFile = path.join(runOutputDir, `trace-seed-${seed}.json`);
       writeFileSync(traceFile, `${JSON.stringify(trace, null, 2)}\n`);
       const arms = {};
@@ -1709,11 +1718,11 @@ if (OPT.doctor) {
       ],
     },
     ...(OPT.backendAvailability ? { backendAvailability: {
-      protocol: AVAILABILITY_PROTOCOL,
+      protocol: OPT.availabilityProtocol,
       schemaVersion: 2,
       clockBasis: "host wall clock shared by the scheduler probe and grant sampler; episodes reject clock steps over 5ms inside the measured interval",
       burst: AVAILABILITY_BURST,
-      returnRequest: AVAILABILITY_RETURN_REQUEST,
+      returnRequest: { inputChars: AVAILABILITY_RETURN_INPUT_CHARS },
       grantSampleIntervalMs: SAMPLING.managedIntervalMs,
       endpoint: "first scheduler step allocating KV capacity and scheduling tokens for the first planned returning interactive request",
       physicalReclamationClaim: false,

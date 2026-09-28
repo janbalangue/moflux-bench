@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.49.0 - 2026-09-27
+
+### Added
+
+- `--availability-protocol` selects the vLLM Metal availability trace:
+  `fixed-burst-v3`, the default, or `fixed-burst-v2` as a paired control. v2
+  keeps the same burst with a class-size return request, which shows what the
+  never-lent slot gives ordinary returning work under the same KV pressure.
+  - v2 traces carry no size key and replay the v2 seed-3 pilot's recorded
+    trace hash exactly. Results go to its existing
+    `-backend-availability-fixed-burst-v2` namespace.
+  - The flag requires `--backend-availability` and refuses unknown protocols.
+  - Its gap distribution gate is not expected to pass under v2. Read it
+    through engine queue time, dispatch-to-schedule time and the count of
+    seeds served without waiting. See
+    [BACKEND-AVAILABILITY.md](demo/BACKEND-AVAILABILITY.md).
+  - The plan and summary report the selected protocol and the return request
+    size it actually uses, 400 characters under v2.
+
 ## 0.48.0 - 2026-09-27
 
 ### Changed

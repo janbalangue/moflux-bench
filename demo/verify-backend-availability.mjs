@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { AVAILABILITY_BURST, AVAILABILITY_RETURN_REQUEST, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
+import { AVAILABILITY_BURST, AVAILABILITY_RETURN_REQUEST, availabilityProtocol, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { buildTrace, validateTrace } from "../load/trace-lib.mjs";
 import { VLLM_METAL_LONG_CONTEXT_WORKLOAD } from "./vllm-contention-lib.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -13,6 +13,15 @@ const dryRun = execFileSync(process.execPath, [path.join(ROOT, "demo/vllm-conten
 assert.match(dryRun, /long-context-backend-availability/);
 assert.match(dryRun, /PASS dry-run/);
 assert.throws(() => execFileSync(process.execPath, [path.join(ROOT, "demo/vllm-contention.mjs"), "--backend=nvidia", "--backend-availability", "--dry-run"], { stdio: "pipe" }), /Command failed/);
+const availabilityDryRun = (...extra) => execFileSync(process.execPath, [path.join(ROOT, "demo/vllm-contention.mjs"),
+  "--backend=metal", "--workload=metal-long-context-v1", "--dry-run", ...extra], { encoding: "utf8", stdio: "pipe" });
+assert.match(dryRun, /backend-availability-fixed-burst-v3/, "v3 is the default protocol");
+assert.match(availabilityDryRun("--backend-availability", "--availability-protocol=fixed-burst-v2"),
+  /backend-availability-fixed-burst-v2/);
+assert.throws(() => availabilityDryRun("--backend-availability", "--availability-protocol=fixed-burst-v1"), /Command failed/);
+assert.throws(() => availabilityDryRun("--availability-protocol=fixed-burst-v2"), /Command failed/,
+  "a protocol without --backend-availability would silently run the ordinary sweep");
+assert.throws(() => availabilityProtocol("fixed-burst-v1"), /must be one of fixed-burst-v2, fixed-burst-v3/);
 const requestId = "moflux-bench-interactive-1-a1";
 const fixture = () => ({ seed: 1, arm: "moflux", startedAtEpochMs: 10000, nominalFloor: 3,
   workload: { interactiveResumeStartMs: 900, interactiveResumeDurationMs: 1000, maxAttempts: 1,
@@ -116,6 +125,15 @@ for (let seed = 1; seed <= 30; seed += 1) {
   // Only the selected return is enlarged; every other request keeps its class size.
   assert.equal(selected.inputChars, AVAILABILITY_RETURN_REQUEST.inputChars);
   assert.deepEqual(trace.entries.filter((e) => e.inputChars !== undefined).map((e) => e.id), [selected.id]);
+  // The v2 control is the same trace without the size key.
+  const control = availabilityTrace(base, config, "fixed-burst-v2");
+  validateTrace(control, config);
+  assert.equal(control.availabilityProtocol, "fixed-burst-v2");
+  assert.ok(control.entries.every((e) => !Object.hasOwn(e, "inputChars")));
+  assert.deepEqual(control.entries.map(({ id, arrivalMs }) => [id, arrivalMs]),
+    trace.entries.map(({ id, arrivalMs }) => [id, arrivalMs]));
+  // Seed 3 replays the hash recorded by the fixed-burst-v2 pilot (20260927T212906Z).
+  if (seed === 3) assert.equal(control.hash, "d67e425ba0c8d1880994ccf4b3886161ca0581876a8cd2b3228f28e966eebd1a");
 }
 
 // Exercise the actual load generator over HTTP: request IDs and partial tokens

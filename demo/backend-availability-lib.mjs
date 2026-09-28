@@ -24,6 +24,18 @@ const first = (events, type, id) => events.find((e) => e.event === type && e.req
 export const AVAILABILITY_PROTOCOL = "fixed-burst-v3";
 export const AVAILABILITY_BURST = Object.freeze({ leadMs: 12_000, spacingMs: 100, requests: 3 });
 export const AVAILABILITY_RETURN_REQUEST = Object.freeze({ inputChars: 2_000 });
+// v2 stays selectable as a paired control: the same burst with a class-size
+// return request, which shows what the never-lent slot gives ordinary work.
+export const AVAILABILITY_PROTOCOLS = Object.freeze({
+  "fixed-burst-v2": Object.freeze({ returnRequest: null }),
+  "fixed-burst-v3": Object.freeze({ returnRequest: AVAILABILITY_RETURN_REQUEST }),
+});
+export function availabilityProtocol(name) {
+  if (!Object.hasOwn(AVAILABILITY_PROTOCOLS, name)) {
+    throw new Error(`--availability-protocol must be one of ${Object.keys(AVAILABILITY_PROTOCOLS).join(", ")}`);
+  }
+  return AVAILABILITY_PROTOCOLS[name];
+}
 /**
  * Grant sampling for this experiment. The Metal default of 1s makes the grant
  * bracket about a second wide, which cannot order a request scheduled within
@@ -31,7 +43,10 @@ export const AVAILABILITY_RETURN_REQUEST = Object.freeze({ inputChars: 2_000 });
  * `--managed-telemetry-interval-ms` still overrides it.
  */
 export const AVAILABILITY_MANAGED_INTERVAL_MS = 250;
-export function availabilityTrace(trace, workload) {
+export function availabilityTrace(trace, workload, protocol = AVAILABILITY_PROTOCOL) {
+  const { returnRequest } = availabilityProtocol(protocol);
+  // v2 entries carry no size key at all, so they hash exactly as the v2 pilot did.
+  const size = returnRequest ? { inputChars: returnRequest.inputChars } : {};
   const returning = trace.entries.filter((e) => e.class === "interactive" &&
     e.arrivalMs >= workload.interactiveResumeStartMs);
   const entries = trace.entries.filter((e) => e.class !== "batch" ||
@@ -39,9 +54,9 @@ export function availabilityTrace(trace, workload) {
   const selected = returning.sort((a, b) => a.arrivalMs - b.arrivalMs)[0];
   // Only the selected request is enlarged; later returns keep the class size.
   if (selected) Object.assign(entries.find((e) => e.id === selected.id), {
-    arrivalMs: workload.interactiveResumeStartMs, inputChars: AVAILABILITY_RETURN_REQUEST.inputChars });
+    arrivalMs: workload.interactiveResumeStartMs, ...size });
   else entries.push({ id: "interactive-resume-1", class: "interactive",
-    arrivalMs: workload.interactiveResumeStartMs, inputChars: AVAILABILITY_RETURN_REQUEST.inputChars,
+    arrivalMs: workload.interactiveResumeStartMs, ...size,
     retryJitter: [1], targetSlots: [0], providerSeeds: [trace.workload.seed] });
   // Establish batch demand early enough for the controller to lend idle slots.
   entries.push({ id: "batch-prime-1", class: "batch", arrivalMs: workload.batchStartMs,
@@ -55,7 +70,7 @@ export function availabilityTrace(trace, workload) {
   const result = { ...trace, entries, planned: {
     interactive: entries.filter((e) => e.class === "interactive").length,
     batch: entries.filter((e) => e.class === "batch").length, total: entries.length,
-  }, availabilityProtocol: AVAILABILITY_PROTOCOL };
+  }, availabilityProtocol: protocol };
   return { ...result, hash: traceHash(result) };
 }
 

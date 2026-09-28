@@ -26,6 +26,26 @@ allocates POSIX shared memory at startup; a sandboxed shell that denies it
 fails before the first arm with `PermissionError ... shm_open`, which is an
 environment failure rather than an experiment result.
 
+`--availability-protocol` selects the trace protocol: `fixed-burst-v3`, the
+default, or `fixed-burst-v2` as a paired control. v2 has the same burst with a
+class-size return request, and seed 3 replays the v2 pilot's recorded trace
+hash. Run it on the same seeds as a v3 yield check, close in time, because
+two identical `unlent-concurrency-2` sweeps differed by several requests on the
+same seed:
+
+```sh
+node demo/vllm-contention.mjs --backend=metal --workload=metal-long-context-v1 \
+  --backend-availability --availability-protocol=fixed-burst-v2 --seeds=1-5
+```
+
+A v2 return request fits beside the resident batch requests, so it is not a
+gap measurement, and its distribution gate is not expected to pass. Its own
+arrival triggers restoration, so most v2 episodes are `inconclusive` because
+their schedule time falls inside the grant bracket; that label says the order
+against restoration is unresolved, not that the request waited. Read v2 through
+`engineQueueMs`, `dispatchToScheduleMs` and the count of seeds served without
+waiting.
+
 The sweep retains the four counterbalanced FCFS, priority, static and MoFlux
 arms, fresh engines, immutable model revision, excluded warmup, and the `metal-long-context-v1` request sizes: long batch requests, 320 scheduler KV blocks
 of 16 tokens, prefix caching disabled. Results have a separate
@@ -72,7 +92,8 @@ prompt is about 474 tokens, or 30 blocks. The installed vLLM scheduler admits a
 waiting request only when its full prompt fits (`scheduler_reserve_full_isl`)
 and never preempts running work to place a waiting request, so the selected
 request stays in the engine queue until a resident request finishes. The v2
-pilot stays in its own namespace; v2 is superseded.
+pilot stays in its own namespace. v2 is no longer the default but remains
+selectable as the paired control described under Run.
 
 Do the one-seed pilot first. A 30-seed, four-arm sweep is substantial local
 inference work. A seed is not replaced just because it fails the pressure gate;
