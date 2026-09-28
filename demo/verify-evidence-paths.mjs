@@ -61,6 +61,11 @@ check("the published sweep paths are declared reviewed", () => {
     isReviewedEvidence("results/vllm-metal-long-context-unlent-concurrency-2/seed-1/summary.json"),
     true,
   );
+  assert.equal(isReviewedEvidence("results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1.json"), true);
+  assert.equal(
+    isReviewedEvidence("results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1/comparison-seed-1.json"),
+    true,
+  );
 });
 
 check("generated run output is not reviewed", () => {

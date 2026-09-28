@@ -1,0 +1,562 @@
+{
+  "arm": "vllm-metal-long-context-unlent-concurrency-2-vllm-fcfs",
+  "seed": 3,
+  "percentileScope": "run",
+  "drain": {
+    "elapsedMs": 11298,
+    "idleMs": 90000,
+    "maxMs": 180000,
+    "timeoutMode": "censor",
+    "outcome": "complete",
+    "cause": null,
+    "censoredTotal": 0,
+    "censoredByClass": {
+      "interactive": 0,
+      "batch": 0
+    },
+    "censoredRequests": []
+  },
+  "config": {
+    "targets": [
+      "http://127.0.0.1:18000"
+    ],
+    "interactiveTargets": [
+      "http://127.0.0.1:18000"
+    ],
+    "batchTargets": [
+      "http://127.0.0.1:18000"
+    ],
+    "metricsPort": 0,
+    "metricsRelayUrl": "",
+    "metricsPushIntervalMs": 1000,
+    "metricsRelayRequired": false,
+    "armLabel": "vllm-metal-long-context-unlent-concurrency-2-vllm-fcfs",
+    "providerApi": "openai",
+    "durationMs": 105000,
+    "seed": 3,
+    "interactiveModel": "moflux-vllm",
+    "batchModel": "moflux-vllm",
+    "interactiveRps": 0.25,
+    "interactiveInputChars": 400,
+    "sizeDistribution": "uniform",
+    "interactiveSizeSigma": 0.75,
+    "batchSizeSigma": 0,
+    "interactiveMaxTokens": 16,
+    "interactiveStartMs": 0,
+    "interactiveDurationMs": 25000,
+    "interactiveResumeStartMs": 60000,
+    "interactiveResumeDurationMs": 25000,
+    "interactiveResumeRps": 0.5,
+    "batchStartMs": 25000,
+    "batchDurationMs": 60000,
+    "batchRps": 0.15,
+    "batchInputChars": 7100,
+    "batchMaxTokens": 64,
+    "maxAttempts": 1,
+    "backoffBaseMs": 500,
+    "honorRetryHints": true,
+    "inFlightCeiling": 256,
+    "drainIdleMs": 90000,
+    "drainMaxMs": 180000,
+    "drainTimeoutMode": "censor",
+    "windowMs": 105000,
+    "temperature": 0,
+    "interactivePriority": null,
+    "batchPriority": null,
+    "forceOutputLength": true,
+    "fixedOutputMinTokens": false,
+    "emitPhaseSamples": true,
+    "backendAvailability": false,
+    "traceFile": "provided",
+    "traceOut": "",
+    "out": "requested",
+    "interactiveIdentityToken": "",
+    "batchIdentityToken": "",
+    "providerCredentialConfigured": true
+  },
+  "generatorSaturated": 0,
+  "startedAt": "2026-09-27T22:23:51.252Z",
+  "startedAtEpochMs": 1790547831252,
+  "wallClockMs": 95895,
+  "trace": {
+    "version": 3,
+    "hash": "38f55c798403c0de54d66ae4f1e686f85cf94bb6a282dfbdd0d2b3f29910f3d1",
+    "planned": {
+      "interactive": 19,
+      "batch": 10,
+      "total": 29
+    },
+    "source": "provided"
+  },
+  "classes": {
+    "interactive": {
+      "logical": 19,
+      "attempts": 19,
+      "success": 19,
+      "successRate": 1,
+      "retryAmplification": 1,
+      "localReject": 0,
+      "localRejectReasons": {},
+      "localRejectPools": {},
+      "localRejectConstraints": {},
+      "localRejectDetails": [],
+      "localRejectGrantUnavailable": {},
+      "localRejectSnapshots": [],
+      "admissionClassResponses": {
+        "unclassified": 19
+      },
+      "upstreamReject": 0,
+      "borrowedDeadlineAbandoned": 0,
+      "borrowedDeadlineSnapshots": [],
+      "serverError": 0,
+      "serverErrorSnapshots": [],
+      "requestError": 0,
+      "requestErrorReasons": {},
+      "requestErrorSnapshots": [],
+      "transportError": 0,
+      "exhausted": 0,
+      "drainTimeoutCensored": 0,
+      "drainTimeoutSnapshots": [],
+      "requestSizes": null,
+      "bindingConstraint": {
+        "budgetLimited": 0,
+        "concurrencyLimited": 0,
+        "grantUnavailable": 0,
+        "tokenBoundShare": null,
+        "exercisedTokenAwareness": false
+      },
+      "firstAttemptAtMs": 805.7,
+      "lastAttemptAtMs": 84594.4,
+      "lastLocalRejectAtMs": null,
+      "firstResponseHeadersAtMs": 833.4,
+      "firstSuccessAtMs": 2073.7,
+      "responseHeadersGapMs": 27.7,
+      "firstSuccessGapMs": 1268,
+      "windows": {
+        "boundaryMs": 25000,
+        "endMs": 105000,
+        "idle": {
+          "completed": 8,
+          "goodputRps": 0.32,
+          "p50Ms": 1885.8765840000015,
+          "p95Ms": 2384.6052500000005,
+          "ttftP50Ms": 422.0776249999999,
+          "ttftP95Ms": 599.1760000000013
+        },
+        "contended": {
+          "completed": 11,
+          "goodputRps": 0.138,
+          "p50Ms": 10952.730416000006,
+          "p95Ms": 13309.69816700001,
+          "ttftP50Ms": 8721.28224999999,
+          "ttftP95Ms": 11497.332332999998
+        },
+        "resumeMs": 60000,
+        "borrow": {
+          "completed": 0,
+          "goodputRps": 0,
+          "p50Ms": null,
+          "p95Ms": null,
+          "ttftP50Ms": null,
+          "ttftP95Ms": null
+        },
+        "contention": {
+          "completed": 11,
+          "goodputRps": 0.244,
+          "p50Ms": 10952.730416000006,
+          "p95Ms": 13309.69816700001,
+          "ttftP50Ms": 8721.28224999999,
+          "ttftP95Ms": 11497.332332999998
+        },
+        "drainCompleted": 0
+      },
+      "phaseSamples": [
+        {
+          "t": 1790547833326,
+          "offsetMs": 2073.8,
+          "arrivalMs": 801.5,
+          "responseHeadersAtMs": 833.4,
+          "completedAtMs": 2073.8,
+          "latencyMs": 1268.149125,
+          "ttftMs": 341.933125
+        },
+        {
+          "t": 1790547841440,
+          "offsetMs": 10187.4,
+          "arrivalMs": 8856.5,
+          "responseHeadersAtMs": 8868.4,
+          "completedAtMs": 10187.4,
+          "latencyMs": 1330.0397089999988,
+          "ttftMs": 422.0776249999999
+        },
+        {
+          "t": 1790547843825,
+          "offsetMs": 12573.2,
+          "arrivalMs": 10229.7,
+          "responseHeadersAtMs": 10239.4,
+          "completedAtMs": 12573.2,
+          "latencyMs": 2342.285333,
+          "ttftMs": 507.2152079999996
+        },
+        {
+          "t": 1790547843890,
+          "offsetMs": 12638.2,
+          "arrivalMs": 10252.1,
+          "responseHeadersAtMs": 10259.6,
+          "completedAtMs": 12638.2,
+          "latencyMs": 2384.6052500000005,
+          "ttftMs": 599.1760000000013
+        },
+        {
+          "t": 1790547844410,
+          "offsetMs": 13158.3,
+          "arrivalMs": 11615.2,
+          "responseHeadersAtMs": 11624.5,
+          "completedAtMs": 13158.3,
+          "latencyMs": 1541.9407090000004,
+          "ttftMs": 387.40912500000013
+        },
+        {
+          "t": 1790547852895,
+          "offsetMs": 21643.2,
+          "arrivalMs": 20313,
+          "responseHeadersAtMs": 20321.4,
+          "completedAtMs": 21643.2,
+          "latencyMs": 1328.9346250000017,
+          "ttftMs": 403.49475000000166
+        },
+        {
+          "t": 1790547856735,
+          "offsetMs": 25482.8,
+          "arrivalMs": 23277.7,
+          "responseHeadersAtMs": 23290.9,
+          "completedAtMs": 25482.8,
+          "latencyMs": 2203.6899159999994,
+          "ttftMs": 588.4357080000009
+        },
+        {
+          "t": 1790547856735,
+          "offsetMs": 25483.1,
+          "arrivalMs": 23596.4,
+          "responseHeadersAtMs": 23606.3,
+          "completedAtMs": 25483.1,
+          "latencyMs": 1885.8765840000015,
+          "ttftMs": 378.0354589999988
+        },
+        {
+          "t": 1790547900866,
+          "offsetMs": 69615.4,
+          "arrivalMs": 64194.2,
+          "responseHeadersAtMs": 64201.6,
+          "completedAtMs": 69615.4,
+          "latencyMs": 5421.005708000004,
+          "ttftMs": 3568.1951670000053
+        },
+        {
+          "t": 1790547903139,
+          "offsetMs": 71888.5,
+          "arrivalMs": 64735.7,
+          "responseHeadersAtMs": 64745.8,
+          "completedAtMs": 71888.5,
+          "latencyMs": 7150.986915999994,
+          "ttftMs": 5298.186375000005
+        },
+        {
+          "t": 1790547908987,
+          "offsetMs": 77736.3,
+          "arrivalMs": 67674.8,
+          "responseHeadersAtMs": 67683.2,
+          "completedAtMs": 77736.3,
+          "latencyMs": 10058.953957999998,
+          "ttftMs": 8193.97579099999
+        },
+        {
+          "t": 1790547914792,
+          "offsetMs": 83541.1,
+          "arrivalMs": 70229.7,
+          "responseHeadersAtMs": 70237.9,
+          "completedAtMs": 83541.1,
+          "latencyMs": 13309.69816700001,
+          "ttftMs": 11497.332332999998
+        },
+        {
+          "t": 1790547915077,
+          "offsetMs": 83825.8,
+          "arrivalMs": 72847.9,
+          "responseHeadersAtMs": 72858,
+          "completedAtMs": 83825.8,
+          "latencyMs": 10975.727417000002,
+          "ttftMs": 8996.9225
+        },
+        {
+          "t": 1790547917171,
+          "offsetMs": 85919.9,
+          "arrivalMs": 74965.8,
+          "responseHeadersAtMs": 74976,
+          "completedAtMs": 85919.9,
+          "latencyMs": 10952.730416000006,
+          "ttftMs": 9143.400290999998
+        },
+        {
+          "t": 1790547920071,
+          "offsetMs": 88820.2,
+          "arrivalMs": 75509.4,
+          "responseHeadersAtMs": 75517,
+          "completedAtMs": 88820.2,
+          "latencyMs": 13308.763584,
+          "ttftMs": 8721.28224999999
+        },
+        {
+          "t": 1790547922491,
+          "offsetMs": 91240.8,
+          "arrivalMs": 79490.1,
+          "responseHeadersAtMs": 79499.5,
+          "completedAtMs": 91240.8,
+          "latencyMs": 11748.830208,
+          "ttftMs": 9751.324791000006
+        },
+        {
+          "t": 1790547923498,
+          "offsetMs": 92246.9,
+          "arrivalMs": 80687.7,
+          "responseHeadersAtMs": 80694.4,
+          "completedAtMs": 92246.9,
+          "latencyMs": 11557.836250000008,
+          "ttftMs": 9580.005292000002
+        },
+        {
+          "t": 1790547924850,
+          "offsetMs": 93599.8,
+          "arrivalMs": 83493.6,
+          "responseHeadersAtMs": 83500.6,
+          "completedAtMs": 93599.8,
+          "latencyMs": 10106.032542,
+          "ttftMs": 8149.303209000005
+        },
+        {
+          "t": 1790547925615,
+          "offsetMs": 94364.2,
+          "arrivalMs": 84594.2,
+          "responseHeadersAtMs": 84597.4,
+          "completedAtMs": 94364.2,
+          "latencyMs": 9769.799207999997,
+          "ttftMs": 8059.436499999996
+        }
+      ],
+      "retryHints": {
+        "received": 0,
+        "applied": 0,
+        "blindSleepMs": 0,
+        "hintedSleepMs": 0,
+        "totalSleepMs": 0
+      },
+      "outputTokens": 304,
+      "inputTokens": 2242,
+      "inputTokensReported": 19,
+      "latencyMs": {
+        "p50": 7151,
+        "p95": 13309.7,
+        "p99": 13309.7
+      },
+      "ttftMs": {
+        "p50": 5298.2,
+        "p95": 11497.3,
+        "p99": 11497.3
+      }
+    },
+    "batch": {
+      "logical": 10,
+      "attempts": 10,
+      "success": 10,
+      "successRate": 1,
+      "retryAmplification": 1,
+      "localReject": 0,
+      "localRejectReasons": {},
+      "localRejectPools": {},
+      "localRejectConstraints": {},
+      "localRejectDetails": [],
+      "localRejectGrantUnavailable": {},
+      "localRejectSnapshots": [],
+      "admissionClassResponses": {
+        "unclassified": 10
+      },
+      "upstreamReject": 0,
+      "borrowedDeadlineAbandoned": 0,
+      "borrowedDeadlineSnapshots": [],
+      "serverError": 0,
+      "serverErrorSnapshots": [],
+      "requestError": 0,
+      "requestErrorReasons": {},
+      "requestErrorSnapshots": [],
+      "transportError": 0,
+      "exhausted": 0,
+      "drainTimeoutCensored": 0,
+      "drainTimeoutSnapshots": [],
+      "requestSizes": null,
+      "bindingConstraint": {
+        "budgetLimited": 0,
+        "concurrencyLimited": 0,
+        "grantUnavailable": 0,
+        "tokenBoundShare": null,
+        "exercisedTokenAwareness": false
+      },
+      "firstAttemptAtMs": 26112,
+      "lastAttemptAtMs": 79225.5,
+      "lastLocalRejectAtMs": null,
+      "firstResponseHeadersAtMs": 26126.4,
+      "firstSuccessAtMs": 33370.2,
+      "responseHeadersGapMs": 14.4,
+      "firstSuccessGapMs": 7258.2,
+      "windows": {
+        "boundaryMs": 25000,
+        "endMs": 105000,
+        "idle": {
+          "completed": 0,
+          "goodputRps": 0,
+          "p50Ms": null,
+          "p95Ms": null,
+          "ttftP50Ms": null,
+          "ttftP95Ms": null
+        },
+        "contended": {
+          "completed": 10,
+          "goodputRps": 0.125,
+          "p50Ms": 23153.628750000003,
+          "p95Ms": 29008.232041000003,
+          "ttftP50Ms": 9893.08425,
+          "ttftP95Ms": 18178.486916
+        },
+        "resumeMs": 60000,
+        "borrow": {
+          "completed": 7,
+          "goodputRps": 0.2,
+          "p50Ms": 17137.163333999997,
+          "p95Ms": 29008.232041000003,
+          "ttftP50Ms": 5850.025500000003,
+          "ttftP95Ms": 18178.486916
+        },
+        "contention": {
+          "completed": 3,
+          "goodputRps": 0.067,
+          "p50Ms": 23153.628750000003,
+          "p95Ms": 23167.522375,
+          "ttftP50Ms": 9893.08425,
+          "ttftP95Ms": 11763.848333999995
+        },
+        "drainCompleted": 0
+      },
+      "phaseSamples": [
+        {
+          "t": 1790547864622,
+          "offsetMs": 33370.2,
+          "arrivalMs": 26110.4,
+          "responseHeadersAtMs": 26126.4,
+          "completedAtMs": 33370.2,
+          "latencyMs": 7258.264416000002,
+          "ttftMs": 2943.723665999998
+        },
+        {
+          "t": 1790547887422,
+          "offsetMs": 56170.4,
+          "arrivalMs": 40976.1,
+          "responseHeadersAtMs": 40991.8,
+          "completedAtMs": 56170.4,
+          "latencyMs": 15192.948874999995,
+          "ttftMs": 3043.8753329999963
+        },
+        {
+          "t": 1790547892995,
+          "offsetMs": 61744.1,
+          "arrivalMs": 45408.6,
+          "responseHeadersAtMs": 45414.4,
+          "completedAtMs": 61744.1,
+          "latencyMs": 16336.316083999998,
+          "ttftMs": 5850.025500000003
+        },
+        {
+          "t": 1790547895880,
+          "offsetMs": 64629.1,
+          "arrivalMs": 47490,
+          "responseHeadersAtMs": 47505.5,
+          "completedAtMs": 64629.1,
+          "latencyMs": 17137.163333999997,
+          "ttftMs": 3889.914417
+        },
+        {
+          "t": 1790547903995,
+          "offsetMs": 72743.6,
+          "arrivalMs": 47932.1,
+          "responseHeadersAtMs": 47943.9,
+          "completedAtMs": 72743.6,
+          "latencyMs": 24811.646167000006,
+          "ttftMs": 11252.894709
+        },
+        {
+          "t": 1790547909717,
+          "offsetMs": 78466,
+          "arrivalMs": 49456.4,
+          "responseHeadersAtMs": 49469.3,
+          "completedAtMs": 78466,
+          "latencyMs": 29008.232041000003,
+          "ttftMs": 18178.486916
+        },
+        {
+          "t": 1790547912696,
+          "offsetMs": 81445.3,
+          "arrivalMs": 54290.5,
+          "responseHeadersAtMs": 54303.5,
+          "completedAtMs": 81445.3,
+          "latencyMs": 27155.304207999994,
+          "ttftMs": 13472.402083
+        },
+        {
+          "t": 1790547921117,
+          "offsetMs": 89866.4,
+          "arrivalMs": 66709.9,
+          "responseHeadersAtMs": 66728.2,
+          "completedAtMs": 89866.4,
+          "latencyMs": 23153.628750000003,
+          "ttftMs": 9158.59554200001
+        },
+        {
+          "t": 1790547924383,
+          "offsetMs": 93132.5,
+          "arrivalMs": 69963.6,
+          "responseHeadersAtMs": 69975.5,
+          "completedAtMs": 93132.5,
+          "latencyMs": 23167.522375,
+          "ttftMs": 11763.848333999995
+        },
+        {
+          "t": 1790547927141,
+          "offsetMs": 95890.7,
+          "arrivalMs": 79222.9,
+          "responseHeadersAtMs": 79240.1,
+          "completedAtMs": 95890.7,
+          "latencyMs": 16665.154083999994,
+          "ttftMs": 9893.08425
+        }
+      ],
+      "retryHints": {
+        "received": 0,
+        "applied": 0,
+        "blindSleepMs": 0,
+        "hintedSleepMs": 0,
+        "totalSleepMs": 0
+      },
+      "outputTokens": 640,
+      "inputTokens": 16070,
+      "inputTokensReported": 10,
+      "latencyMs": {
+        "p50": 23153.6,
+        "p95": 29008.2,
+        "p99": 29008.2
+      },
+      "ttftMs": {
+        "p50": 9893.1,
+        "p95": 18178.5,
+        "p99": 18178.5
+      }
+    }
+  }
+}

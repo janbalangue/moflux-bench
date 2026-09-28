@@ -85,6 +85,10 @@ export const REVIEWED_EVIDENCE = Object.freeze([
   // A different policy, so a separate corpus, protected in advance.
   "results/vllm-metal-long-context-unlent-concurrency-2.json",
   "results/vllm-metal-long-context-unlent-concurrency-2/",
+  // 0.47.1 repeat on the same traces and runtimes. Kept beside the 0.46.0
+  // pass rather than over it, so both runs stay citable.
+  "results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1.json",
+  "results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1/",
 ]);
 
 /** Directory under the results root that holds generated runs. */
