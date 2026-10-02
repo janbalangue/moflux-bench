@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-09-28T07:04:04.206Z",
+  "entries": [
+    {
+      "file": "compose.log",
+      "status": "saved"
+    },
+    {
+      "file": "grants.json",
+      "status": "saved"
+    },
+    {
+      "file": "events.json",
+      "status": "saved"
+    },
+    {
+      "file": "static-stats.json",
+      "status": "saved"
+    },
+    {
+      "file": "moflux-stats.json",
+      "status": "saved"
+    }
+  ]
+}

@@ -19,8 +19,17 @@
 - Admission-boundary verification in the complete harness suite and
   publication checks. See [preregistration](demo/ADMISSION-BOUNDARY.md).
 
-This release adds experiment and analysis tooling. It does not promote new
-benchmark results or change recorded runtime metadata in existing evidence.
+### Published evidence
+
+- Five-seed boundary-8 run from 2026-09-28: all validity and H1–H5 gates
+  pass, with engine queue manipulation observed in all five seeds. The
+  preregistered paired boundary-4 baseline is absent, so no change between
+  boundaries is established.
+- Five-seed availability `fixed-burst-v3` negative result alongside its
+  `fixed-burst-v2` control. Both are valid contention runs; v3 fails H2.
+  Neither meets the separate 30-observation availability distribution gate.
+  Original JSON, scheduler JSONL, runtime metadata and source hashes are
+  retained. See [evidence notes](results/README.md#newly-reviewed-evidence).
 
 ## 0.49.0 - 2026-09-27
 

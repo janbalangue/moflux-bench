@@ -1,0 +1,5464 @@
+{
+  "seed": 4,
+  "order": [
+    "moflux",
+    "vllm-fcfs",
+    "vllm-priority",
+    "static"
+  ],
+  "arms": {
+    "moflux": {
+      "arm": "moflux",
+      "managed": true,
+      "pool": "vllm-moflux",
+      "trace": {
+        "hash": "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2"
+      },
+      "runtimeIdentity": {
+        "backend": "metal",
+        "engineVersion": "0.29.0",
+        "pluginVersion": "0.29.0",
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "servedModel": "moflux-vllm",
+        "appleChip": "Apple M1",
+        "systemMemoryBytes": 17179869184,
+        "platform": "darwin",
+        "arch": "arm64",
+        "macosVersion": "27.0",
+        "schedulingPolicy": "priority",
+        "maxNumSeqs": 4,
+        "maxModelLen": 4096,
+        "gpuMemoryUtilization": 0.4,
+        "blockSize": 16,
+        "kvCacheBlocks": 320,
+        "prefixCaching": false,
+        "pagedAttention": true,
+        "authenticatedHostBridge": true
+      },
+      "warmup": {
+        "requestsPerClass": 5,
+        "completed": 10,
+        "excludedFromMeasurement": true
+      },
+      "startingGrant": {
+        "interactive": {
+          "limits": {
+            "protectedConcurrent": 6,
+            "maxConcurrent": 8,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          },
+          "inFlight": 0,
+          "inFlightTokens": 0,
+          "protectedConcurrentInUse": 0,
+          "borrowedConcurrent": 0,
+          "borrowedInFlightTokens": 0,
+          "admitted": 72,
+          "rejected": 4,
+          "demandState": "demanding",
+          "demandStateSince": "2026-09-28T06:57:15.175Z",
+          "recentAdmissions": 0,
+          "recentRejections": 0,
+          "releasedConcurrent": 0,
+          "releasedTokens": 0,
+          "restorationPending": false
+        },
+        "batch": {
+          "limits": {
+            "protectedConcurrent": 0,
+            "maxConcurrent": 8,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "inFlight": 0,
+          "inFlightTokens": 0,
+          "protectedConcurrentInUse": 0,
+          "borrowedConcurrent": 0,
+          "borrowedInFlightTokens": 0,
+          "admitted": 47,
+          "rejected": 14,
+          "demandState": "idle",
+          "demandStateSince": "2026-09-28T06:57:13.689Z",
+          "recentAdmissions": 0,
+          "recentRejections": 0,
+          "releasedConcurrent": 2,
+          "releasedTokens": 12288,
+          "restorationPending": false
+        }
+      },
+      "classes": {
+        "interactive": {
+          "logical": 19,
+          "attempts": 19,
+          "success": 19,
+          "successRate": 1,
+          "goodputRps": 0.181,
+          "ttftMs": {
+            "p50": 1951.26,
+            "p95": 4521.43
+          },
+          "latencyMs": {
+            "p50": 5081.52,
+            "p95": 7547.44
+          },
+          "completionTokens": 304,
+          "promptTokens": 2242,
+          "promptTokenReports": 19,
+          "totalTokens": 2546,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "interactive": 19
+          },
+          "windows": {
+            "idle": {
+              "completed": 5,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 1331.1875839999993,
+              "latencyP95Ms": 2233.339541999999,
+              "ttftP50Ms": 429.703125,
+              "ttftP95Ms": 628.3020420000003
+            },
+            "borrow": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "contention": {
+              "completed": 14,
+              "goodputRps": 0.311,
+              "sloGoodputRps": 0.56,
+              "latencyP50Ms": 5281.934166999999,
+              "latencyP95Ms": 7547.440375000006,
+              "ttftP50Ms": 2329.4384999999966,
+              "ttftP95Ms": 4521.434874999992
+            },
+            "drainCompleted": 0
+          }
+        },
+        "batch": {
+          "logical": 13,
+          "attempts": 13,
+          "success": 8,
+          "successRate": 0.6154,
+          "goodputRps": 0.0762,
+          "ttftMs": {
+            "p50": 5885.2,
+            "p95": 16939.56
+          },
+          "latencyMs": {
+            "p50": 16345.26,
+            "p95": 28200.08
+          },
+          "completionTokens": 512,
+          "promptTokens": 12856,
+          "promptTokenReports": 8,
+          "totalTokens": 13368,
+          "rejectedAdmissions": 5,
+          "rejectionReasons": {
+            "concurrency_limit": 5
+          },
+          "rejectionConstraints": {
+            "admission_class_protection": 5
+          },
+          "rejectionDetails": [
+            {
+              "pool": "vllm-moflux",
+              "reason": "concurrency_limit",
+              "grantUnavailable": false,
+              "count": 5,
+              "requestedMin": 1834,
+              "requestedMax": 1956,
+              "availableMin": 57622,
+              "availableMax": 61527,
+              "budgetMin": 65536,
+              "budgetMax": 65536
+            }
+          ],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 5,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "batch": 13
+          },
+          "windows": {
+            "idle": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "borrow": {
+              "completed": 7,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 18973.391375,
+              "latencyP95Ms": 28200.079833999996,
+              "ttftP50Ms": 5910.394334000004,
+              "ttftP95Ms": 16939.559625
+            },
+            "contention": {
+              "completed": 1,
+              "goodputRps": 0.022,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 10082.614333000005,
+              "latencyP95Ms": 10082.614333000005,
+              "ttftP50Ms": 3092.2862909999967,
+              "ttftP95Ms": 3092.2862909999967
+            },
+            "drainCompleted": 0
+          }
+        }
+      },
+      "batchBorrowAccounting": {
+        "fromMs": 25000,
+        "toMs": 60000,
+        "arrivalCohort": {
+          "completed": 7,
+          "goodputRps": 0.2
+        },
+        "completionWindow": {
+          "completed": 3,
+          "goodputRps": 0.086
+        },
+        "note": "Arrival cohort counts eventual successful completions of borrow-phase arrivals; completion window counts successful completions timestamped inside that phase. Neither counts rejected or censored work as completed. Missing timestamps yield unknown values."
+      },
+      "bindingConstraint": {
+        "interactive": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        },
+        "batch": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 5,
+          "grantUnavailable": 0,
+          "tokenBoundShare": 0,
+          "exercisedTokenAwareness": false
+        }
+      },
+      "drain": {
+        "elapsedMs": 6311,
+        "idleMs": 90000,
+        "maxMs": 180000,
+        "timeoutMode": "fail",
+        "outcome": "complete",
+        "cause": null,
+        "censoredTotal": 0,
+        "censoredByClass": {
+          "interactive": 0,
+          "batch": 0
+        },
+        "censoredRequests": []
+      },
+      "generatorSaturated": 0,
+      "vllm": {
+        "sampleCount": 95,
+        "cacheConfig": {
+          "blockSize": 16,
+          "numGpuBlocks": 320,
+          "numGpuBlocksOverride": 320
+        },
+        "scrapeErrors": [],
+        "missingRequiredMetrics": [],
+        "gauges": {
+          "running": {
+            "samples": 95,
+            "min": 0,
+            "p50": 2,
+            "p95": 4,
+            "max": 4,
+            "mean": 1.5053,
+            "nonzeroShare": 0.5684
+          },
+          "waiting": {
+            "samples": 95,
+            "min": 0,
+            "p50": 0,
+            "p95": 2,
+            "max": 4,
+            "mean": 0.5263,
+            "nonzeroShare": 0.3263
+          },
+          "kvCacheUsage": {
+            "samples": 95,
+            "min": 0,
+            "p50": 0.0752,
+            "p95": 0.9718,
+            "max": 0.9969,
+            "mean": 0.3198,
+            "nonzeroShare": 0.5684
+          }
+        },
+        "preemptions": {
+          "start": 0,
+          "end": 1,
+          "delta": 1
+        },
+        "histograms": {
+          "ttft": {
+            "count": 27,
+            "sum": 92.1556,
+            "mean": 3.4132,
+            "p50": 5,
+            "p95": 20,
+            "p99": 20,
+            "unit": "seconds"
+          },
+          "itl": {
+            "count": 789,
+            "sum": 141.9702,
+            "mean": 0.1799,
+            "p50": 0.15,
+            "p95": 0.3,
+            "p99": 5,
+            "unit": "seconds"
+          },
+          "queue": {
+            "count": 27,
+            "sum": 34.3368,
+            "mean": 1.2717,
+            "p50": 0.3,
+            "p95": 5,
+            "p99": 15,
+            "unit": "seconds"
+          },
+          "prefill": {
+            "count": 27,
+            "sum": 40.7405,
+            "mean": 1.5089,
+            "p50": 0.5,
+            "p95": 10,
+            "p99": 10,
+            "unit": "seconds"
+          },
+          "decode": {
+            "count": 27,
+            "sum": 141.9702,
+            "mean": 5.2582,
+            "p50": 5,
+            "p95": 15,
+            "p99": 20,
+            "unit": "seconds"
+          },
+          "inference": {
+            "count": 27,
+            "sum": 182.7107,
+            "mean": 6.7671,
+            "p50": 10,
+            "p95": 20,
+            "p99": 20,
+            "unit": "seconds"
+          },
+          "e2e": {
+            "count": 27,
+            "sum": 234.1108,
+            "mean": 8.6708,
+            "p50": 10,
+            "p95": 30,
+            "p99": 30,
+            "unit": "seconds"
+          }
+        },
+        "phases": {
+          "borrow": {
+            "fromMs": 25100,
+            "toMs": 60100,
+            "running": {
+              "samples": 35,
+              "min": 0,
+              "p50": 2,
+              "p95": 3,
+              "max": 3,
+              "mean": 1.4571,
+              "nonzeroShare": 0.6286
+            },
+            "waiting": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0,
+              "p95": 2,
+              "max": 2,
+              "mean": 0.3714,
+              "nonzeroShare": 0.3143
+            },
+            "kvCacheUsage": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0.6395,
+              "p95": 0.9718,
+              "max": 0.9749,
+              "mean": 0.469,
+              "nonzeroShare": 0.6286
+            },
+            "preemptionsDelta": 0
+          },
+          "contention": {
+            "fromMs": 60100,
+            "toMs": 85100,
+            "running": {
+              "samples": 24,
+              "min": 2,
+              "p50": 3,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.2083,
+              "nonzeroShare": 1
+            },
+            "waiting": {
+              "samples": 24,
+              "min": 0,
+              "p50": 2,
+              "p95": 3,
+              "max": 4,
+              "mean": 1.5,
+              "nonzeroShare": 0.7917
+            },
+            "kvCacheUsage": {
+              "samples": 24,
+              "min": 0.0752,
+              "p50": 0.3793,
+              "p95": 0.9937,
+              "max": 0.9969,
+              "mean": 0.491,
+              "nonzeroShare": 1
+            },
+            "preemptionsDelta": 1
+          }
+        },
+        "recovery": {
+          "lastArrivalAtMs": 85100,
+          "queueClearedAtMs": 86122,
+          "queueClearanceMs": 1022,
+          "engineIdleAtMs": 89126,
+          "engineIdleLatencyMs": 4026,
+          "kvCacheAtOrBelow10PctAtMs": 89126,
+          "kvCacheAtOrBelow10PctLatencyMs": 4026,
+          "note": "These are observed vLLM engine states after the last arrival. They do not imply that MoFlux reclaimed GPU execution or KV-cache blocks."
+        },
+        "scheduledReturn": {
+          "atMs": 60100,
+          "sampledAtMs": 61094,
+          "kvCacheUsage": 0.64576802507837,
+          "running": 2,
+          "waiting": 2,
+          "firstObservedEmptyQueueAtMs": 77111,
+          "firstObservedEmptyQueueDelayMs": 17011,
+          "note": "Engine-wide snapshot after the scheduled return boundary, and delay to the first sampled empty queue. Includes sampling delay, may precede actual demand or grant restoration, and does not establish sustained clearance or interactive waiting time. Later queues may form."
+        }
+      },
+      "gpu": null,
+      "hostProcess": {
+        "sampleCount": 19,
+        "errors": [],
+        "rootPid": 93876,
+        "processCount": {
+          "p50": 3,
+          "p95": 3,
+          "max": 3,
+          "mean": 3
+        },
+        "cpuPct": {
+          "p50": 9.8,
+          "p95": 40.4,
+          "max": 40.4,
+          "mean": 15.81
+        },
+        "rssMiB": {
+          "p50": 2145.8,
+          "p95": 2169.17,
+          "max": 2169.17,
+          "mean": 2152.21
+        }
+      },
+      "hostPressure": {
+        "sampleCount": 19,
+        "errors": [],
+        "pressureSamples": {
+          "normal": 19,
+          "warn": 0,
+          "critical": 0,
+          "unknown": 0
+        },
+        "worstPressure": "normal",
+        "swapUsedMiB": {
+          "start": 706.81,
+          "end": 706.81,
+          "max": 706.81,
+          "delta": 0
+        },
+        "freeMiB": {
+          "min": 62.1,
+          "p50": 130.8
+        },
+        "compressorMiBMax": 2307.7,
+        "pagesDuringArm": {
+          "swapouts": 0,
+          "swapins": 16,
+          "pageouts": 5,
+          "pageins": 17924,
+          "compressions": 0,
+          "decompressions": 22524
+        },
+        "swapoutMiBDuringArm": 0,
+        "thermalWarningSamples": 0,
+        "performanceWarningSamples": 0,
+        "thermalRecordedLines": []
+      },
+      "dcgm": {
+        "configured": false,
+        "sampleCount": 0,
+        "errors": []
+      },
+      "managedSampleCount": 95,
+      "managedSampleErrors": []
+    },
+    "vllm-fcfs": {
+      "arm": "vllm-fcfs",
+      "managed": false,
+      "pool": null,
+      "trace": {
+        "hash": "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2"
+      },
+      "runtimeIdentity": {
+        "backend": "metal",
+        "engineVersion": "0.29.0",
+        "pluginVersion": "0.29.0",
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "servedModel": "moflux-vllm",
+        "appleChip": "Apple M1",
+        "systemMemoryBytes": 17179869184,
+        "platform": "darwin",
+        "arch": "arm64",
+        "macosVersion": "27.0",
+        "schedulingPolicy": "fcfs",
+        "maxNumSeqs": 4,
+        "maxModelLen": 4096,
+        "gpuMemoryUtilization": 0.4,
+        "blockSize": 16,
+        "kvCacheBlocks": 320,
+        "prefixCaching": false,
+        "pagedAttention": true,
+        "authenticatedHostBridge": true
+      },
+      "warmup": {
+        "requestsPerClass": 5,
+        "completed": 10,
+        "excludedFromMeasurement": true
+      },
+      "startingGrant": null,
+      "classes": {
+        "interactive": {
+          "logical": 19,
+          "attempts": 19,
+          "success": 19,
+          "successRate": 1,
+          "goodputRps": 0.181,
+          "ttftMs": {
+            "p50": 14376.17,
+            "p95": 24603.84
+          },
+          "latencyMs": {
+            "p50": 17740.88,
+            "p95": 26405.19
+          },
+          "completionTokens": 304,
+          "promptTokens": 2242,
+          "promptTokenReports": 19,
+          "totalTokens": 2546,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "unclassified": 19
+          },
+          "windows": {
+            "idle": {
+              "completed": 5,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 1344.6675000000032,
+              "latencyP95Ms": 2250.0824170000005,
+              "ttftP50Ms": 437.75800000000027,
+              "ttftP95Ms": 628.4933330000003
+            },
+            "borrow": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "contention": {
+              "completed": 14,
+              "goodputRps": 0.311,
+              "sloGoodputRps": 0,
+              "latencyP50Ms": 18817.615291999995,
+              "latencyP95Ms": 26405.194833,
+              "ttftP50Ms": 16597.661166000005,
+              "ttftP95Ms": 24603.835000000006
+            },
+            "drainCompleted": 2
+          }
+        },
+        "batch": {
+          "logical": 13,
+          "attempts": 13,
+          "success": 13,
+          "successRate": 1,
+          "goodputRps": 0.1238,
+          "ttftMs": {
+            "p50": 9986.51,
+            "p95": 24441.72
+          },
+          "latencyMs": {
+            "p50": 23272.47,
+            "p95": 31129.43
+          },
+          "completionTokens": 832,
+          "promptTokens": 20891,
+          "promptTokenReports": 13,
+          "totalTokens": 21723,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "unclassified": 13
+          },
+          "windows": {
+            "idle": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "borrow": {
+              "completed": 7,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 18953.660042000003,
+              "latencyP95Ms": 23539.918875000003,
+              "ttftP50Ms": 5867.531208,
+              "ttftP95Ms": 12469.14308300001
+            },
+            "contention": {
+              "completed": 6,
+              "goodputRps": 0.133,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 30294.783834,
+              "latencyP95Ms": 31129.428499999995,
+              "ttftP50Ms": 15988.247208999994,
+              "ttftP95Ms": 24441.719500000007
+            },
+            "drainCompleted": 3
+          }
+        }
+      },
+      "batchBorrowAccounting": {
+        "fromMs": 25000,
+        "toMs": 60000,
+        "arrivalCohort": {
+          "completed": 7,
+          "goodputRps": 0.2
+        },
+        "completionWindow": {
+          "completed": 3,
+          "goodputRps": 0.086
+        },
+        "note": "Arrival cohort counts eventual successful completions of borrow-phase arrivals; completion window counts successful completions timestamped inside that phase. Neither counts rejected or censored work as completed. Missing timestamps yield unknown values."
+      },
+      "bindingConstraint": {
+        "interactive": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        },
+        "batch": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        }
+      },
+      "drain": {
+        "elapsedMs": 29311,
+        "idleMs": 90000,
+        "maxMs": 180000,
+        "timeoutMode": "censor",
+        "outcome": "complete",
+        "cause": null,
+        "censoredTotal": 0,
+        "censoredByClass": {
+          "interactive": 0,
+          "batch": 0
+        },
+        "censoredRequests": []
+      },
+      "generatorSaturated": 0,
+      "vllm": {
+        "sampleCount": 112,
+        "cacheConfig": {
+          "blockSize": 16,
+          "numGpuBlocks": 320,
+          "numGpuBlocksOverride": 320
+        },
+        "scrapeErrors": [],
+        "missingRequiredMetrics": [],
+        "gauges": {
+          "running": {
+            "samples": 112,
+            "min": 0,
+            "p50": 2,
+            "p95": 4,
+            "max": 4,
+            "mean": 1.875,
+            "nonzeroShare": 0.6875
+          },
+          "waiting": {
+            "samples": 112,
+            "min": 0,
+            "p50": 1,
+            "p95": 12,
+            "max": 14,
+            "mean": 2.8839,
+            "nonzeroShare": 0.5089
+          },
+          "kvCacheUsage": {
+            "samples": 112,
+            "min": 0,
+            "p50": 0.6458,
+            "p95": 0.9937,
+            "max": 1,
+            "mean": 0.4774,
+            "nonzeroShare": 0.6875
+          }
+        },
+        "preemptions": {
+          "start": 0,
+          "end": 2,
+          "delta": 2
+        },
+        "histograms": {
+          "ttft": {
+            "count": 32,
+            "sum": 386.396,
+            "mean": 12.0749,
+            "p50": 20,
+            "p95": 40,
+            "p99": 40,
+            "unit": "seconds"
+          },
+          "itl": {
+            "count": 1104,
+            "sum": 196.5651,
+            "mean": 0.178,
+            "p50": 0.15,
+            "p95": 0.15,
+            "p99": 5,
+            "unit": "seconds"
+          },
+          "queue": {
+            "count": 32,
+            "sum": 292.2529,
+            "mean": 9.1329,
+            "p50": 15,
+            "p95": 30,
+            "p99": 30,
+            "unit": "seconds"
+          },
+          "prefill": {
+            "count": 32,
+            "sum": 70.5582,
+            "mean": 2.2049,
+            "p50": 5,
+            "p95": 10,
+            "p99": 10,
+            "unit": "seconds"
+          },
+          "decode": {
+            "count": 32,
+            "sum": 196.5651,
+            "mean": 6.1427,
+            "p50": 5,
+            "p95": 15,
+            "p99": 15,
+            "unit": "seconds"
+          },
+          "inference": {
+            "count": 32,
+            "sum": 267.1234,
+            "mean": 8.3476,
+            "p50": 10,
+            "p95": 20,
+            "p99": 20,
+            "unit": "seconds"
+          },
+          "e2e": {
+            "count": 32,
+            "sum": 582.9655,
+            "mean": 18.2177,
+            "p50": 20,
+            "p95": 40,
+            "p99": 40,
+            "unit": "seconds"
+          }
+        },
+        "phases": {
+          "borrow": {
+            "fromMs": 25068,
+            "toMs": 60068,
+            "running": {
+              "samples": 35,
+              "min": 0,
+              "p50": 2,
+              "p95": 3,
+              "max": 3,
+              "mean": 1.4571,
+              "nonzeroShare": 0.6286
+            },
+            "waiting": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0,
+              "p95": 2,
+              "max": 2,
+              "mean": 0.3714,
+              "nonzeroShare": 0.3143
+            },
+            "kvCacheUsage": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0.6395,
+              "p95": 0.9718,
+              "max": 0.9749,
+              "mean": 0.469,
+              "nonzeroShare": 0.6286
+            },
+            "preemptionsDelta": 0
+          },
+          "contention": {
+            "fromMs": 60068,
+            "toMs": 85068,
+            "running": {
+              "samples": 24,
+              "min": 2,
+              "p50": 3,
+              "p95": 4,
+              "max": 4,
+              "mean": 2.9583,
+              "nonzeroShare": 1
+            },
+            "waiting": {
+              "samples": 24,
+              "min": 2,
+              "p50": 8,
+              "p95": 12,
+              "max": 14,
+              "mean": 7.5,
+              "nonzeroShare": 1
+            },
+            "kvCacheUsage": {
+              "samples": 24,
+              "min": 0.3981,
+              "p50": 0.6614,
+              "p95": 1,
+              "max": 1,
+              "mean": 0.7813,
+              "nonzeroShare": 1
+            },
+            "preemptionsDelta": 1
+          }
+        },
+        "recovery": {
+          "lastArrivalAtMs": 85068,
+          "queueClearedAtMs": 107116,
+          "queueClearanceMs": 22048,
+          "engineIdleAtMs": null,
+          "engineIdleLatencyMs": null,
+          "kvCacheAtOrBelow10PctAtMs": null,
+          "kvCacheAtOrBelow10PctLatencyMs": null,
+          "note": "These are observed vLLM engine states after the last arrival. They do not imply that MoFlux reclaimed GPU execution or KV-cache blocks."
+        },
+        "scheduledReturn": {
+          "atMs": 60068,
+          "sampledAtMs": 61064,
+          "kvCacheUsage": 0.64576802507837,
+          "running": 2,
+          "waiting": 2,
+          "firstObservedEmptyQueueAtMs": 107116,
+          "firstObservedEmptyQueueDelayMs": 47048,
+          "note": "Engine-wide snapshot after the scheduled return boundary, and delay to the first sampled empty queue. Includes sampling delay, may precede actual demand or grant restoration, and does not establish sustained clearance or interactive waiting time. Later queues may form."
+        }
+      },
+      "gpu": null,
+      "hostProcess": {
+        "sampleCount": 23,
+        "errors": [],
+        "rootPid": 95601,
+        "processCount": {
+          "p50": 3,
+          "p95": 3,
+          "max": 3,
+          "mean": 3
+        },
+        "cpuPct": {
+          "p50": 14.9,
+          "p95": 41.9,
+          "max": 42.1,
+          "mean": 19.83
+        },
+        "rssMiB": {
+          "p50": 2223.72,
+          "p95": 2235.59,
+          "max": 2236.42,
+          "mean": 2219.96
+        }
+      },
+      "hostPressure": {
+        "sampleCount": 23,
+        "errors": [],
+        "pressureSamples": {
+          "normal": 23,
+          "warn": 0,
+          "critical": 0,
+          "unknown": 0
+        },
+        "worstPressure": "normal",
+        "swapUsedMiB": {
+          "start": 698.81,
+          "end": 682.81,
+          "max": 698.81,
+          "delta": -16
+        },
+        "freeMiB": {
+          "min": 69,
+          "p50": 218
+        },
+        "compressorMiBMax": 2376.4,
+        "pagesDuringArm": {
+          "swapouts": 0,
+          "swapins": 679,
+          "pageouts": 0,
+          "pageins": 9110,
+          "compressions": 0,
+          "decompressions": 34265
+        },
+        "swapoutMiBDuringArm": 0,
+        "thermalWarningSamples": 0,
+        "performanceWarningSamples": 0,
+        "thermalRecordedLines": []
+      },
+      "dcgm": {
+        "configured": false,
+        "sampleCount": 0,
+        "errors": []
+      },
+      "managedSampleCount": 0,
+      "managedSampleErrors": []
+    },
+    "vllm-priority": {
+      "arm": "vllm-priority",
+      "managed": false,
+      "pool": null,
+      "trace": {
+        "hash": "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2"
+      },
+      "runtimeIdentity": {
+        "backend": "metal",
+        "engineVersion": "0.29.0",
+        "pluginVersion": "0.29.0",
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "servedModel": "moflux-vllm",
+        "appleChip": "Apple M1",
+        "systemMemoryBytes": 17179869184,
+        "platform": "darwin",
+        "arch": "arm64",
+        "macosVersion": "27.0",
+        "schedulingPolicy": "priority",
+        "maxNumSeqs": 4,
+        "maxModelLen": 4096,
+        "gpuMemoryUtilization": 0.4,
+        "blockSize": 16,
+        "kvCacheBlocks": 320,
+        "prefixCaching": false,
+        "pagedAttention": true,
+        "authenticatedHostBridge": true
+      },
+      "warmup": {
+        "requestsPerClass": 5,
+        "completed": 10,
+        "excludedFromMeasurement": true
+      },
+      "startingGrant": null,
+      "classes": {
+        "interactive": {
+          "logical": 19,
+          "attempts": 19,
+          "success": 19,
+          "successRate": 1,
+          "goodputRps": 0.181,
+          "ttftMs": {
+            "p50": 1170.21,
+            "p95": 5859.68
+          },
+          "latencyMs": {
+            "p50": 4349.29,
+            "p95": 10660.57
+          },
+          "completionTokens": 304,
+          "promptTokens": 2242,
+          "promptTokenReports": 19,
+          "totalTokens": 2546,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "unclassified": 19
+          },
+          "windows": {
+            "idle": {
+              "completed": 5,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 1338.3361250000016,
+              "latencyP95Ms": 2252.174791999999,
+              "ttftP50Ms": 439.1548330000005,
+              "ttftP95Ms": 644.5124579999992
+            },
+            "borrow": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "contention": {
+              "completed": 14,
+              "goodputRps": 0.311,
+              "sloGoodputRps": 0.44,
+              "latencyP50Ms": 6024.728875000001,
+              "latencyP95Ms": 10660.567083000002,
+              "ttftP50Ms": 2506.466124999999,
+              "ttftP95Ms": 5859.678458000009
+            },
+            "drainCompleted": 0
+          }
+        },
+        "batch": {
+          "logical": 13,
+          "attempts": 13,
+          "success": 13,
+          "successRate": 1,
+          "goodputRps": 0.1238,
+          "ttftMs": {
+            "p50": 14929.66,
+            "p95": 28307.85
+          },
+          "latencyMs": {
+            "p50": 27310.3,
+            "p95": 38881.76
+          },
+          "completionTokens": 832,
+          "promptTokens": 20891,
+          "promptTokenReports": 13,
+          "totalTokens": 21723,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "unclassified": 13
+          },
+          "windows": {
+            "idle": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "borrow": {
+              "completed": 7,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 19173.296292,
+              "latencyP95Ms": 27310.30308299999,
+              "ttftP50Ms": 5979.3816249999945,
+              "ttftP95Ms": 14929.661915999997
+            },
+            "contention": {
+              "completed": 6,
+              "goodputRps": 0.133,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 37569.35820799999,
+              "latencyP95Ms": 38881.757790999996,
+              "ttftP50Ms": 25191.187416,
+              "ttftP95Ms": 28307.84704200001
+            },
+            "drainCompleted": 4
+          }
+        }
+      },
+      "batchBorrowAccounting": {
+        "fromMs": 25000,
+        "toMs": 60000,
+        "arrivalCohort": {
+          "completed": 7,
+          "goodputRps": 0.2
+        },
+        "completionWindow": {
+          "completed": 3,
+          "goodputRps": 0.086
+        },
+        "note": "Arrival cohort counts eventual successful completions of borrow-phase arrivals; completion window counts successful completions timestamped inside that phase. Neither counts rejected or censored work as completed. Missing timestamps yield unknown values."
+      },
+      "bindingConstraint": {
+        "interactive": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        },
+        "batch": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        }
+      },
+      "drain": {
+        "elapsedMs": 34311,
+        "idleMs": 90000,
+        "maxMs": 180000,
+        "timeoutMode": "censor",
+        "outcome": "complete",
+        "cause": null,
+        "censoredTotal": 0,
+        "censoredByClass": {
+          "interactive": 0,
+          "batch": 0
+        },
+        "censoredRequests": []
+      },
+      "generatorSaturated": 0,
+      "vllm": {
+        "sampleCount": 117,
+        "cacheConfig": {
+          "blockSize": 16,
+          "numGpuBlocks": 320,
+          "numGpuBlocksOverride": 320
+        },
+        "scrapeErrors": [],
+        "missingRequiredMetrics": [],
+        "gauges": {
+          "running": {
+            "samples": 117,
+            "min": 0,
+            "p50": 2,
+            "p95": 4,
+            "max": 4,
+            "mean": 1.8974,
+            "nonzeroShare": 0.7009
+          },
+          "waiting": {
+            "samples": 117,
+            "min": 0,
+            "p50": 1,
+            "p95": 5,
+            "max": 6,
+            "mean": 1.5812,
+            "nonzeroShare": 0.5043
+          },
+          "kvCacheUsage": {
+            "samples": 117,
+            "min": 0,
+            "p50": 0.6364,
+            "p95": 0.9781,
+            "max": 0.9937,
+            "mean": 0.4557,
+            "nonzeroShare": 0.7009
+          }
+        },
+        "preemptions": {
+          "start": 0,
+          "end": 1,
+          "delta": 1
+        },
+        "histograms": {
+          "ttft": {
+            "count": 32,
+            "sum": 241.0234,
+            "mean": 7.532,
+            "p50": 5,
+            "p95": 40,
+            "p99": 40,
+            "unit": "seconds"
+          },
+          "itl": {
+            "count": 1104,
+            "sum": 213.91,
+            "mean": 0.1938,
+            "p50": 0.15,
+            "p95": 0.3,
+            "p99": 5,
+            "unit": "seconds"
+          },
+          "queue": {
+            "count": 32,
+            "sum": 157.3051,
+            "mean": 4.9158,
+            "p50": 0.5,
+            "p95": 30,
+            "p99": 30,
+            "unit": "seconds"
+          },
+          "prefill": {
+            "count": 32,
+            "sum": 63.9536,
+            "mean": 1.9986,
+            "p50": 0.8,
+            "p95": 10,
+            "p99": 10,
+            "unit": "seconds"
+          },
+          "decode": {
+            "count": 32,
+            "sum": 213.91,
+            "mean": 6.6847,
+            "p50": 5,
+            "p95": 15,
+            "p99": 20,
+            "unit": "seconds"
+          },
+          "inference": {
+            "count": 32,
+            "sum": 277.8636,
+            "mean": 8.6832,
+            "p50": 10,
+            "p95": 20,
+            "p99": 30,
+            "unit": "seconds"
+          },
+          "e2e": {
+            "count": 32,
+            "sum": 454.9438,
+            "mean": 14.217,
+            "p50": 10,
+            "p95": 40,
+            "p99": 40,
+            "unit": "seconds"
+          }
+        },
+        "phases": {
+          "borrow": {
+            "fromMs": 25088,
+            "toMs": 60088,
+            "running": {
+              "samples": 35,
+              "min": 0,
+              "p50": 2,
+              "p95": 3,
+              "max": 3,
+              "mean": 1.4857,
+              "nonzeroShare": 0.6286
+            },
+            "waiting": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0,
+              "p95": 2,
+              "max": 2,
+              "mean": 0.3429,
+              "nonzeroShare": 0.2857
+            },
+            "kvCacheUsage": {
+              "samples": 35,
+              "min": 0,
+              "p50": 0.6395,
+              "p95": 0.9749,
+              "max": 0.9781,
+              "mean": 0.4778,
+              "nonzeroShare": 0.6286
+            },
+            "preemptionsDelta": 0
+          },
+          "contention": {
+            "fromMs": 60088,
+            "toMs": 85088,
+            "running": {
+              "samples": 24,
+              "min": 2,
+              "p50": 3,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.2083,
+              "nonzeroShare": 1
+            },
+            "waiting": {
+              "samples": 24,
+              "min": 2,
+              "p50": 4,
+              "p95": 6,
+              "max": 6,
+              "mean": 4.0417,
+              "nonzeroShare": 1
+            },
+            "kvCacheUsage": {
+              "samples": 24,
+              "min": 0.0502,
+              "p50": 0.4577,
+              "p95": 0.9906,
+              "max": 0.9937,
+              "mean": 0.4992,
+              "nonzeroShare": 1
+            },
+            "preemptionsDelta": 1
+          }
+        },
+        "recovery": {
+          "lastArrivalAtMs": 85088,
+          "queueClearedAtMs": 110138,
+          "queueClearanceMs": 25050,
+          "engineIdleAtMs": null,
+          "engineIdleLatencyMs": null,
+          "kvCacheAtOrBelow10PctAtMs": null,
+          "kvCacheAtOrBelow10PctLatencyMs": null,
+          "note": "These are observed vLLM engine states after the last arrival. They do not imply that MoFlux reclaimed GPU execution or KV-cache blocks."
+        },
+        "scheduledReturn": {
+          "atMs": 60088,
+          "sampledAtMs": 61075,
+          "kvCacheUsage": 0.64576802507837,
+          "running": 2,
+          "waiting": 2,
+          "firstObservedEmptyQueueAtMs": 110138,
+          "firstObservedEmptyQueueDelayMs": 50050,
+          "note": "Engine-wide snapshot after the scheduled return boundary, and delay to the first sampled empty queue. Includes sampling delay, may precede actual demand or grant restoration, and does not establish sustained clearance or interactive waiting time. Later queues may form."
+        }
+      },
+      "gpu": null,
+      "hostProcess": {
+        "sampleCount": 24,
+        "errors": [],
+        "rootPid": 97696,
+        "processCount": {
+          "p50": 3,
+          "p95": 3,
+          "max": 3,
+          "mean": 3
+        },
+        "cpuPct": {
+          "p50": 21.5,
+          "p95": 41.1,
+          "max": 42.2,
+          "mean": 19.91
+        },
+        "rssMiB": {
+          "p50": 2876,
+          "p95": 2891.92,
+          "max": 2891.92,
+          "mean": 2875.42
+        }
+      },
+      "hostPressure": {
+        "sampleCount": 24,
+        "errors": [],
+        "pressureSamples": {
+          "normal": 24,
+          "warn": 0,
+          "critical": 0,
+          "unknown": 0
+        },
+        "worstPressure": "normal",
+        "swapUsedMiB": {
+          "start": 682.81,
+          "end": 682.81,
+          "max": 682.81,
+          "delta": 0
+        },
+        "freeMiB": {
+          "min": 62.9,
+          "p50": 113.1
+        },
+        "compressorMiBMax": 2355.7,
+        "pagesDuringArm": {
+          "swapouts": 0,
+          "swapins": 20,
+          "pageouts": 1,
+          "pageins": 6354,
+          "compressions": 0,
+          "decompressions": 22884
+        },
+        "swapoutMiBDuringArm": 0,
+        "thermalWarningSamples": 0,
+        "performanceWarningSamples": 0,
+        "thermalRecordedLines": []
+      },
+      "dcgm": {
+        "configured": false,
+        "sampleCount": 0,
+        "errors": []
+      },
+      "managedSampleCount": 0,
+      "managedSampleErrors": []
+    },
+    "static": {
+      "arm": "static",
+      "managed": true,
+      "pool": "vllm-static",
+      "trace": {
+        "hash": "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2"
+      },
+      "runtimeIdentity": {
+        "backend": "metal",
+        "engineVersion": "0.29.0",
+        "pluginVersion": "0.29.0",
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "servedModel": "moflux-vllm",
+        "appleChip": "Apple M1",
+        "systemMemoryBytes": 17179869184,
+        "platform": "darwin",
+        "arch": "arm64",
+        "macosVersion": "27.0",
+        "schedulingPolicy": "priority",
+        "maxNumSeqs": 4,
+        "maxModelLen": 4096,
+        "gpuMemoryUtilization": 0.4,
+        "blockSize": 16,
+        "kvCacheBlocks": 320,
+        "prefixCaching": false,
+        "pagedAttention": true,
+        "authenticatedHostBridge": true
+      },
+      "warmup": {
+        "requestsPerClass": 5,
+        "completed": 10,
+        "excludedFromMeasurement": true
+      },
+      "startingGrant": {
+        "interactive": {
+          "limits": {
+            "protectedConcurrent": 6,
+            "maxConcurrent": 8,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          },
+          "inFlight": 0,
+          "inFlightTokens": 0,
+          "protectedConcurrentInUse": 0,
+          "borrowedConcurrent": 0,
+          "borrowedInFlightTokens": 0,
+          "admitted": 76,
+          "rejected": 0,
+          "demandState": null,
+          "demandStateSince": null,
+          "recentAdmissions": 0,
+          "recentRejections": 0,
+          "releasedConcurrent": 0,
+          "releasedTokens": 0,
+          "restorationPending": false
+        },
+        "batch": {
+          "limits": {
+            "protectedConcurrent": 2,
+            "maxConcurrent": 8,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "inFlight": 0,
+          "inFlightTokens": 0,
+          "protectedConcurrentInUse": 0,
+          "borrowedConcurrent": 0,
+          "borrowedInFlightTokens": 0,
+          "admitted": 40,
+          "rejected": 21,
+          "demandState": null,
+          "demandStateSince": null,
+          "recentAdmissions": 0,
+          "recentRejections": 0,
+          "releasedConcurrent": 0,
+          "releasedTokens": 0,
+          "restorationPending": false
+        }
+      },
+      "classes": {
+        "interactive": {
+          "logical": 19,
+          "attempts": 19,
+          "success": 19,
+          "successRate": 1,
+          "goodputRps": 0.181,
+          "ttftMs": {
+            "p50": 476.73,
+            "p95": 3561.27
+          },
+          "latencyMs": {
+            "p50": 2214.64,
+            "p95": 5536.13
+          },
+          "completionTokens": 304,
+          "promptTokens": 2242,
+          "promptTokenReports": 19,
+          "totalTokens": 2546,
+          "rejectedAdmissions": 0,
+          "rejectionReasons": {},
+          "rejectionConstraints": {},
+          "rejectionDetails": [],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 0,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "interactive": 19
+          },
+          "windows": {
+            "idle": {
+              "completed": 5,
+              "goodputRps": 0.2,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 1358.4128749999982,
+              "latencyP95Ms": 2214.6381659999997,
+              "ttftP50Ms": 448.76287500000035,
+              "ttftP95Ms": 624.8660829999999
+            },
+            "borrow": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "contention": {
+              "completed": 14,
+              "goodputRps": 0.311,
+              "sloGoodputRps": 0.56,
+              "latencyP50Ms": 3051.4300000000076,
+              "latencyP95Ms": 5536.133833,
+              "ttftP50Ms": 493.6392909999995,
+              "ttftP95Ms": 3561.2704159999994
+            },
+            "drainCompleted": 0
+          }
+        },
+        "batch": {
+          "logical": 13,
+          "attempts": 13,
+          "success": 6,
+          "successRate": 0.4615,
+          "goodputRps": 0.0571,
+          "ttftMs": {
+            "p50": 4484.33,
+            "p95": 5956.43
+          },
+          "latencyMs": {
+            "p50": 13224.84,
+            "p95": 14430.54
+          },
+          "completionTokens": 384,
+          "promptTokens": 9642,
+          "promptTokenReports": 6,
+          "totalTokens": 10026,
+          "rejectedAdmissions": 7,
+          "rejectionReasons": {
+            "concurrency_limit": 7
+          },
+          "rejectionConstraints": {
+            "admission_class_protection": 7
+          },
+          "rejectionDetails": [
+            {
+              "pool": "vllm-static",
+              "reason": "concurrency_limit",
+              "grantUnavailable": false,
+              "count": 7,
+              "requestedMin": 1876,
+              "requestedMax": 1991,
+              "availableMin": 61088,
+              "availableMax": 61784,
+              "budgetMin": 65536,
+              "budgetMax": 65536
+            }
+          ],
+          "budgetRejectionSnapshots": [],
+          "grantUnavailableRejections": 0,
+          "grantUnavailableSnapshots": [],
+          "deadlineAbandonments": 0,
+          "tornStreams": 0,
+          "serverErrors": 0,
+          "serverErrorCauses": {},
+          "requestErrors": 0,
+          "requestErrorReasons": {},
+          "upstreamRejects": 0,
+          "exhausted": 7,
+          "drainTimeoutCensored": 0,
+          "drainTimeoutCensoredContention": 0,
+          "admissionClassResponses": {
+            "batch": 13
+          },
+          "windows": {
+            "idle": {
+              "completed": 0,
+              "goodputRps": 0,
+              "sloGoodputRps": null,
+              "latencyP50Ms": null,
+              "latencyP95Ms": null,
+              "ttftP50Ms": null,
+              "ttftP95Ms": null
+            },
+            "borrow": {
+              "completed": 4,
+              "goodputRps": 0.114,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 13316.721582999999,
+              "latencyP95Ms": 13531.119124999997,
+              "ttftP50Ms": 5924.981541000001,
+              "ttftP95Ms": 5956.425583000004
+            },
+            "contention": {
+              "completed": 2,
+              "goodputRps": 0.044,
+              "sloGoodputRps": null,
+              "latencyP50Ms": 14430.539292000001,
+              "latencyP95Ms": 14430.539292000001,
+              "ttftP50Ms": 3353.891499999998,
+              "ttftP95Ms": 3353.891499999998
+            },
+            "drainCompleted": 0
+          }
+        }
+      },
+      "batchBorrowAccounting": {
+        "fromMs": 25000,
+        "toMs": 60000,
+        "arrivalCohort": {
+          "completed": 4,
+          "goodputRps": 0.114
+        },
+        "completionWindow": {
+          "completed": 2,
+          "goodputRps": 0.057
+        },
+        "note": "Arrival cohort counts eventual successful completions of borrow-phase arrivals; completion window counts successful completions timestamped inside that phase. Neither counts rejected or censored work as completed. Missing timestamps yield unknown values."
+      },
+      "bindingConstraint": {
+        "interactive": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 0,
+          "grantUnavailable": 0,
+          "tokenBoundShare": null,
+          "exercisedTokenAwareness": false
+        },
+        "batch": {
+          "budgetLimited": 0,
+          "concurrencyLimited": 7,
+          "grantUnavailable": 0,
+          "tokenBoundShare": 0,
+          "exercisedTokenAwareness": false
+        }
+      },
+      "drain": {
+        "elapsedMs": 4977,
+        "idleMs": 90000,
+        "maxMs": 180000,
+        "timeoutMode": "fail",
+        "outcome": "complete",
+        "cause": null,
+        "censoredTotal": 0,
+        "censoredByClass": {
+          "interactive": 0,
+          "batch": 0
+        },
+        "censoredRequests": []
+      },
+      "generatorSaturated": 0,
+      "vllm": {
+        "sampleCount": 93,
+        "cacheConfig": {
+          "blockSize": 16,
+          "numGpuBlocks": 320,
+          "numGpuBlocksOverride": 320
+        },
+        "scrapeErrors": [],
+        "missingRequiredMetrics": [],
+        "gauges": {
+          "running": {
+            "samples": 93,
+            "min": 0,
+            "p50": 0,
+            "p95": 4,
+            "max": 4,
+            "mean": 0.8925,
+            "nonzeroShare": 0.3871
+          },
+          "waiting": {
+            "samples": 93,
+            "min": 0,
+            "p50": 0,
+            "p95": 1,
+            "max": 2,
+            "mean": 0.086,
+            "nonzeroShare": 0.0538
+          },
+          "kvCacheUsage": {
+            "samples": 93,
+            "min": 0,
+            "p50": 0,
+            "p95": 0.6897,
+            "max": 0.7022,
+            "mean": 0.1791,
+            "nonzeroShare": 0.3871
+          }
+        },
+        "preemptions": {
+          "start": 0,
+          "end": 0,
+          "delta": 0
+        },
+        "histograms": {
+          "ttft": {
+            "count": 25,
+            "sum": 48.7151,
+            "mean": 1.9486,
+            "p50": 0.75,
+            "p95": 7.5,
+            "p99": 7.5,
+            "unit": "seconds"
+          },
+          "itl": {
+            "count": 663,
+            "sum": 82.1151,
+            "mean": 0.1239,
+            "p50": 0.15,
+            "p95": 0.15,
+            "p99": 0.3,
+            "unit": "seconds"
+          },
+          "queue": {
+            "count": 25,
+            "sum": 7.2573,
+            "mean": 0.2903,
+            "p50": 0.3,
+            "p95": 2,
+            "p99": 2.5,
+            "unit": "seconds"
+          },
+          "prefill": {
+            "count": 25,
+            "sum": 31.6189,
+            "mean": 1.2648,
+            "p50": 0.5,
+            "p95": 10,
+            "p99": 10,
+            "unit": "seconds"
+          },
+          "decode": {
+            "count": 25,
+            "sum": 82.1151,
+            "mean": 3.2846,
+            "p50": 2,
+            "p95": 10,
+            "p99": 15,
+            "unit": "seconds"
+          },
+          "inference": {
+            "count": 25,
+            "sum": 113.734,
+            "mean": 4.5494,
+            "p50": 2.5,
+            "p95": 15,
+            "p99": 15,
+            "unit": "seconds"
+          },
+          "e2e": {
+            "count": 25,
+            "sum": 130.8041,
+            "mean": 5.2322,
+            "p50": 5,
+            "p95": 15,
+            "p99": 15,
+            "unit": "seconds"
+          }
+        },
+        "phases": {
+          "borrow": {
+            "fromMs": 25087,
+            "toMs": 60087,
+            "running": {
+              "samples": 34,
+              "min": 0,
+              "p50": 0,
+              "p95": 2,
+              "max": 2,
+              "mean": 0.5882,
+              "nonzeroShare": 0.2941
+            },
+            "waiting": {
+              "samples": 34,
+              "min": 0,
+              "p50": 0,
+              "p95": 0,
+              "max": 0,
+              "mean": 0,
+              "nonzeroShare": 0
+            },
+            "kvCacheUsage": {
+              "samples": 34,
+              "min": 0,
+              "p50": 0,
+              "p95": 0.652,
+              "max": 0.652,
+              "mean": 0.1887,
+              "nonzeroShare": 0.2941
+            },
+            "preemptionsDelta": 0
+          },
+          "contention": {
+            "fromMs": 60087,
+            "toMs": 85087,
+            "running": {
+              "samples": 25,
+              "min": 0,
+              "p50": 2,
+              "p95": 4,
+              "max": 4,
+              "mean": 2.04,
+              "nonzeroShare": 0.76
+            },
+            "waiting": {
+              "samples": 25,
+              "min": 0,
+              "p50": 0,
+              "p95": 2,
+              "max": 2,
+              "mean": 0.32,
+              "nonzeroShare": 0.2
+            },
+            "kvCacheUsage": {
+              "samples": 25,
+              "min": 0,
+              "p50": 0.3448,
+              "p95": 0.6959,
+              "max": 0.7022,
+              "mean": 0.3491,
+              "nonzeroShare": 0.76
+            },
+            "preemptionsDelta": 0
+          }
+        },
+        "recovery": {
+          "lastArrivalAtMs": 85087,
+          "queueClearedAtMs": 85125,
+          "queueClearanceMs": 38,
+          "engineIdleAtMs": 88129,
+          "engineIdleLatencyMs": 3042,
+          "kvCacheAtOrBelow10PctAtMs": 88129,
+          "kvCacheAtOrBelow10PctLatencyMs": 3042,
+          "note": "These are observed vLLM engine states after the last arrival. They do not imply that MoFlux reclaimed GPU execution or KV-cache blocks."
+        },
+        "scheduledReturn": {
+          "atMs": 60087,
+          "sampledAtMs": 60090,
+          "kvCacheUsage": 0.64576802507837,
+          "running": 2,
+          "waiting": 0,
+          "firstObservedEmptyQueueAtMs": 60090,
+          "firstObservedEmptyQueueDelayMs": 3,
+          "note": "Engine-wide snapshot after the scheduled return boundary, and delay to the first sampled empty queue. Includes sampling delay, may precede actual demand or grant restoration, and does not establish sustained clearance or interactive waiting time. Later queues may form."
+        }
+      },
+      "gpu": null,
+      "hostProcess": {
+        "sampleCount": 19,
+        "errors": [],
+        "rootPid": 99882,
+        "processCount": {
+          "p50": 3,
+          "p95": 3,
+          "max": 3,
+          "mean": 3
+        },
+        "cpuPct": {
+          "p50": 20.8,
+          "p95": 39.3,
+          "max": 39.3,
+          "mean": 17.57
+        },
+        "rssMiB": {
+          "p50": 2408.27,
+          "p95": 2432.47,
+          "max": 2432.47,
+          "mean": 2414.06
+        }
+      },
+      "hostPressure": {
+        "sampleCount": 19,
+        "errors": [],
+        "pressureSamples": {
+          "normal": 19,
+          "warn": 0,
+          "critical": 0,
+          "unknown": 0
+        },
+        "worstPressure": "normal",
+        "swapUsedMiB": {
+          "start": 682.81,
+          "end": 682.81,
+          "max": 682.81,
+          "delta": 0
+        },
+        "freeMiB": {
+          "min": 61,
+          "p50": 385.8
+        },
+        "compressorMiBMax": 2406.6,
+        "pagesDuringArm": {
+          "swapouts": 0,
+          "swapins": 0,
+          "pageouts": 0,
+          "pageins": 1175,
+          "compressions": 0,
+          "decompressions": 24258
+        },
+        "swapoutMiBDuringArm": 0,
+        "thermalWarningSamples": 0,
+        "performanceWarningSamples": 0,
+        "thermalRecordedLines": []
+      },
+      "dcgm": {
+        "configured": false,
+        "sampleCount": 0,
+        "errors": []
+      },
+      "managedSampleCount": 93,
+      "managedSampleErrors": []
+    }
+  },
+  "evidence": {
+    "moflux": {
+      "lending": {
+        "samples": 95,
+        "lendingEpisodes": 5,
+        "restorationRequiredEpisodes": 4,
+        "restorationEpisodes": 4,
+        "unrestoredEpisodes": 0,
+        "passiveReturnEpisodes": 0,
+        "openAtEndOfRunEpisodes": 1,
+        "restorationSloMs": 15000,
+        "restorationLatencyMsMedian": 0,
+        "restorationLatencyMsMax": 1007,
+        "restorationSloBreaches": 0,
+        "occupancyRestorationLatencyMsMedian": 0,
+        "occupancyRestorationLatencyMsMax": 5051,
+        "occupancyRestorationSloBreaches": 0,
+        "peakLentConcurrent": 4,
+        "peakBorrowedConcurrent": 3,
+        "minRetainedTokenFloor": 8192,
+        "episodes": [
+          {
+            "lentAtMs": 3039,
+            "lentConcurrent": 4,
+            "lentTokens": 40960,
+            "retainedTokenFloor": 8192,
+            "demandReturnedAtMs": 4044,
+            "demandReturnEvidence": "in-flight",
+            "restorationStartedAtMs": 4044,
+            "restoredAtMs": 4044,
+            "occupancyRestoredAtMs": 4044,
+            "lentConcurrentAtDemandReturn": 0,
+            "borrowedConcurrentAtDemandReturn": 0,
+            "encroachmentAtDemandReturn": 0,
+            "grandfatheredBorrowersAtDemandReturn": 0,
+            "restorationRequired": true,
+            "restorationLatencyMs": 0,
+            "occupancyRestorationLatencyMs": 0,
+            "withinRestorationSlo": true,
+            "occupancyWithinRestorationSlo": true,
+            "outcome": "restored"
+          },
+          {
+            "lentAtMs": 12118,
+            "lentConcurrent": 4,
+            "lentTokens": 40960,
+            "retainedTokenFloor": 8192,
+            "demandReturnedAtMs": 19187,
+            "demandReturnEvidence": "in-flight",
+            "restorationStartedAtMs": 19187,
+            "restoredAtMs": 20194,
+            "occupancyRestoredAtMs": 20194,
+            "lentConcurrentAtDemandReturn": 4,
+            "borrowedConcurrentAtDemandReturn": 0,
+            "encroachmentAtDemandReturn": 0,
+            "grandfatheredBorrowersAtDemandReturn": 0,
+            "restorationRequired": true,
+            "restorationLatencyMs": 1007,
+            "occupancyRestorationLatencyMs": 1007,
+            "withinRestorationSlo": true,
+            "occupancyWithinRestorationSlo": true,
+            "outcome": "restored"
+          },
+          {
+            "lentAtMs": 23223,
+            "lentConcurrent": 4,
+            "lentTokens": 40960,
+            "retainedTokenFloor": 8192,
+            "demandReturnedAtMs": 24232,
+            "demandReturnEvidence": "in-flight",
+            "restorationStartedAtMs": 24232,
+            "restoredAtMs": 24232,
+            "occupancyRestoredAtMs": 24232,
+            "lentConcurrentAtDemandReturn": 0,
+            "borrowedConcurrentAtDemandReturn": 0,
+            "encroachmentAtDemandReturn": 0,
+            "grandfatheredBorrowersAtDemandReturn": 0,
+            "restorationRequired": true,
+            "restorationLatencyMs": 0,
+            "occupancyRestorationLatencyMs": 0,
+            "withinRestorationSlo": true,
+            "occupancyWithinRestorationSlo": true,
+            "outcome": "restored"
+          },
+          {
+            "lentAtMs": 27263,
+            "lentConcurrent": 4,
+            "lentTokens": 40960,
+            "retainedTokenFloor": 8192,
+            "demandReturnedAtMs": 61565,
+            "demandReturnEvidence": "in-flight",
+            "restorationStartedAtMs": 61565,
+            "restoredAtMs": 61565,
+            "occupancyRestoredAtMs": 66616,
+            "lentConcurrentAtDemandReturn": 0,
+            "borrowedConcurrentAtDemandReturn": 2,
+            "encroachmentAtDemandReturn": 2,
+            "grandfatheredBorrowersAtDemandReturn": 2,
+            "restorationRequired": true,
+            "restorationLatencyMs": 0,
+            "occupancyRestorationLatencyMs": 5051,
+            "withinRestorationSlo": true,
+            "occupancyWithinRestorationSlo": true,
+            "outcome": "restored"
+          },
+          {
+            "lentAtMs": 90836,
+            "lentConcurrent": 4,
+            "lentTokens": 40960,
+            "retainedTokenFloor": 8192,
+            "demandReturnedAtMs": null,
+            "demandReturnEvidence": null,
+            "restorationStartedAtMs": null,
+            "restoredAtMs": null,
+            "occupancyRestoredAtMs": null,
+            "lentConcurrentAtDemandReturn": null,
+            "borrowedConcurrentAtDemandReturn": null,
+            "encroachmentAtDemandReturn": null,
+            "grandfatheredBorrowersAtDemandReturn": null,
+            "restorationRequired": false,
+            "restorationLatencyMs": null,
+            "occupancyRestorationLatencyMs": null,
+            "withinRestorationSlo": null,
+            "occupancyWithinRestorationSlo": null,
+            "outcome": "open-at-end-of-run"
+          }
+        ]
+      },
+      "recovery": {
+        "lendingObserved": true,
+        "demandReturnAtMs": 61565,
+        "restorationRequired": true,
+        "floorRestored": true,
+        "floorRestorationLatencyMs": 0,
+        "floorWithinSlo": true,
+        "occupancyRestored": true,
+        "occupancyRestorationLatencyMs": 5051,
+        "occupancyWithinSlo": true,
+        "nativeUnlentConcurrentBreaches": 0
+      },
+      "demandReturn": {
+        "admissionClass": "interactive",
+        "resumeWindowMs": {
+          "fromMs": 60000,
+          "toMs": 85000
+        },
+        "loadgenSkewMs": 100,
+        "timebase": "Sampler offsets are milliseconds from the arm's measured start. Generator-side instants are shifted by loadgenSkewMs onto the same origin; when that skew is unknown they are reported as null rather than aligned by assumption.",
+        "generatorResumedAtMs": 60528.816,
+        "generatorResumedAtSamplerMs": 60628.8,
+        "tyrFirstDecisionAtMs": 62859.7,
+        "tyrFirstDecisionAtSamplerMs": 62959.7,
+        "tyrFirstDecisionWasRejection": false,
+        "benchmarkMarkedActiveAtMs": 61565,
+        "benchmarkMarkedActiveEvidence": "in-flight",
+        "capacityLentAtMark": false,
+        "lentConcurrentAtMark": 0,
+        "appliedProtectedConcurrentAtMark": 6,
+        "borrowerAtMark": "batch",
+        "borrowedConcurrentAtMark": 2,
+        "borrowerEncroachmentAtMark": 2,
+        "lastBorrowerAdmissionBeforeMarkAtMs": 59548,
+        "borrowerAdmissionsDuringResumeWindow": 1,
+        "newBorrowingDuringResumeWindow": true,
+        "lastBorrowerAdmissionAtMs": 79729,
+        "restorationWasNeeded": true,
+        "restorationStartedAtMs": 61565,
+        "floorRestoredAtMs": 61565,
+        "occupancyRestoredAtMs": 66616,
+        "floorRestorationLatencyMs": 0,
+        "occupancyRestorationLatencyMs": 5051,
+        "resumeWindow": {
+          "admitted": 14,
+          "rejected": 0,
+          "maxInFlight": 6
+        }
+      },
+      "engineCorrelation": {
+        "observedDemandReturn": {
+          "atMs": 61565,
+          "engine": {
+            "sampledAtMs": 62095,
+            "sampleLagMs": 530,
+            "running": 2,
+            "waiting": 2,
+            "kvCacheUsage": 0.64576802507837
+          },
+          "admission": {
+            "sampledAtMs": 61565,
+            "sampleLagMs": 0,
+            "batchInFlight": 4,
+            "batchBorrowedConcurrent": 2,
+            "interactiveProtectedConcurrent": 6
+          }
+        },
+        "grantFloorRestored": {
+          "atMs": 61565,
+          "engine": {
+            "sampledAtMs": 62095,
+            "sampleLagMs": 530,
+            "running": 2,
+            "waiting": 2,
+            "kvCacheUsage": 0.64576802507837
+          },
+          "admission": {
+            "sampledAtMs": 61565,
+            "sampleLagMs": 0,
+            "batchInFlight": 4,
+            "batchBorrowedConcurrent": 2,
+            "interactiveProtectedConcurrent": 6
+          }
+        },
+        "note": "Offsets share the arm sampler origin. Each snapshot is the first sample at or after its anchor; inspect sample lag. Borrowed occupancy is admission-side only. Engine gauges are aggregate and cannot establish batch KV residency, interactive queue time, or physical reclamation. Missing anchors or samples remain unknown."
+      },
+      "controlPlane": {
+        "tyrRestoration": {
+          "status": "measured",
+          "framing": "Admission slots are Tyr-local and can be taken back from a borrower by an expiring deadline (enforced). Upstream token capacity cannot be reclaimed once in flight at the provider: an unlent slice is withheld before lending (allocation-enforced), and everything else is a wall-clock objective. Tyr reports upstream cancellation as unverified and this benchmark never restates it as reclaimed capacity.",
+          "admissionSlots": {
+            "releaseMechanism": "deadline_abandonment",
+            "enforceability": "enforced",
+            "configuredDeadlinesMs": {},
+            "released": 0,
+            "releasedByCause": {
+              "deadline": 0,
+              "manual": 0,
+              "unattributed": 0
+            },
+            "deadlineShare": null
+          },
+          "upstreamCapacity": {
+            "releaseMechanism": "abort_signal",
+            "enforceability": "unverified",
+            "cancellationRequested": 0,
+            "activeAccountingHolds": 0,
+            "reclamation": "unverified"
+          },
+          "pools": [
+            {
+              "pool": "vllm-moflux",
+              "admissionSlotReleaseMechanism": "deadline_abandonment",
+              "admissionSlotEnforceability": "enforced",
+              "upstreamReleaseMechanism": "abort_signal",
+              "upstreamEnforceability": "unverified",
+              "configuredClasses": [],
+              "released": 0,
+              "releasedByCause": {
+                "deadline": 0,
+                "manual": 0
+              },
+              "cancellationRequested": 0,
+              "activeAccountingHolds": 0
+            }
+          ]
+        },
+        "latchfloEpisodes": {
+          "status": "measured",
+          "episodes": 26,
+          "resources": [
+            {
+              "resource": "admissionSlots",
+              "releaseMechanism": "lease_safe_handoff",
+              "enforceability": "objective",
+              "sloMs": 15000,
+              "episodes": 26,
+              "sloViolations": 0,
+              "targetTotal": 116,
+              "unlentTotal": 0,
+              "medianDurationMs": 146,
+              "maxDurationMs": 13454
+            },
+            {
+              "resource": "upstreamCapacity",
+              "releaseMechanism": "unlent_floor",
+              "enforceability": "unlent_floor",
+              "sloMs": 15000,
+              "episodes": 26,
+              "sloViolations": 0,
+              "targetTotal": 950272,
+              "unlentTotal": 172032,
+              "medianDurationMs": 146,
+              "maxDurationMs": 13454
+            }
+          ]
+        },
+        "unlentGauges": {
+          "status": "measured",
+          "concurrencyStatus": "measured",
+          "admissionClasses": [
+            {
+              "pool": "vllm-moflux",
+              "admissionClass": "batch",
+              "unlentTokens": 4096,
+              "unlentConcurrent": null
+            },
+            {
+              "pool": "vllm-moflux",
+              "admissionClass": "interactive",
+              "unlentTokens": 8192,
+              "unlentConcurrent": 2
+            }
+          ],
+          "capacityGroupMembers": [],
+          "totalUnlentTokens": 12288,
+          "totalUnlentConcurrent": 2,
+          "concurrentSamples": 1
+        },
+        "handoff": {
+          "events": 15,
+          "eventWindow": {
+            "limit": 1000,
+            "returned": 1000,
+            "earliestEventAt": "2026-09-28T06:57:07.838Z",
+            "latestEventAt": "2026-09-28T06:58:54.699Z",
+            "startedAt": "2026-09-28T06:57:19.556Z",
+            "completeForArm": true
+          },
+          "prepared": 5,
+          "committed": 5,
+          "grantApplied": 5,
+          "aborted": 0,
+          "abortReasons": {},
+          "committedWithoutAck": 0,
+          "unsafeHandoffs": 0,
+          "indeterminateHandoffs": 0,
+          "proofComplete": true,
+          "timelines": [
+            {
+              "handoffId": "36af5cd9-1e93-4efa-ac81-879a7f790786",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:23.150Z",
+              "preparedOffsetMs": 3594,
+              "requiredDrainGrantIds": [
+                "395b9690-315a-401d-8c8a-43c74dd04b19"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "395b9690-315a-401d-8c8a-43c74dd04b19",
+                  "firstAckAt": "2026-09-28T06:57:23.258Z",
+                  "firstAckOffsetMs": 3702
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:23.258Z",
+              "ackBarrierOffsetMs": 3702,
+              "committedAt": "2026-09-28T06:57:23.264Z",
+              "committedOffsetMs": 3708,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "872d695d-cc6f-47a2-a946-99b49e94a4b9",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:38.664Z",
+              "preparedOffsetMs": 19108,
+              "requiredDrainGrantIds": [
+                "f7f819a2-3190-4f2b-bdd1-675424dec9a0"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "f7f819a2-3190-4f2b-bdd1-675424dec9a0",
+                  "firstAckAt": "2026-09-28T06:57:38.799Z",
+                  "firstAckOffsetMs": 19243
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:38.799Z",
+              "ackBarrierOffsetMs": 19243,
+              "committedAt": "2026-09-28T06:57:38.802Z",
+              "committedOffsetMs": 19246,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "0d119ef4-cd44-46f7-ab6f-031ea6a521e0",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:43.110Z",
+              "preparedOffsetMs": 23554,
+              "requiredDrainGrantIds": [
+                "ddadc7d8-5ac0-469c-a503-f529c52c79ff"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "ddadc7d8-5ac0-469c-a503-f529c52c79ff",
+                  "firstAckAt": "2026-09-28T06:57:43.289Z",
+                  "firstAckOffsetMs": 23733
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:43.289Z",
+              "ackBarrierOffsetMs": 23733,
+              "committedAt": "2026-09-28T06:57:43.295Z",
+              "committedOffsetMs": 23739,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "bea60341-baae-407e-976f-c9bf6a7b8350",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:52.692Z",
+              "preparedOffsetMs": 33136,
+              "requiredDrainGrantIds": [
+                "8c5f118d-eba2-4404-b4fd-6c603aef86ab"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "8c5f118d-eba2-4404-b4fd-6c603aef86ab",
+                  "firstAckAt": "2026-09-28T06:57:52.710Z",
+                  "firstAckOffsetMs": 33154
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:52.710Z",
+              "ackBarrierOffsetMs": 33154,
+              "committedAt": "2026-09-28T06:57:52.714Z",
+              "committedOffsetMs": 33158,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "1d671e43-cac7-4aab-9ec2-3d0d32563eaa",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:58:20.306Z",
+              "preparedOffsetMs": 60750,
+              "requiredDrainGrantIds": [
+                "874ec583-4b6f-4518-bc7f-8a2ab878fb04"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "874ec583-4b6f-4518-bc7f-8a2ab878fb04",
+                  "firstAckAt": "2026-09-28T06:58:20.324Z",
+                  "firstAckOffsetMs": 60768
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:58:20.324Z",
+              "ackBarrierOffsetMs": 60768,
+              "committedAt": "2026-09-28T06:58:25.747Z",
+              "committedOffsetMs": 66191,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            }
+          ]
+        }
+      },
+      "criticalWindow": {
+        "fromMs": 50000,
+        "toMs": 80000,
+        "samples": 30,
+        "retained": 22,
+        "note": "Samples identical to their predecessor are omitted; the first and last sample in the interval are always kept so the boundaries are observed rather than inferred.",
+        "series": [
+          {
+            "atMs": 50474,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 5970,
+                "borrowedConcurrent": 1,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 1,
+                "admitted": 51,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 51481,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7896,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 52,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 52488,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 5906,
+                "borrowedConcurrent": 1,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 1,
+                "admitted": 52,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 53497,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7781,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 53,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 59548,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 5,
+                "inFlightTokens": 9656,
+                "borrowedConcurrent": 3,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 3,
+                "admitted": 54,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 60556,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 8192,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 77,
+                "rejected": 4,
+                "demandState": "idle",
+                "demandActive": false,
+                "demandEvidence": "controller-state:idle",
+                "releasedConcurrent": 4,
+                "releasedTokens": 40960,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7666,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 54,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 61565,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 124,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 78,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": true
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7666,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 54,
+                "rejected": 14,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 62574,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 6,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 248,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 79,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": true
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7666,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 54,
+                "rejected": 15,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 63585,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 6,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 248,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 79,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": true
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7666,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 65605,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 7,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 374,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 81,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": true
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 7666,
+                "borrowedConcurrent": 2,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 2,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 66616,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 6,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 497,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 82,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 68640,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 7,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 5,
+                "inFlightTokens": 619,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 83,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 69648,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 8,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 6,
+                "inFlightTokens": 741,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 84,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 70655,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 6,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 493,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 84,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 16,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 71662,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 367,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 84,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 17,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 72673,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 244,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 84,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 17,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 74686,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 373,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 85,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 17,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 75694,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 381,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 86,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 17,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 76701,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 259,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 86,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 17,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 77710,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 130,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 86,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3750,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 18,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 78719,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 261,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 88,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 1875,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 54,
+                "rejected": 18,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 79729,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 390,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 89,
+                "rejected": 4,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3804,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 55,
+                "rejected": 18,
+                "demandState": "demanding",
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    "static": {
+      "lending": {
+        "samples": 93,
+        "lendingEpisodes": 0,
+        "restorationRequiredEpisodes": 0,
+        "restorationEpisodes": 0,
+        "unrestoredEpisodes": 0,
+        "passiveReturnEpisodes": 0,
+        "openAtEndOfRunEpisodes": 0,
+        "restorationSloMs": 15000,
+        "restorationLatencyMsMedian": null,
+        "restorationLatencyMsMax": null,
+        "restorationSloBreaches": 0,
+        "occupancyRestorationLatencyMsMedian": null,
+        "occupancyRestorationLatencyMsMax": null,
+        "occupancyRestorationSloBreaches": 0,
+        "peakLentConcurrent": 0,
+        "peakBorrowedConcurrent": 0,
+        "minRetainedTokenFloor": null,
+        "episodes": []
+      },
+      "recovery": {
+        "lendingObserved": false,
+        "demandReturnAtMs": 61558,
+        "restorationRequired": false,
+        "floorRestored": true,
+        "floorRestorationLatencyMs": null,
+        "floorWithinSlo": true,
+        "occupancyRestored": true,
+        "occupancyRestorationLatencyMs": null,
+        "occupancyWithinSlo": true,
+        "nativeUnlentConcurrentBreaches": 0
+      },
+      "demandReturn": {
+        "admissionClass": "interactive",
+        "resumeWindowMs": {
+          "fromMs": 60000,
+          "toMs": 85000
+        },
+        "loadgenSkewMs": 87,
+        "timebase": "Sampler offsets are milliseconds from the arm's measured start. Generator-side instants are shifted by loadgenSkewMs onto the same origin; when that skew is unknown they are reported as null rather than aligned by assumption.",
+        "generatorResumedAtMs": 60528.816,
+        "generatorResumedAtSamplerMs": 60615.8,
+        "tyrFirstDecisionAtMs": 61021.9,
+        "tyrFirstDecisionAtSamplerMs": 61108.9,
+        "tyrFirstDecisionWasRejection": false,
+        "benchmarkMarkedActiveAtMs": 61558,
+        "benchmarkMarkedActiveEvidence": "in-flight",
+        "capacityLentAtMark": false,
+        "lentConcurrentAtMark": 0,
+        "appliedProtectedConcurrentAtMark": 6,
+        "borrowerAtMark": "batch",
+        "borrowedConcurrentAtMark": 0,
+        "borrowerEncroachmentAtMark": 0,
+        "lastBorrowerAdmissionBeforeMarkAtMs": 53493,
+        "borrowerAdmissionsDuringResumeWindow": 2,
+        "newBorrowingDuringResumeWindow": true,
+        "lastBorrowerAdmissionAtMs": 77706,
+        "restorationWasNeeded": false,
+        "restorationStartedAtMs": null,
+        "floorRestoredAtMs": 61558,
+        "occupancyRestoredAtMs": 61558,
+        "floorRestorationLatencyMs": 0,
+        "occupancyRestorationLatencyMs": 0,
+        "resumeWindow": {
+          "admitted": 14,
+          "rejected": 0,
+          "maxInFlight": 4
+        }
+      },
+      "engineCorrelation": {
+        "observedDemandReturn": {
+          "atMs": 61558,
+          "engine": {
+            "sampledAtMs": 62094,
+            "sampleLagMs": 536,
+            "running": 3,
+            "waiting": 0,
+            "kvCacheUsage": 0.677115987460815
+          },
+          "admission": {
+            "sampledAtMs": 61558,
+            "sampleLagMs": 0,
+            "batchInFlight": 2,
+            "batchBorrowedConcurrent": 0,
+            "interactiveProtectedConcurrent": 6
+          }
+        },
+        "grantFloorRestored": {
+          "atMs": 61558,
+          "engine": {
+            "sampledAtMs": 62094,
+            "sampleLagMs": 536,
+            "running": 3,
+            "waiting": 0,
+            "kvCacheUsage": 0.677115987460815
+          },
+          "admission": {
+            "sampledAtMs": 61558,
+            "sampleLagMs": 0,
+            "batchInFlight": 2,
+            "batchBorrowedConcurrent": 0,
+            "interactiveProtectedConcurrent": 6
+          }
+        },
+        "note": "Offsets share the arm sampler origin. Each snapshot is the first sample at or after its anchor; inspect sample lag. Borrowed occupancy is admission-side only. Engine gauges are aggregate and cannot establish batch KV residency, interactive queue time, or physical reclamation. Missing anchors or samples remain unknown."
+      },
+      "controlPlane": {
+        "tyrRestoration": {
+          "status": "measured",
+          "framing": "Admission slots are Tyr-local and can be taken back from a borrower by an expiring deadline (enforced). Upstream token capacity cannot be reclaimed once in flight at the provider: an unlent slice is withheld before lending (allocation-enforced), and everything else is a wall-clock objective. Tyr reports upstream cancellation as unverified and this benchmark never restates it as reclaimed capacity.",
+          "admissionSlots": {
+            "releaseMechanism": "deadline_abandonment",
+            "enforceability": "enforced",
+            "configuredDeadlinesMs": {},
+            "released": 0,
+            "releasedByCause": {
+              "deadline": 0,
+              "manual": 0,
+              "unattributed": 0
+            },
+            "deadlineShare": null
+          },
+          "upstreamCapacity": {
+            "releaseMechanism": "abort_signal",
+            "enforceability": "unverified",
+            "cancellationRequested": 0,
+            "activeAccountingHolds": 0,
+            "reclamation": "unverified"
+          },
+          "pools": [
+            {
+              "pool": "vllm-static",
+              "admissionSlotReleaseMechanism": "deadline_abandonment",
+              "admissionSlotEnforceability": "enforced",
+              "upstreamReleaseMechanism": "abort_signal",
+              "upstreamEnforceability": "unverified",
+              "configuredClasses": [],
+              "released": 0,
+              "releasedByCause": {
+                "deadline": 0,
+                "manual": 0
+              },
+              "cancellationRequested": 0,
+              "activeAccountingHolds": 0
+            }
+          ]
+        },
+        "latchfloEpisodes": {
+          "status": "no-episodes",
+          "episodes": 0,
+          "resources": null
+        },
+        "unlentGauges": {
+          "status": "not-configured",
+          "concurrencyStatus": "not-configured",
+          "admissionClasses": [],
+          "capacityGroupMembers": [],
+          "totalUnlentTokens": 0,
+          "totalUnlentConcurrent": 0,
+          "concurrentSamples": 0
+        },
+        "handoff": {
+          "events": 0,
+          "eventWindow": {
+            "limit": 1000,
+            "returned": 1000,
+            "earliestEventAt": "2026-09-28T07:04:18.584Z",
+            "latestEventAt": "2026-09-28T07:06:17.136Z",
+            "startedAt": "2026-09-28T07:04:44.043Z",
+            "completeForArm": true
+          },
+          "prepared": 0,
+          "committed": 0,
+          "grantApplied": 0,
+          "aborted": 0,
+          "abortReasons": {},
+          "committedWithoutAck": 0,
+          "unsafeHandoffs": 0,
+          "indeterminateHandoffs": 0,
+          "proofComplete": true,
+          "timelines": []
+        }
+      },
+      "criticalWindow": {
+        "fromMs": 50000,
+        "toMs": 80000,
+        "samples": 30,
+        "retained": 19,
+        "note": "Samples identical to their predecessor are omitted; the first and last sample in the interval are always kept so the boundaries are observed rather than inferred.",
+        "series": [
+          {
+            "atMs": 50467,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 0,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 81,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 42,
+                "rejected": 23,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 51475,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 1,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 81,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 1876,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 43,
+                "rejected": 23,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 53493,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 81,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3752,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 23,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 59545,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 81,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3752,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 24,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 61558,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 126,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 82,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3752,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 24,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 62571,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 4,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 252,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 83,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3752,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 25,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 63581,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 126,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 83,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3752,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 65603,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 248,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 85,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 66611,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 372,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 86,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 67619,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 248,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 86,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 68630,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 1,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 129,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 87,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 69639,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 258,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 88,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 70650,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 1,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 129,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 88,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 44,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 71656,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 1,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 0,
+                "inFlightTokens": 0,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 88,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": false,
+                "demandEvidence": "no-controller-view",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 1954,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 45,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 74679,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 2,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 131,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 89,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 1954,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 45,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 75687,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 262,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 90,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 1954,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 45,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 77706,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 3,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 1,
+                "inFlightTokens": 131,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 90,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3920,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 46,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 78712,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 5,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 3,
+                "inFlightTokens": 395,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 92,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3920,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 46,
+                "rejected": 26,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          },
+          {
+            "atMs": 79726,
+            "poolMaxConcurrent": 8,
+            "poolTokenBudget": 65536,
+            "poolInFlight": 6,
+            "classes": {
+              "interactive": {
+                "protectedConcurrent": 6,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536,
+                "inFlight": 4,
+                "inFlightTokens": 527,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 93,
+                "rejected": 0,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              },
+              "batch": {
+                "protectedConcurrent": 2,
+                "maxConcurrent": 8,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536,
+                "inFlight": 2,
+                "inFlightTokens": 3920,
+                "borrowedConcurrent": 0,
+                "borrowedInFlightTokens": 0,
+                "encroachment": 0,
+                "admitted": 46,
+                "rejected": 27,
+                "demandState": null,
+                "demandActive": true,
+                "demandEvidence": "in-flight",
+                "releasedConcurrent": 0,
+                "releasedTokens": 0,
+                "restorationPending": false
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "traceHash": "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2",
+    "metricDefinitions": {
+      "batchBorrowGoodputRps": "Eventual successful completions of borrow-phase arrivals / borrow duration; not completion throughput within that window.",
+      "mofluxBatchBorrowDeltaVsStaticRps": "Paired difference in arrival-cohort goodput; historical gate name retained.",
+      "interactiveContentionTtftP95Ms": "Successful requests only; read alongside SLO goodput and rejections."
+    },
+    "batchBorrowWindowCompletionRps": {
+      "vllm-fcfs": 0.086,
+      "vllm-priority": 0.086,
+      "static": 0.057,
+      "moflux": 0.086
+    },
+    "interactiveContentionSloGoodputRps": {
+      "vllm-fcfs": 0,
+      "vllm-priority": 0.44,
+      "static": 0.56,
+      "moflux": 0.56
+    },
+    "interactiveContentionTtftP95Ms": {
+      "vllm-fcfs": 24603.835000000006,
+      "vllm-priority": 5859.678458000009,
+      "static": 3561.2704159999994,
+      "moflux": 4521.434874999992
+    },
+    "batchBorrowGoodputRps": {
+      "vllm-fcfs": 0.2,
+      "vllm-priority": 0.2,
+      "static": 0.114,
+      "moflux": 0.2
+    },
+    "priorityGoodputDeltaVsFcfsRps": 0.44,
+    "mofluxGoodputDeltaVsPriorityRps": 0.12,
+    "mofluxBatchBorrowDeltaVsStaticRps": 0.086
+  },
+  "proof": {
+    "valid": true,
+    "passed": true,
+    "gates": [
+      {
+        "gate": "allArmsPresent",
+        "passed": true,
+        "observed": [
+          "moflux",
+          "vllm-fcfs",
+          "vllm-priority",
+          "static"
+        ],
+        "threshold": [
+          "vllm-fcfs",
+          "vllm-priority",
+          "static",
+          "moflux"
+        ],
+        "reason": "all four arms must complete"
+      },
+      {
+        "gate": "identicalTrace",
+        "passed": true,
+        "observed": [
+          "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2",
+          "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2",
+          "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2",
+          "ca433c1cc9b864c92e937d9c27da78cdd344005ec43e437b803a8a700f8f93f2"
+        ],
+        "threshold": "one hash",
+        "reason": "every arm must replay the same immutable request trace"
+      },
+      {
+        "gate": "generatorHeadroom",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": 0,
+          "vllm-priority": 0,
+          "static": 0,
+          "moflux": 0
+        },
+        "threshold": 0,
+        "reason": "a saturated load generator invalidates the run"
+      },
+      {
+        "gate": "vllmMetricsComplete",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": [],
+          "vllm-priority": [],
+          "static": [],
+          "moflux": []
+        },
+        "threshold": "no missing required metrics",
+        "reason": "queue, occupancy, KV, preemption, and timing claims require their engine metrics"
+      },
+      {
+        "gate": "successfulInferenceObserved",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "successes": 32,
+            "completionTokens": 1136,
+            "expectedCompletionTokens": 1136,
+            "promptTokens": 23133,
+            "promptTokenReports": 32
+          },
+          "vllm-priority": {
+            "successes": 32,
+            "completionTokens": 1136,
+            "expectedCompletionTokens": 1136,
+            "promptTokens": 23133,
+            "promptTokenReports": 32
+          },
+          "static": {
+            "successes": 25,
+            "completionTokens": 688,
+            "expectedCompletionTokens": 688,
+            "promptTokens": 11884,
+            "promptTokenReports": 25
+          },
+          "moflux": {
+            "successes": 27,
+            "completionTokens": 816,
+            "expectedCompletionTokens": 816,
+            "promptTokens": 15098,
+            "promptTokenReports": 27
+          }
+        },
+        "threshold": "exact fixed completion tokens plus prompt usage for every success in every arm",
+        "reason": "HTTP or stream completion without generated-token evidence is not successful inference"
+      },
+      {
+        "gate": "vllmRequestMetricsActive",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "ttftCount": 32,
+            "e2eCount": 32
+          },
+          "vllm-priority": {
+            "ttftCount": 32,
+            "e2eCount": 32
+          },
+          "static": {
+            "ttftCount": 25,
+            "e2eCount": 25
+          },
+          "moflux": {
+            "ttftCount": 27,
+            "e2eCount": 27
+          }
+        },
+        "threshold": "positive measured TTFT and end-to-end histogram counts per arm",
+        "reason": "metric names alone do not prove that vLLM executed any measured request"
+      },
+      {
+        "gate": "hostProcessTelemetryPresent",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": 23,
+          "vllm-priority": 24,
+          "static": 19,
+          "moflux": 19
+        },
+        "threshold": ">0 per arm",
+        "reason": "a native Metal experiment must record the vLLM process tree and its host pressure"
+      },
+      {
+        "gate": "telemetryIntegrity",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "vllmScrapeErrors": [],
+            "platformSampleErrors": []
+          },
+          "vllm-priority": {
+            "vllmScrapeErrors": [],
+            "platformSampleErrors": []
+          },
+          "static": {
+            "vllmScrapeErrors": [],
+            "platformSampleErrors": []
+          },
+          "moflux": {
+            "vllmScrapeErrors": [],
+            "platformSampleErrors": []
+          }
+        },
+        "threshold": "zero scrape/sample errors",
+        "reason": "missing intervals can hide the short queue, KV, or restoration transition under test"
+      },
+      {
+        "gate": "hostMemoryHeadroom",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "samples": 23,
+            "errors": [],
+            "worstPressure": "normal",
+            "criticalSamples": 0,
+            "swapoutMiB": 0,
+            "minFreeMiB": 69
+          },
+          "vllm-priority": {
+            "samples": 24,
+            "errors": [],
+            "worstPressure": "normal",
+            "criticalSamples": 0,
+            "swapoutMiB": 0,
+            "minFreeMiB": 62.9
+          },
+          "static": {
+            "samples": 19,
+            "errors": [],
+            "worstPressure": "normal",
+            "criticalSamples": 0,
+            "swapoutMiB": 0,
+            "minFreeMiB": 61
+          },
+          "moflux": {
+            "samples": 19,
+            "errors": [],
+            "worstPressure": "normal",
+            "criticalSamples": 0,
+            "swapoutMiB": 0,
+            "minFreeMiB": 62.1
+          }
+        },
+        "threshold": "per arm: pressure samples present and error-free, critical <= 0, swap-out <= 256 MiB",
+        "reason": "a swapping host degrades Docker networking, control-plane requests, and engine latency together; that is host contention, not an arm effect"
+      },
+      {
+        "gate": "managedSamplerIntegrity",
+        "passed": true,
+        "observed": {
+          "static": {
+            "samples": 93,
+            "errors": []
+          },
+          "moflux": {
+            "samples": 95,
+            "errors": []
+          }
+        },
+        "threshold": "at least one sample and zero errors per managed arm",
+        "reason": "admission restoration cannot be reconstructed through gaps in Tyr/controller sampling"
+      },
+      {
+        "gate": "concurrencyAdmissionExercised",
+        "passed": true,
+        "observed": {
+          "concurrencyLimited": 12,
+          "budgetLimited": 0,
+          "budgetRejectionEvidence": {
+            "static": {
+              "interactive": {
+                "ranges": [],
+                "snapshots": []
+              },
+              "batch": {
+                "ranges": [],
+                "snapshots": []
+              }
+            },
+            "moflux": {
+              "interactive": {
+                "ranges": [],
+                "snapshots": []
+              },
+              "batch": {
+                "ranges": [],
+                "snapshots": []
+              }
+            }
+          }
+        },
+        "threshold": "concurrencyLimited>0 and budgetLimited=0",
+        "reason": "the 6/2 concurrency treatment must bind without turning into a token-budget experiment"
+      },
+      {
+        "gate": "managedGrantContinuity",
+        "passed": true,
+        "observed": {
+          "grantUnavailable": 0,
+          "byArm": {
+            "static": {
+              "interactive": {
+                "count": 0,
+                "snapshots": []
+              },
+              "batch": {
+                "count": 0,
+                "snapshots": []
+              }
+            },
+            "moflux": {
+              "interactive": {
+                "count": 0,
+                "snapshots": []
+              },
+              "batch": {
+                "count": 0,
+                "snapshots": []
+              }
+            }
+          }
+        },
+        "threshold": "0 refusals with a zero capacity envelope",
+        "reason": "a managed arm that refuses work because it holds no live grant is measuring a control-plane gap, not the 6/2 treatment"
+      },
+      {
+        "gate": "contentionExercised",
+        "passed": true,
+        "observed": 14,
+        "threshold": ">=1",
+        "reason": "at least one direct arm must show a non-empty vLLM waiting queue"
+      },
+      {
+        "gate": "interactiveSloSignal",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": 0,
+          "vllm-priority": 0.44
+        },
+        "threshold": ">0 req/s in at least one direct arm",
+        "reason": "an all-zero direct comparison cannot support priority or non-inferiority claims"
+      },
+      {
+        "gate": "runtimeIdentityStable",
+        "passed": true,
+        "observed": [
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "fcfs",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          }
+        ],
+        "threshold": "same vLLM/plugin/model/Mac/capacity",
+        "reason": "only the declared scheduling/admission policy may vary"
+      },
+      {
+        "gate": "runtimeConfigurationObserved",
+        "passed": true,
+        "observed": [
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "fcfs",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          },
+          {
+            "backend": "metal",
+            "engineVersion": "0.29.0",
+            "pluginVersion": "0.29.0",
+            "model": "Qwen/Qwen2.5-1.5B-Instruct",
+            "modelRevision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+            "servedModel": "moflux-vllm",
+            "appleChip": "Apple M1",
+            "systemMemoryBytes": 17179869184,
+            "platform": "darwin",
+            "arch": "arm64",
+            "macosVersion": "27.0",
+            "schedulingPolicy": "priority",
+            "maxNumSeqs": 4,
+            "maxModelLen": 4096,
+            "gpuMemoryUtilization": 0.4,
+            "blockSize": 16,
+            "kvCacheBlocks": 320,
+            "prefixCaching": false,
+            "pagedAttention": true,
+            "authenticatedHostBridge": true
+          }
+        ],
+        "threshold": "observed vLLM/plugin/model commit/Apple platform and pinned engine arguments",
+        "reason": "a stable null or silently changed setting is not a controlled runtime"
+      },
+      {
+        "gate": "applePlatformIdentity",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "platform": "darwin",
+            "arch": "arm64"
+          },
+          "vllm-priority": {
+            "platform": "darwin",
+            "arch": "arm64"
+          },
+          "static": {
+            "platform": "darwin",
+            "arch": "arm64"
+          },
+          "moflux": {
+            "platform": "darwin",
+            "arch": "arm64"
+          }
+        },
+        "threshold": "darwin/arm64 for every arm",
+        "reason": "Metal evidence is invalid unless every arm ran natively on Apple Silicon"
+      },
+      {
+        "gate": "schedulerPolicies",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": "fcfs",
+          "vllm-priority": "priority",
+          "static": "priority",
+          "moflux": "priority"
+        },
+        "threshold": {
+          "vllm-fcfs": "fcfs",
+          "vllm-priority": "priority",
+          "static": "priority",
+          "moflux": "priority"
+        },
+        "reason": "FCFS is isolated to its control arm; all other arms use vLLM priority scheduling"
+      },
+      {
+        "gate": "noEngineOrTransportErrors",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "serverErrors": 0,
+            "serverErrorCauses": {
+              "interactive": {},
+              "batch": {}
+            },
+            "requestErrors": 0,
+            "tornStreams": 0
+          },
+          "vllm-priority": {
+            "serverErrors": 0,
+            "serverErrorCauses": {
+              "interactive": {},
+              "batch": {}
+            },
+            "requestErrors": 0,
+            "tornStreams": 0
+          },
+          "static": {
+            "serverErrors": 0,
+            "serverErrorCauses": {
+              "interactive": {},
+              "batch": {}
+            },
+            "requestErrors": 0,
+            "tornStreams": 0
+          },
+          "moflux": {
+            "serverErrors": 0,
+            "serverErrorCauses": {
+              "interactive": {},
+              "batch": {}
+            },
+            "requestErrors": 0,
+            "tornStreams": 0
+          }
+        },
+        "threshold": 0,
+        "reason": "engine faults and torn streams are not admission-policy outcomes"
+      },
+      {
+        "gate": "kvPoolPinned",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": {
+            "blockSize": 16,
+            "numGpuBlocks": 320,
+            "numGpuBlocksOverride": 320
+          },
+          "vllm-priority": {
+            "blockSize": 16,
+            "numGpuBlocks": 320,
+            "numGpuBlocksOverride": 320
+          },
+          "static": {
+            "blockSize": 16,
+            "numGpuBlocks": 320,
+            "numGpuBlocksOverride": 320
+          },
+          "moflux": {
+            "blockSize": 16,
+            "numGpuBlocks": 320,
+            "numGpuBlocksOverride": 320
+          }
+        },
+        "threshold": "320 blocks of 16 tokens in every arm",
+        "reason": "the scheduler's KV pool must be the pinned one, read from the engine, not assumed from the command line"
+      },
+      {
+        "gate": "kvPressureExercised",
+        "passed": true,
+        "observed": {
+          "vllm-fcfs": 1,
+          "vllm-priority": 0.9937
+        },
+        "threshold": "peak KV usage >= 0.9 in at least one direct arm",
+        "reason": "a KV-pressure workload that never filled the pool did not test what it exists to test"
+      },
+      {
+        "gate": "nativeUnlentFloor",
+        "passed": true,
+        "observed": 0,
+        "threshold": 0,
+        "reason": "the two-slot allocation-enforced reserve must never disappear from a usable grant"
+      },
+      {
+        "gate": "controlPlaneEvidence",
+        "passed": true,
+        "observed": "present",
+        "threshold": "present",
+        "reason": "restoration and unlent-floor claims require controller-side evidence"
+      },
+      {
+        "gate": "allocatorUnlentReserve",
+        "passed": true,
+        "observed": {
+          "status": "measured",
+          "concurrencyStatus": "measured",
+          "admissionClasses": [
+            {
+              "pool": "vllm-moflux",
+              "admissionClass": "batch",
+              "unlentTokens": 4096,
+              "unlentConcurrent": null
+            },
+            {
+              "pool": "vllm-moflux",
+              "admissionClass": "interactive",
+              "unlentTokens": 8192,
+              "unlentConcurrent": 2
+            }
+          ],
+          "capacityGroupMembers": [],
+          "totalUnlentTokens": 12288,
+          "totalUnlentConcurrent": 2,
+          "concurrentSamples": 1
+        },
+        "threshold": ">=2 concurrent and >=12288 tokens withheld",
+        "reason": "the allocator's gauges, not the submitted policy, must confirm the native reserve"
+      },
+      {
+        "gate": "handoffSafety",
+        "passed": true,
+        "observed": {
+          "events": 15,
+          "eventWindow": {
+            "limit": 1000,
+            "returned": 1000,
+            "earliestEventAt": "2026-09-28T06:57:07.838Z",
+            "latestEventAt": "2026-09-28T06:58:54.699Z",
+            "startedAt": "2026-09-28T06:57:19.556Z",
+            "completeForArm": true
+          },
+          "prepared": 5,
+          "committed": 5,
+          "grantApplied": 5,
+          "aborted": 0,
+          "abortReasons": {},
+          "committedWithoutAck": 0,
+          "unsafeHandoffs": 0,
+          "indeterminateHandoffs": 0,
+          "proofComplete": true,
+          "timelines": [
+            {
+              "handoffId": "36af5cd9-1e93-4efa-ac81-879a7f790786",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:23.150Z",
+              "preparedOffsetMs": 3594,
+              "requiredDrainGrantIds": [
+                "395b9690-315a-401d-8c8a-43c74dd04b19"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "395b9690-315a-401d-8c8a-43c74dd04b19",
+                  "firstAckAt": "2026-09-28T06:57:23.258Z",
+                  "firstAckOffsetMs": 3702
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:23.258Z",
+              "ackBarrierOffsetMs": 3702,
+              "committedAt": "2026-09-28T06:57:23.264Z",
+              "committedOffsetMs": 3708,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "872d695d-cc6f-47a2-a946-99b49e94a4b9",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:38.664Z",
+              "preparedOffsetMs": 19108,
+              "requiredDrainGrantIds": [
+                "f7f819a2-3190-4f2b-bdd1-675424dec9a0"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "f7f819a2-3190-4f2b-bdd1-675424dec9a0",
+                  "firstAckAt": "2026-09-28T06:57:38.799Z",
+                  "firstAckOffsetMs": 19243
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:38.799Z",
+              "ackBarrierOffsetMs": 19243,
+              "committedAt": "2026-09-28T06:57:38.802Z",
+              "committedOffsetMs": 19246,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "0d119ef4-cd44-46f7-ab6f-031ea6a521e0",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:43.110Z",
+              "preparedOffsetMs": 23554,
+              "requiredDrainGrantIds": [
+                "ddadc7d8-5ac0-469c-a503-f529c52c79ff"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "ddadc7d8-5ac0-469c-a503-f529c52c79ff",
+                  "firstAckAt": "2026-09-28T06:57:43.289Z",
+                  "firstAckOffsetMs": 23733
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:43.289Z",
+              "ackBarrierOffsetMs": 23733,
+              "committedAt": "2026-09-28T06:57:43.295Z",
+              "committedOffsetMs": 23739,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "bea60341-baae-407e-976f-c9bf6a7b8350",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:57:52.692Z",
+              "preparedOffsetMs": 33136,
+              "requiredDrainGrantIds": [
+                "8c5f118d-eba2-4404-b4fd-6c603aef86ab"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "8c5f118d-eba2-4404-b4fd-6c603aef86ab",
+                  "firstAckAt": "2026-09-28T06:57:52.710Z",
+                  "firstAckOffsetMs": 33154
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:57:52.710Z",
+              "ackBarrierOffsetMs": 33154,
+              "committedAt": "2026-09-28T06:57:52.714Z",
+              "committedOffsetMs": 33158,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            },
+            {
+              "handoffId": "1d671e43-cac7-4aab-9ec2-3d0d32563eaa",
+              "status": "safe",
+              "preparedAt": "2026-09-28T06:58:20.306Z",
+              "preparedOffsetMs": 60750,
+              "requiredDrainGrantIds": [
+                "874ec583-4b6f-4518-bc7f-8a2ab878fb04"
+              ],
+              "drainGrantAcks": [
+                {
+                  "grantId": "874ec583-4b6f-4518-bc7f-8a2ab878fb04",
+                  "firstAckAt": "2026-09-28T06:58:20.324Z",
+                  "firstAckOffsetMs": 60768
+                }
+              ],
+              "allRequiredAcks": true,
+              "ackBarrierAt": "2026-09-28T06:58:20.324Z",
+              "ackBarrierOffsetMs": 60768,
+              "committedAt": "2026-09-28T06:58:25.747Z",
+              "committedOffsetMs": 66191,
+              "abortedAt": null,
+              "abortedOffsetMs": null,
+              "commitAfterAckBarrier": true
+            }
+          ]
+        },
+        "threshold": "complete bounded event window and zero unsafe handoffs",
+        "reason": "a grant must not move before required drain acknowledgements"
+      },
+      {
+        "gate": "restorationEpisodeEvidence",
+        "passed": true,
+        "observed": {
+          "status": "measured",
+          "episodes": 26,
+          "resources": [
+            {
+              "resource": "admissionSlots",
+              "releaseMechanism": "lease_safe_handoff",
+              "enforceability": "objective",
+              "sloMs": 15000,
+              "episodes": 26,
+              "sloViolations": 0,
+              "targetTotal": 116,
+              "unlentTotal": 0,
+              "medianDurationMs": 146,
+              "maxDurationMs": 13454
+            },
+            {
+              "resource": "upstreamCapacity",
+              "releaseMechanism": "unlent_floor",
+              "enforceability": "unlent_floor",
+              "sloMs": 15000,
+              "episodes": 26,
+              "sloViolations": 0,
+              "targetTotal": 950272,
+              "unlentTotal": 172032,
+              "medianDurationMs": 146,
+              "maxDurationMs": 13454
+            }
+          ]
+        },
+        "threshold": ">0 measured per-resource episodes",
+        "reason": "sampled grant recovery must agree with Latchflo's per-resource restoration record"
+      }
+    ],
+    "failed": []
+  }
+}

@@ -74,6 +74,11 @@ demo/vllm/runtime/
 !results/vllm-metal-contention/
 !results/vllm-metal-contention/**
 
+# Reviewed five-seed admission-boundary experiment.
+!results/vllm-metal-long-context-admission-8-unlent-2.json
+!results/vllm-metal-long-context-admission-8-unlent-2/
+!results/vllm-metal-long-context-admission-8-unlent-2/**
+
 demo/.DS_Store
 demo/moflux/.env
 results/runs/

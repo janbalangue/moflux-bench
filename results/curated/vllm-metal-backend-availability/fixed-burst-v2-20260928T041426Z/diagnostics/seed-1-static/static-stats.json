@@ -1,0 +1,1417 @@
+{
+  "limits": {
+    "revision": 233,
+    "maxConcurrent": 4,
+    "maxQueue": 0,
+    "tokenBudget": {
+      "budget": 65536,
+      "highPriorityReserve": 0
+    },
+    "admissionClasses": {
+      "interactive": {
+        "protectedConcurrent": 3,
+        "maxConcurrent": 4,
+        "protectedInFlightTokens": 49152,
+        "maxInFlightTokens": 65536
+      },
+      "batch": {
+        "protectedConcurrent": 1,
+        "maxConcurrent": 4,
+        "protectedInFlightTokens": 16384,
+        "maxInFlightTokens": 65536
+      }
+    }
+  },
+  "bulkhead": {
+    "inFlight": 0,
+    "pending": 0,
+    "maxConcurrent": 4,
+    "maxQueue": 0,
+    "closed": false,
+    "totalAdmitted": 27,
+    "totalReleased": 27,
+    "aborted": 0,
+    "timedOut": 0,
+    "rejected": 0,
+    "rejectedByReason": {},
+    "doubleRelease": 0,
+    "inFlightUnderflow": 0,
+    "hookErrors": 0
+  },
+  "llm": {
+    "inFlight": 0,
+    "admitted": 27,
+    "released": 27,
+    "borrowedConcurrencyAbandoned": 0,
+    "borrowedConcurrencyAbandonedByCause": {},
+    "rejected": 6,
+    "rejectedByReason": {
+      "concurrency_limit": 6
+    }
+  },
+  "tokenBudget": {
+    "budget": 65536,
+    "inFlightTokens": 0,
+    "available": 65536,
+    "totalReserved": 12131,
+    "totalConsumed": 11096,
+    "totalRefunded": 10403,
+    "totalOverrun": 0,
+    "highPriorityReserve": 0
+  },
+  "admissionClasses": {
+    "defaultClass": "batch",
+    "shared": {
+      "maxConcurrent": 0,
+      "inFlight": 0,
+      "availableConcurrent": 0,
+      "tokenBudget": {
+        "budget": 0,
+        "inFlightTokens": 0,
+        "available": 0
+      }
+    },
+    "classes": {
+      "interactive": {
+        "limits": {
+          "protectedConcurrent": 3,
+          "maxConcurrent": 4,
+          "protectedInFlightTokens": 49152,
+          "maxInFlightTokens": 65536
+        },
+        "inFlight": 0,
+        "protectedConcurrentInUse": 0,
+        "borrowedConcurrent": 0,
+        "inFlightTokens": 0,
+        "protectedTokensInUse": 0,
+        "borrowedInFlightTokens": 0,
+        "admitted": 18,
+        "released": 18,
+        "borrowedConcurrencyAbandoned": 0,
+        "rejected": 0,
+        "rejectedByReason": {},
+        "totalReserved": 2297,
+        "totalConsumed": 2412,
+        "totalRefunded": 1145,
+        "totalOverrun": 0,
+        "totalBorrowedAdmissions": 0,
+        "totalBorrowedTokensReserved": 0
+      },
+      "batch": {
+        "limits": {
+          "protectedConcurrent": 1,
+          "maxConcurrent": 4,
+          "protectedInFlightTokens": 16384,
+          "maxInFlightTokens": 65536
+        },
+        "inFlight": 0,
+        "protectedConcurrentInUse": 0,
+        "borrowedConcurrent": 0,
+        "inFlightTokens": 0,
+        "protectedTokensInUse": 0,
+        "borrowedInFlightTokens": 0,
+        "admitted": 9,
+        "released": 9,
+        "borrowedConcurrencyAbandoned": 0,
+        "rejected": 6,
+        "rejectedByReason": {
+          "concurrency_limit": 6
+        },
+        "totalReserved": 9834,
+        "totalConsumed": 8684,
+        "totalRefunded": 9258,
+        "totalOverrun": 0,
+        "totalBorrowedAdmissions": 0,
+        "totalBorrowedTokensReserved": 0
+      }
+    }
+  },
+  "tyr": {
+    "admissionMode": "enforce",
+    "advisory": {
+      "checked": 33,
+      "wouldAdmit": 27,
+      "wouldReject": 6,
+      "rejectedByReason": {
+        "concurrency_limit": 6
+      }
+    },
+    "observe": {
+      "bypassed": 0,
+      "raceBypassed": 0,
+      "bypassedByReason": {},
+      "usageReported": 0,
+      "totalInputTokens": 0,
+      "totalOutputTokens": 0
+    },
+    "adaptiveEstimation": {
+      "enabled": true,
+      "corrections": [
+        {
+          "model": "moflux-vllm",
+          "samples": 27,
+          "factor": 1.0424139108930621,
+          "applied": 1.0424139108930621
+        }
+      ]
+    },
+    "progressiveReconciliation": {
+      "enabled": true,
+      "updateStepTokens": 64,
+      "outputSafetyMarginTokens": 64,
+      "reports": 27,
+      "updates": 27,
+      "coalesced": 0,
+      "earlyReleasedTokens": 10403
+    },
+    "provenance": {
+      "retainedRevisions": 57,
+      "current": {
+        "source": "latchflo",
+        "grantId": "2c48b2b7-67a5-478e-abbf-b1b5e21305ba",
+        "controllerEpoch": 1,
+        "revision": 233,
+        "expiresAt": "2026-09-28T04:22:19.331Z"
+      }
+    },
+    "admissionProvenance": {
+      "capacity": 512,
+      "retained": 27,
+      "dropped": 0,
+      "captureFailures": 0,
+      "nextSequence": 28,
+      "events": [
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 1,
+          "admittedAt": "2026-09-28T04:20:20.293Z",
+          "admissionId": "bc5f5ca8-acfd-4371-a462-b0b779c5258c",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 177,
+          "reservedTokens": 424,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 177,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "8e9ef7d1-4819-4fc6-949b-d480eb221b44",
+            "controllerEpoch": 1,
+            "revision": 177,
+            "expiresAt": "2026-09-28T04:20:33.232Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 2,
+          "admittedAt": "2026-09-28T04:20:22.758Z",
+          "admissionId": "e6e7399a-964a-4159-a182-dc03ea8e07ff",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 177,
+          "reservedTokens": 424,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 177,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "8e9ef7d1-4819-4fc6-949b-d480eb221b44",
+            "controllerEpoch": 1,
+            "revision": 177,
+            "expiresAt": "2026-09-28T04:20:33.232Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 3,
+          "admittedAt": "2026-09-28T04:20:24.403Z",
+          "admissionId": "6174756d-a53f-45f2-af4b-d612f311e90d",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 177,
+          "reservedTokens": 424,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 177,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "8e9ef7d1-4819-4fc6-949b-d480eb221b44",
+            "controllerEpoch": 1,
+            "revision": 177,
+            "expiresAt": "2026-09-28T04:20:33.232Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 4,
+          "admittedAt": "2026-09-28T04:20:26.048Z",
+          "admissionId": "6f53cf65-d6ec-4171-b40d-85efc692cd61",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 181,
+          "reservedTokens": 424,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 5,
+          "admittedAt": "2026-09-28T04:20:27.685Z",
+          "admissionId": "0c075235-bbd2-4241-844e-99771100b980",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 181,
+          "reservedTokens": 424,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 6,
+          "admittedAt": "2026-09-28T04:20:29.352Z",
+          "admissionId": "185fa490-eb0e-4cf8-85bd-ab045b48ef8b",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 181,
+          "reservedTokens": 118,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 7,
+          "admittedAt": "2026-09-28T04:20:30.605Z",
+          "admissionId": "8fe4ed0c-8251-4826-9ecf-fa45fda10189",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 181,
+          "reservedTokens": 121,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 8,
+          "admittedAt": "2026-09-28T04:20:31.850Z",
+          "admissionId": "e8dd5cc8-c06c-40ea-91d5-e2947ced7a29",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 181,
+          "reservedTokens": 124,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 9,
+          "admittedAt": "2026-09-28T04:20:33.109Z",
+          "admissionId": "bc03e13a-c8d8-40e8-9f60-78080cedd812",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 181,
+          "reservedTokens": 126,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 181,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "72eda7d0-b3cb-4c40-afe3-97c21e8e9d2d",
+            "controllerEpoch": 1,
+            "revision": 181,
+            "expiresAt": "2026-09-28T04:20:40.809Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 10,
+          "admittedAt": "2026-09-28T04:20:34.358Z",
+          "admissionId": "efdb2e99-020d-4f2d-aeb3-de238c652c56",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 185,
+          "reservedTokens": 128,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 185,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "7a894f2d-f731-4f02-bfe3-e0e3bf30ca56",
+            "controllerEpoch": 1,
+            "revision": 185,
+            "expiresAt": "2026-09-28T04:20:48.395Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 11,
+          "admittedAt": "2026-09-28T04:20:45.402Z",
+          "admissionId": "f3e89065-7e99-4b02-a5ac-d599acd45b5a",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 189,
+          "reservedTokens": 129,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 189,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "12e299bd-bee8-4f12-91b4-38a3dbd2d20c",
+            "controllerEpoch": 1,
+            "revision": 189,
+            "expiresAt": "2026-09-28T04:20:55.962Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 12,
+          "admittedAt": "2026-09-28T04:20:47.127Z",
+          "admissionId": "ffdf48d6-d191-4aec-bd50-43cf9526dc97",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 189,
+          "reservedTokens": 130,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 189,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "12e299bd-bee8-4f12-91b4-38a3dbd2d20c",
+            "controllerEpoch": 1,
+            "revision": 189,
+            "expiresAt": "2026-09-28T04:20:55.962Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 13,
+          "admittedAt": "2026-09-28T04:20:49.772Z",
+          "admissionId": "c031cf7c-86ea-48af-ad70-7e9d3b332678",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 193,
+          "reservedTokens": 131,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 193,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "7e5575cb-360a-483e-96b0-05196a33a8e3",
+            "controllerEpoch": 1,
+            "revision": 193,
+            "expiresAt": "2026-09-28T04:21:03.555Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 14,
+          "admittedAt": "2026-09-28T04:20:50.606Z",
+          "admissionId": "74379035-0963-4d67-831c-92e76be47786",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 193,
+          "reservedTokens": 131,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 193,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "7e5575cb-360a-483e-96b0-05196a33a8e3",
+            "controllerEpoch": 1,
+            "revision": 193,
+            "expiresAt": "2026-09-28T04:21:03.555Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 15,
+          "admittedAt": "2026-09-28T04:21:00.714Z",
+          "admissionId": "7c261e2b-ab9a-4a3e-a937-c50b5df6420b",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 197,
+          "reservedTokens": 1976,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 197,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "3eccf5af-a590-4e58-abb1-7296c11766b7",
+            "controllerEpoch": 1,
+            "revision": 197,
+            "expiresAt": "2026-09-28T04:21:11.157Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 16,
+          "admittedAt": "2026-09-28T04:21:23.717Z",
+          "admissionId": "f4d3c36f-fa4c-4500-9400-6d5f0f6cac69",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 209,
+          "reservedTokens": 1915,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 209,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "2cda4a1c-2118-4e2d-8efb-0bb24b43bdea",
+            "controllerEpoch": 1,
+            "revision": 209,
+            "expiresAt": "2026-09-28T04:21:33.904Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 17,
+          "admittedAt": "2026-09-28T04:21:35.717Z",
+          "admissionId": "dfccce50-063e-49d2-9c6c-fc9733e2eb89",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 217,
+          "reservedTokens": 126,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 217,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "0ad4947a-bb07-4db4-b22d-13ceb8d2b928",
+            "controllerEpoch": 1,
+            "revision": 217,
+            "expiresAt": "2026-09-28T04:21:49.064Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 18,
+          "admittedAt": "2026-09-28T04:21:38.122Z",
+          "admissionId": "f206f4c4-bac6-44ed-ae94-c2b40dbcfe3b",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 217,
+          "reservedTokens": 1896,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 217,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "0ad4947a-bb07-4db4-b22d-13ceb8d2b928",
+            "controllerEpoch": 1,
+            "revision": 217,
+            "expiresAt": "2026-09-28T04:21:49.064Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 19,
+          "admittedAt": "2026-09-28T04:21:39.478Z",
+          "admissionId": "a0e3e66b-04c0-4200-895a-3ad6ea2baa27",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 217,
+          "reservedTokens": 127,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 217,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "0ad4947a-bb07-4db4-b22d-13ceb8d2b928",
+            "controllerEpoch": 1,
+            "revision": 217,
+            "expiresAt": "2026-09-28T04:21:49.064Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 20,
+          "admittedAt": "2026-09-28T04:21:39.600Z",
+          "admissionId": "b9756ab8-1752-4fae-aa53-ba97f875ee8e",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 217,
+          "reservedTokens": 127,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 217,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "0ad4947a-bb07-4db4-b22d-13ceb8d2b928",
+            "controllerEpoch": 1,
+            "revision": 217,
+            "expiresAt": "2026-09-28T04:21:49.064Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 21,
+          "admittedAt": "2026-09-28T04:21:39.683Z",
+          "admissionId": "0c721d97-52c7-4d89-a876-5f0a0c4b6795",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 217,
+          "reservedTokens": 127,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 217,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "0ad4947a-bb07-4db4-b22d-13ceb8d2b928",
+            "controllerEpoch": 1,
+            "revision": 217,
+            "expiresAt": "2026-09-28T04:21:49.064Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 22,
+          "admittedAt": "2026-09-28T04:21:45.034Z",
+          "admissionId": "5218ef28-0857-4eba-9e41-23d836ff51f8",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 221,
+          "reservedTokens": 131,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 221,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "a6cbbcb9-a35e-4bee-ac73-b252e32e4fae",
+            "controllerEpoch": 1,
+            "revision": 221,
+            "expiresAt": "2026-09-28T04:21:56.658Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 23,
+          "admittedAt": "2026-09-28T04:21:46.583Z",
+          "admissionId": "e3a95241-f546-4ea2-a864-8c2cfdf8ce31",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 221,
+          "reservedTokens": 131,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 221,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "a6cbbcb9-a35e-4bee-ac73-b252e32e4fae",
+            "controllerEpoch": 1,
+            "revision": 221,
+            "expiresAt": "2026-09-28T04:21:56.658Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 24,
+          "admittedAt": "2026-09-28T04:21:49.723Z",
+          "admissionId": "3012010e-9b97-4efc-8446-eabce7aca052",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 225,
+          "reservedTokens": 129,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 225,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "b4458dbb-038c-4986-8146-6e4c67f18c23",
+            "controllerEpoch": 1,
+            "revision": 225,
+            "expiresAt": "2026-09-28T04:22:04.217Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 25,
+          "admittedAt": "2026-09-28T04:21:50.417Z",
+          "admissionId": "98764b78-5a57-48b4-ad4b-7ca6ea1bc09d",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "batch",
+          "limitRevision": 225,
+          "reservedTokens": 1927,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 225,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "b4458dbb-038c-4986-8146-6e4c67f18c23",
+            "controllerEpoch": 1,
+            "revision": 225,
+            "expiresAt": "2026-09-28T04:22:04.217Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 26,
+          "admittedAt": "2026-09-28T04:21:55.790Z",
+          "admissionId": "ae1566dc-58d6-4195-8e2c-b75b4259fa3e",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 225,
+          "reservedTokens": 130,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 225,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "b4458dbb-038c-4986-8146-6e4c67f18c23",
+            "controllerEpoch": 1,
+            "revision": 225,
+            "expiresAt": "2026-09-28T04:22:04.217Z"
+          }
+        },
+        {
+          "schema": "tyr.admission-provenance.v1",
+          "sequence": 27,
+          "admittedAt": "2026-09-28T04:21:58.225Z",
+          "admissionId": "0053cb46-8e46-4bef-b958-b0d934b3036b",
+          "pool": "vllm-static",
+          "priority": "normal",
+          "admissionClass": "interactive",
+          "limitRevision": 229,
+          "reservedTokens": 131,
+          "resources": {
+            "borrowedConcurrency": false,
+            "borrowedTokens": 0
+          },
+          "limits": {
+            "revision": 229,
+            "maxConcurrent": 4,
+            "maxQueue": 0,
+            "tokenBudget": {
+              "budget": 65536,
+              "highPriorityReserve": 0
+            },
+            "admissionClasses": {
+              "interactive": {
+                "protectedConcurrent": 3,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 49152,
+                "maxInFlightTokens": 65536
+              },
+              "batch": {
+                "protectedConcurrent": 1,
+                "maxConcurrent": 4,
+                "protectedInFlightTokens": 16384,
+                "maxInFlightTokens": 65536
+              }
+            }
+          },
+          "grant": {
+            "source": "latchflo",
+            "grantId": "a1795dbc-95db-4479-8844-6b483becf217",
+            "controllerEpoch": 1,
+            "revision": 229,
+            "expiresAt": "2026-09-28T04:22:11.762Z"
+          }
+        }
+      ]
+    },
+    "restoration": {
+      "admissionSlots": {
+        "releaseMechanism": "deadline_abandonment",
+        "enforceability": "enforced",
+        "configuredDeadlinesMs": {},
+        "released": 0,
+        "releasedByCause": {}
+      },
+      "upstreamCapacity": {
+        "releaseMechanism": "abort_signal",
+        "enforceability": "unverified",
+        "cancellationRequested": 0,
+        "activeAccountingHolds": 0
+      }
+    }
+  }
+}

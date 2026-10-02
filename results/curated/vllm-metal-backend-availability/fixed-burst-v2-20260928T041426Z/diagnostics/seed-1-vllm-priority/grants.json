@@ -1,0 +1,2731 @@
+{
+  "grants": [
+    {
+      "grantId": "f3f23d5c-723d-4e7e-9375-3cc05e4d844a",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 163,
+      "issuedAt": "2026-09-28T04:19:48.556Z",
+      "expiresAt": "2026-09-28T04:20:03.556Z",
+      "limits": {
+        "revision": 163,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "active",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:54.483Z"
+    },
+    {
+      "grantId": "c7524f48-1821-472f-92bb-9d0583e1f7b6",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 161,
+      "issuedAt": "2026-09-28T04:19:47.802Z",
+      "expiresAt": "2026-09-28T04:20:02.802Z",
+      "limits": {
+        "revision": 161,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "active",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:54.389Z"
+    },
+    {
+      "grantId": "fbb7390d-37e7-4dcc-87a2-587bf9d4998c",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 159,
+      "issuedAt": "2026-09-28T04:19:40.981Z",
+      "expiresAt": "2026-09-28T04:19:55.981Z",
+      "limits": {
+        "revision": 159,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:48.502Z"
+    },
+    {
+      "grantId": "479dd97f-2db6-43fe-9358-c7d42cbf7503",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 157,
+      "issuedAt": "2026-09-28T04:19:40.219Z",
+      "expiresAt": "2026-09-28T04:19:55.219Z",
+      "limits": {
+        "revision": 157,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:47.684Z"
+    },
+    {
+      "grantId": "804c88b0-4413-4ccf-9411-0fe35923120a",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 155,
+      "issuedAt": "2026-09-28T04:19:33.384Z",
+      "expiresAt": "2026-09-28T04:19:48.384Z",
+      "limits": {
+        "revision": 155,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:40.826Z"
+    },
+    {
+      "grantId": "3e129a6f-5271-40f3-b4c1-8c07a2813ffb",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 153,
+      "issuedAt": "2026-09-28T04:19:32.623Z",
+      "expiresAt": "2026-09-28T04:19:47.623Z",
+      "limits": {
+        "revision": 153,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:40.140Z"
+    },
+    {
+      "grantId": "16c2e355-b164-4b27-8759-226bbe04927d",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 151,
+      "issuedAt": "2026-09-28T04:19:25.805Z",
+      "expiresAt": "2026-09-28T04:19:40.805Z",
+      "limits": {
+        "revision": 151,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:33.343Z"
+    },
+    {
+      "grantId": "61f532c8-6b7e-4145-b8b2-9298a1e692e4",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 149,
+      "issuedAt": "2026-09-28T04:19:25.041Z",
+      "expiresAt": "2026-09-28T04:19:40.041Z",
+      "limits": {
+        "revision": 149,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:32.533Z"
+    },
+    {
+      "grantId": "abbd1bd6-b5b6-415a-8186-2c91440bbd93",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 147,
+      "issuedAt": "2026-09-28T04:19:18.210Z",
+      "expiresAt": "2026-09-28T04:19:33.210Z",
+      "limits": {
+        "revision": 147,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:25.700Z"
+    },
+    {
+      "grantId": "1d4489ac-cb1b-45b0-b9f6-d6b4e6d8a89c",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 145,
+      "issuedAt": "2026-09-28T04:19:17.446Z",
+      "expiresAt": "2026-09-28T04:19:32.446Z",
+      "limits": {
+        "revision": 145,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:24.819Z"
+    },
+    {
+      "grantId": "92435db5-0dda-4774-85e6-1f59b8d5c266",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 143,
+      "issuedAt": "2026-09-28T04:19:10.603Z",
+      "expiresAt": "2026-09-28T04:19:25.603Z",
+      "limits": {
+        "revision": 143,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:18.144Z"
+    },
+    {
+      "grantId": "a568290b-0094-44b7-9421-35c63f8bc77b",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 141,
+      "issuedAt": "2026-09-28T04:19:09.844Z",
+      "expiresAt": "2026-09-28T04:19:24.844Z",
+      "limits": {
+        "revision": 141,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:17.317Z"
+    },
+    {
+      "grantId": "b2595670-4819-46d8-b4f2-5916affad0c6",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 139,
+      "issuedAt": "2026-09-28T04:19:03.007Z",
+      "expiresAt": "2026-09-28T04:19:18.007Z",
+      "limits": {
+        "revision": 139,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:10.449Z"
+    },
+    {
+      "grantId": "43e32e85-ce1f-4d17-8878-63f9afeb5499",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 137,
+      "issuedAt": "2026-09-28T04:19:02.250Z",
+      "expiresAt": "2026-09-28T04:19:17.250Z",
+      "limits": {
+        "revision": 137,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:09.652Z"
+    },
+    {
+      "grantId": "792a6fad-fc8b-42a7-bea4-c21923f81583",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 135,
+      "issuedAt": "2026-09-28T04:18:55.407Z",
+      "expiresAt": "2026-09-28T04:19:10.407Z",
+      "limits": {
+        "revision": 135,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:02.877Z"
+    },
+    {
+      "grantId": "117720b2-1272-46ba-b62f-67ddb615d86e",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 133,
+      "issuedAt": "2026-09-28T04:18:54.644Z",
+      "expiresAt": "2026-09-28T04:19:09.644Z",
+      "limits": {
+        "revision": 133,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:19:02.208Z"
+    },
+    {
+      "grantId": "d4b46496-d5f2-4e94-8bf3-7b324edfa82b",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 131,
+      "issuedAt": "2026-09-28T04:18:47.812Z",
+      "expiresAt": "2026-09-28T04:19:02.812Z",
+      "limits": {
+        "revision": 131,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:55.225Z"
+    },
+    {
+      "grantId": "e7018084-3b4c-4541-880c-a978c5b09144",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 129,
+      "issuedAt": "2026-09-28T04:18:47.049Z",
+      "expiresAt": "2026-09-28T04:19:02.049Z",
+      "limits": {
+        "revision": 129,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:54.421Z"
+    },
+    {
+      "grantId": "c5fbd7e0-0efc-433e-91cd-a740b8cd061e",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 127,
+      "issuedAt": "2026-09-28T04:18:40.227Z",
+      "expiresAt": "2026-09-28T04:18:55.227Z",
+      "limits": {
+        "revision": 127,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:47.807Z"
+    },
+    {
+      "grantId": "d839c25e-3fae-44a1-bbd6-fa59b122dc5d",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 125,
+      "issuedAt": "2026-09-28T04:18:39.464Z",
+      "expiresAt": "2026-09-28T04:18:54.464Z",
+      "limits": {
+        "revision": 125,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:47.052Z"
+    },
+    {
+      "grantId": "d683a5e2-51f8-4c0a-b1cf-c5c29411cea1",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 123,
+      "issuedAt": "2026-09-28T04:18:32.631Z",
+      "expiresAt": "2026-09-28T04:18:47.631Z",
+      "limits": {
+        "revision": 123,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:39.957Z"
+    },
+    {
+      "grantId": "f3e35624-7b20-4b11-b402-f3da9ce35b03",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 121,
+      "issuedAt": "2026-09-28T04:18:31.867Z",
+      "expiresAt": "2026-09-28T04:18:46.867Z",
+      "limits": {
+        "revision": 121,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:39.256Z"
+    },
+    {
+      "grantId": "7ad95275-4b52-4ced-a150-596e1a77776f",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 119,
+      "issuedAt": "2026-09-28T04:18:25.052Z",
+      "expiresAt": "2026-09-28T04:18:40.052Z",
+      "limits": {
+        "revision": 119,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:32.583Z"
+    },
+    {
+      "grantId": "db8f9f27-25d6-41d9-a69a-3657ef166005",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 117,
+      "issuedAt": "2026-09-28T04:18:24.290Z",
+      "expiresAt": "2026-09-28T04:18:39.290Z",
+      "limits": {
+        "revision": 117,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:31.842Z"
+    },
+    {
+      "grantId": "df25fb69-7c22-4567-8006-67f5d984b9b5",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 115,
+      "issuedAt": "2026-09-28T04:18:17.476Z",
+      "expiresAt": "2026-09-28T04:18:32.476Z",
+      "limits": {
+        "revision": 115,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:24.983Z"
+    },
+    {
+      "grantId": "6107c544-57c8-4523-8137-702086590792",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 113,
+      "issuedAt": "2026-09-28T04:18:16.715Z",
+      "expiresAt": "2026-09-28T04:18:31.715Z",
+      "limits": {
+        "revision": 113,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:24.037Z"
+    },
+    {
+      "grantId": "56282a09-5e7c-4100-bc0f-a3ccb8218611",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 111,
+      "issuedAt": "2026-09-28T04:18:09.886Z",
+      "expiresAt": "2026-09-28T04:18:24.886Z",
+      "limits": {
+        "revision": 111,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:17.269Z"
+    },
+    {
+      "grantId": "83954b32-12c7-482c-ac14-40fa86176f48",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 109,
+      "issuedAt": "2026-09-28T04:18:09.123Z",
+      "expiresAt": "2026-09-28T04:18:24.123Z",
+      "limits": {
+        "revision": 109,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:16.513Z"
+    },
+    {
+      "grantId": "cbe615fb-429a-4fbd-a656-dd4510117573",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 107,
+      "issuedAt": "2026-09-28T04:18:02.293Z",
+      "expiresAt": "2026-09-28T04:18:17.293Z",
+      "limits": {
+        "revision": 107,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:09.819Z"
+    },
+    {
+      "grantId": "c47b7b73-8769-4315-8a4f-aeb9673ea3a4",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 105,
+      "issuedAt": "2026-09-28T04:18:01.534Z",
+      "expiresAt": "2026-09-28T04:18:16.534Z",
+      "limits": {
+        "revision": 105,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:09.038Z"
+    },
+    {
+      "grantId": "660c9ea9-6a9b-4bd5-918b-8da0316421cf",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 103,
+      "issuedAt": "2026-09-28T04:17:54.715Z",
+      "expiresAt": "2026-09-28T04:18:09.715Z",
+      "limits": {
+        "revision": 103,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:02.279Z"
+    },
+    {
+      "grantId": "e32ac878-ef05-4c66-bfb7-fabd6de4d926",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 101,
+      "issuedAt": "2026-09-28T04:17:53.953Z",
+      "expiresAt": "2026-09-28T04:18:08.953Z",
+      "limits": {
+        "revision": 101,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:18:01.533Z"
+    },
+    {
+      "grantId": "ff6477d6-b69c-4048-91d8-312014ac8156",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 99,
+      "issuedAt": "2026-09-28T04:17:47.127Z",
+      "expiresAt": "2026-09-28T04:18:02.127Z",
+      "limits": {
+        "revision": 99,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:54.567Z"
+    },
+    {
+      "grantId": "9111cedc-9f7c-4ca0-8292-c2d2acce461b",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 97,
+      "issuedAt": "2026-09-28T04:17:46.369Z",
+      "expiresAt": "2026-09-28T04:18:01.369Z",
+      "limits": {
+        "revision": 97,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:53.932Z"
+    },
+    {
+      "grantId": "568f8afb-272f-400f-92f8-9a2c6c3a406b",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 95,
+      "issuedAt": "2026-09-28T04:17:39.544Z",
+      "expiresAt": "2026-09-28T04:17:54.544Z",
+      "limits": {
+        "revision": 95,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:46.930Z"
+    },
+    {
+      "grantId": "0d800b0a-be36-4630-97bd-b438bdf70e11",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 93,
+      "issuedAt": "2026-09-28T04:17:38.783Z",
+      "expiresAt": "2026-09-28T04:17:53.783Z",
+      "limits": {
+        "revision": 93,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:46.340Z"
+    },
+    {
+      "grantId": "342f2a85-7fab-4f2d-a435-9363606f9b22",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 91,
+      "issuedAt": "2026-09-28T04:17:31.953Z",
+      "expiresAt": "2026-09-28T04:17:46.953Z",
+      "limits": {
+        "revision": 91,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:39.350Z"
+    },
+    {
+      "grantId": "630944a2-cf21-4ec6-a671-ee5bb193788c",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 89,
+      "issuedAt": "2026-09-28T04:17:31.195Z",
+      "expiresAt": "2026-09-28T04:17:46.195Z",
+      "limits": {
+        "revision": 89,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:38.675Z"
+    },
+    {
+      "grantId": "3d936b8d-4b44-47ec-afd0-fa7612940748",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 87,
+      "issuedAt": "2026-09-28T04:17:24.373Z",
+      "expiresAt": "2026-09-28T04:17:39.373Z",
+      "limits": {
+        "revision": 87,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:31.745Z"
+    },
+    {
+      "grantId": "3b13a70c-ee89-4785-b74d-26283ba98d4f",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 85,
+      "issuedAt": "2026-09-28T04:17:23.613Z",
+      "expiresAt": "2026-09-28T04:17:38.613Z",
+      "limits": {
+        "revision": 85,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:30.997Z"
+    },
+    {
+      "grantId": "52a1599b-47c4-4710-bb63-ec8672df01f6",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 83,
+      "issuedAt": "2026-09-28T04:17:16.784Z",
+      "expiresAt": "2026-09-28T04:17:31.784Z",
+      "limits": {
+        "revision": 83,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:24.168Z"
+    },
+    {
+      "grantId": "92bc0b80-621f-4c9a-83ab-4a9c2c7254ee",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 81,
+      "issuedAt": "2026-09-28T04:17:16.024Z",
+      "expiresAt": "2026-09-28T04:17:31.024Z",
+      "limits": {
+        "revision": 81,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:23.340Z"
+    },
+    {
+      "grantId": "e79cf45a-d325-4216-b40f-2d9ee863f580",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 79,
+      "issuedAt": "2026-09-28T04:17:09.198Z",
+      "expiresAt": "2026-09-28T04:17:24.198Z",
+      "limits": {
+        "revision": 79,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:16.741Z"
+    },
+    {
+      "grantId": "92b3f237-14b4-4b72-b6f4-868735d12aad",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 77,
+      "issuedAt": "2026-09-28T04:17:08.443Z",
+      "expiresAt": "2026-09-28T04:17:23.443Z",
+      "limits": {
+        "revision": 77,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:15.896Z"
+    },
+    {
+      "grantId": "a301f581-7951-4223-a4cd-585b62e77b3f",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 75,
+      "issuedAt": "2026-09-28T04:17:01.625Z",
+      "expiresAt": "2026-09-28T04:17:16.625Z",
+      "limits": {
+        "revision": 75,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:09.135Z"
+    },
+    {
+      "grantId": "ec205671-7153-4b43-873b-d564c3412e30",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 73,
+      "issuedAt": "2026-09-28T04:17:00.860Z",
+      "expiresAt": "2026-09-28T04:17:15.860Z",
+      "limits": {
+        "revision": 73,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:08.392Z"
+    },
+    {
+      "grantId": "79ad58e7-cc7e-4c97-9b7b-b2da59f540a2",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 71,
+      "issuedAt": "2026-09-28T04:16:54.004Z",
+      "expiresAt": "2026-09-28T04:17:09.004Z",
+      "limits": {
+        "revision": 71,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:01.381Z"
+    },
+    {
+      "grantId": "62c3e400-1a2e-498a-9c1a-f00f404d03da",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 69,
+      "issuedAt": "2026-09-28T04:16:53.249Z",
+      "expiresAt": "2026-09-28T04:17:08.249Z",
+      "limits": {
+        "revision": 69,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:17:00.678Z"
+    },
+    {
+      "grantId": "77669447-860e-4c89-bdad-b584744b946d",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 67,
+      "issuedAt": "2026-09-28T04:16:46.387Z",
+      "expiresAt": "2026-09-28T04:17:01.387Z",
+      "limits": {
+        "revision": 67,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:53.935Z"
+    },
+    {
+      "grantId": "6f33fd17-28f1-4753-87ea-5d98f4729399",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 65,
+      "issuedAt": "2026-09-28T04:16:45.624Z",
+      "expiresAt": "2026-09-28T04:17:00.624Z",
+      "limits": {
+        "revision": 65,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:53.030Z"
+    },
+    {
+      "grantId": "7d618ab9-9ba1-411b-a5fc-c4b70cf7464f",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 63,
+      "issuedAt": "2026-09-28T04:16:38.771Z",
+      "expiresAt": "2026-09-28T04:16:53.771Z",
+      "limits": {
+        "revision": 63,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:46.314Z"
+    },
+    {
+      "grantId": "0013555b-1aaa-4547-8551-190c8c62eb48",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 61,
+      "issuedAt": "2026-09-28T04:16:38.009Z",
+      "expiresAt": "2026-09-28T04:16:53.009Z",
+      "limits": {
+        "revision": 61,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:45.418Z"
+    },
+    {
+      "grantId": "02a4bb00-7fb0-47d5-a17a-5c32b94dbb99",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 59,
+      "issuedAt": "2026-09-28T04:16:31.102Z",
+      "expiresAt": "2026-09-28T04:16:46.102Z",
+      "limits": {
+        "revision": 59,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:38.686Z"
+    },
+    {
+      "grantId": "412e4fd8-a8ca-44cb-a221-ccd20ac170bb",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 57,
+      "issuedAt": "2026-09-28T04:16:30.329Z",
+      "expiresAt": "2026-09-28T04:16:45.329Z",
+      "limits": {
+        "revision": 57,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:37.837Z"
+    },
+    {
+      "grantId": "595047f4-0235-4ef3-a181-ee61a260ef1a",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 55,
+      "issuedAt": "2026-09-28T04:16:23.446Z",
+      "expiresAt": "2026-09-28T04:16:38.446Z",
+      "limits": {
+        "revision": 55,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:31.018Z"
+    },
+    {
+      "grantId": "274ff9b9-a428-4d8b-9730-5aed8b9ced5c",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 53,
+      "issuedAt": "2026-09-28T04:16:22.675Z",
+      "expiresAt": "2026-09-28T04:16:37.675Z",
+      "limits": {
+        "revision": 53,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:30.216Z"
+    },
+    {
+      "grantId": "9eb0e4e2-476b-41c2-9f70-098b3a75e38d",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 51,
+      "issuedAt": "2026-09-28T04:16:15.743Z",
+      "expiresAt": "2026-09-28T04:16:30.743Z",
+      "limits": {
+        "revision": 51,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:23.264Z"
+    },
+    {
+      "grantId": "af48d35a-f770-48d1-940f-9d26e9bea323",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 49,
+      "issuedAt": "2026-09-28T04:16:14.976Z",
+      "expiresAt": "2026-09-28T04:16:29.976Z",
+      "limits": {
+        "revision": 49,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:22.569Z"
+    },
+    {
+      "grantId": "ea489d40-9608-47eb-8736-84120a4ed637",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 47,
+      "issuedAt": "2026-09-28T04:16:08.074Z",
+      "expiresAt": "2026-09-28T04:16:23.074Z",
+      "limits": {
+        "revision": 47,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:15.664Z"
+    },
+    {
+      "grantId": "cc17467b-5b2f-4632-b864-b494204f89ba",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 45,
+      "issuedAt": "2026-09-28T04:16:07.303Z",
+      "expiresAt": "2026-09-28T04:16:22.303Z",
+      "limits": {
+        "revision": 45,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:14.844Z"
+    },
+    {
+      "grantId": "894df405-8187-4663-b8c5-d4f2b59cf75e",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 43,
+      "issuedAt": "2026-09-28T04:16:00.443Z",
+      "expiresAt": "2026-09-28T04:16:15.443Z",
+      "limits": {
+        "revision": 43,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:07.945Z"
+    },
+    {
+      "grantId": "87fb8a09-ccb5-4ffd-8f21-9cd0652f6b36",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 41,
+      "issuedAt": "2026-09-28T04:15:59.683Z",
+      "expiresAt": "2026-09-28T04:16:14.683Z",
+      "limits": {
+        "revision": 41,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:07.258Z"
+    },
+    {
+      "grantId": "3ffe6a9d-3ee8-4a0c-b78d-889b9666a8e8",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 39,
+      "issuedAt": "2026-09-28T04:15:52.810Z",
+      "expiresAt": "2026-09-28T04:16:07.810Z",
+      "limits": {
+        "revision": 39,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:16:00.382Z"
+    },
+    {
+      "grantId": "a9c175b7-ac6a-4012-abf7-f9215d44e30c",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 37,
+      "issuedAt": "2026-09-28T04:15:52.054Z",
+      "expiresAt": "2026-09-28T04:16:07.054Z",
+      "limits": {
+        "revision": 37,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:59.677Z"
+    },
+    {
+      "grantId": "39164bf8-7123-4c47-8339-088d0ef02022",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 35,
+      "issuedAt": "2026-09-28T04:15:45.214Z",
+      "expiresAt": "2026-09-28T04:16:00.214Z",
+      "limits": {
+        "revision": 35,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:52.721Z"
+    },
+    {
+      "grantId": "70867834-9296-447d-ac21-4bf5bf5eccb2",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 33,
+      "issuedAt": "2026-09-28T04:15:44.448Z",
+      "expiresAt": "2026-09-28T04:15:59.448Z",
+      "limits": {
+        "revision": 33,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:51.956Z"
+    },
+    {
+      "grantId": "4b111083-45b1-4961-9e83-830750234251",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 31,
+      "issuedAt": "2026-09-28T04:15:37.553Z",
+      "expiresAt": "2026-09-28T04:15:52.553Z",
+      "limits": {
+        "revision": 31,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:45.108Z"
+    },
+    {
+      "grantId": "4982b9b4-a484-496e-96b8-3779fec1592e",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 29,
+      "issuedAt": "2026-09-28T04:15:36.792Z",
+      "expiresAt": "2026-09-28T04:15:51.792Z",
+      "limits": {
+        "revision": 29,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:44.339Z"
+    },
+    {
+      "grantId": "6e8322ec-88ed-460b-a207-96e124a695dd",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 27,
+      "issuedAt": "2026-09-28T04:15:29.913Z",
+      "expiresAt": "2026-09-28T04:15:44.913Z",
+      "limits": {
+        "revision": 27,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:37.379Z"
+    },
+    {
+      "grantId": "6704dd5c-2d7d-41b3-be9f-81d8c22fa868",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 25,
+      "issuedAt": "2026-09-28T04:15:29.157Z",
+      "expiresAt": "2026-09-28T04:15:44.157Z",
+      "limits": {
+        "revision": 25,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:36.544Z"
+    },
+    {
+      "grantId": "53c3c9f4-eae3-4062-8764-13c651657ad8",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 23,
+      "issuedAt": "2026-09-28T04:15:22.272Z",
+      "expiresAt": "2026-09-28T04:15:37.272Z",
+      "limits": {
+        "revision": 23,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:29.683Z"
+    },
+    {
+      "grantId": "b0828df3-46d1-4810-9b94-cd130a9c5816",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 21,
+      "issuedAt": "2026-09-28T04:15:21.510Z",
+      "expiresAt": "2026-09-28T04:15:36.510Z",
+      "limits": {
+        "revision": 21,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:29.073Z"
+    },
+    {
+      "grantId": "ad12b2ce-8981-486b-9025-f9471ecbd7e4",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 19,
+      "issuedAt": "2026-09-28T04:15:14.665Z",
+      "expiresAt": "2026-09-28T04:15:29.665Z",
+      "limits": {
+        "revision": 19,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:22.261Z"
+    },
+    {
+      "grantId": "4a7e1aca-153f-4818-8c70-7752047f2c1d",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 17,
+      "issuedAt": "2026-09-28T04:15:13.902Z",
+      "expiresAt": "2026-09-28T04:15:28.902Z",
+      "limits": {
+        "revision": 17,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:21.492Z"
+    },
+    {
+      "grantId": "4241820a-1802-4eab-b8fe-7cd7b8e5cc3a",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 15,
+      "issuedAt": "2026-09-28T04:15:07.005Z",
+      "expiresAt": "2026-09-28T04:15:22.005Z",
+      "limits": {
+        "revision": 15,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 4096,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 8192,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:14.463Z"
+    },
+    {
+      "grantId": "95301056-66c2-47df-b100-181ec35a607b",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 13,
+      "issuedAt": "2026-09-28T04:15:06.489Z",
+      "expiresAt": "2026-09-28T04:15:21.489Z",
+      "limits": {
+        "revision": 13,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:06.797Z"
+    },
+    {
+      "grantId": "d76705e1-9048-45e9-b026-900557fd3d14",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 11,
+      "issuedAt": "2026-09-28T04:15:06.238Z",
+      "expiresAt": "2026-09-28T04:15:21.238Z",
+      "limits": {
+        "revision": 11,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:13.895Z"
+    },
+    {
+      "grantId": "46019794-5184-4c13-90db-209de942a619",
+      "instanceId": "tyr-vllm-moflux-metal",
+      "pool": "vllm-moflux",
+      "controllerEpoch": 1,
+      "revision": 3,
+      "issuedAt": "2026-09-28T04:15:04.750Z",
+      "expiresAt": "2026-09-28T04:15:07.750Z",
+      "limits": {
+        "revision": 3,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:06.315Z"
+    },
+    {
+      "grantId": "3083057e-a87f-4034-a640-c9d1cb115448",
+      "instanceId": "tyr-vllm-static-metal",
+      "pool": "vllm-static",
+      "controllerEpoch": 1,
+      "revision": 1,
+      "issuedAt": "2026-09-28T04:15:04.657Z",
+      "expiresAt": "2026-09-28T04:15:07.657Z",
+      "limits": {
+        "revision": 1,
+        "maxConcurrent": 4,
+        "maxQueue": 0,
+        "tokenBudget": {
+          "budget": 65536,
+          "highPriorityReserve": 0
+        },
+        "admissionClasses": {
+          "batch": {
+            "protectedConcurrent": 1,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 16384,
+            "maxInFlightTokens": 65536
+          },
+          "interactive": {
+            "protectedConcurrent": 3,
+            "maxConcurrent": 4,
+            "protectedInFlightTokens": 49152,
+            "maxInFlightTokens": 65536
+          }
+        }
+      },
+      "lifecycle": "superseded",
+      "ackStatus": "applied",
+      "ackAt": "2026-09-28T04:15:05.983Z"
+    }
+  ]
+}

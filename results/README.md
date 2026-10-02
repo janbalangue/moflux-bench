@@ -307,6 +307,21 @@ a file that already existed.
 failure that motivated the topology and determinism remediation. It is
 historical negative evidence, not a current comparison.
 
+## Newly reviewed evidence
+
+- [Admission boundary 8](vllm-metal-long-context-admission-8-unlent-2/README.md):
+  a valid five-seed standalone run, all H1–H5 gates passing, with the
+  preregistered engine-queue manipulation observed. The paired boundary-4
+  baseline is missing; no difference between boundaries is established.
+- [Backend availability v2 control and v3 negative result](curated/vllm-metal-backend-availability/README.md):
+  five seeds per protocol, retained separately. Both pass contention validity;
+  v3 fails interactive SLO-goodput H2. Neither passes the separate availability
+  distribution gate. Raw scheduler JSONL is retained with JSON evidence and
+  SHA-256 provenance.
+
+These runs record harness 0.49.0 and were promoted during the 0.50.0 release
+work. Promotion preserves their recorded runtime and outcomes.
+
 ## Public research replication
 
 `npm run replicate` writes public-arm runs under `replicates/` and aggregates them with `scripts/aggregate.mjs`. This is separate from the licensed video seed sweep.
