@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { buildTrace } from "../load/trace-lib.mjs";
 import { reservationBounds } from "./capacity-lib.mjs";
 import {
+  VLLM_ADMISSION_BOUNDARY_CHECK,
   VLLM_ARM_IDS,
   VLLM_DEFAULT_POLICY_PROFILE,
   VLLM_GPU_MEMORY_UTILIZATION,
@@ -19,6 +20,7 @@ import {
   VLLM_METAL_LONG_CONTEXT_WORKLOAD,
   VLLM_METAL_SWEEP_NAME,
   VLLM_METAL_HOST_PRESSURE_LIMITS,
+  VLLM_MAX_NUM_SEQS,
   VLLM_METAL_WORKLOAD,
   VLLM_METAL_POLICY,
   VLLM_METAL_RUNTIME_PROBE_PREFIX,
@@ -41,6 +43,7 @@ import {
   parsePmsetTherm,
   summarizeManagedRecovery,
   summarizeVllmTelemetry,
+  vllmAdmissionBoundaryCheck,
   vllmApiKeyArgument,
   vllmArm,
   vllmArmDescription,
@@ -897,6 +900,116 @@ assert.deepEqual(VLLM_HYPOTHESIS_THRESHOLDS, {
   requiredQueuePeak: 1,
 });
 
+// admission-8-unlent-2: every admission concurrency doubled against the same engine.
+const boundary8Policy = vllmPolicyForBackend("metal", "admission-8-unlent-2");
+assert.equal(boundary8Policy.profile, "admission-8-unlent-2");
+assert.equal(boundary8Policy.physical.maxConcurrent, 2 * VLLM_MAX_NUM_SEQS);
+assert.deepEqual(
+  Object.fromEntries(Object.entries(boundary8Policy.classes).map(([id, limits]) =>
+    [id, [limits.globalProtectedConcurrent, limits.globalMaxConcurrent]])),
+  { interactive: [6, 8], batch: [2, 8] },
+);
+assert.deepEqual(boundary8Policy.unlentProtectedConcurrent, { interactive: 2, batch: 0 });
+{
+  // Only concurrency changes: tokens, unlent token slices and lease timing stay published.
+  const withoutConcurrency = (policy) => ({
+    ...policy,
+    profile: null,
+    unlentProtectedConcurrent: null,
+    physical: { ...policy.physical, maxConcurrent: null },
+    classes: Object.fromEntries(Object.entries(policy.classes).map(([id, limits]) =>
+      [id, { ...limits, globalProtectedConcurrent: null, globalMaxConcurrent: null }])),
+  });
+  assert.deepEqual(withoutConcurrency(boundary8Policy), withoutConcurrency(VLLM_METAL_POLICY));
+}
+assert.equal(
+  vllmSweepNameFor("metal", longContext, "admission-8-unlent-2"),
+  "vllm-metal-long-context-admission-8-unlent-2",
+  "a different admission boundary writes its own corpus",
+);
+assert.throws(
+  () => vllmPolicyProfileByName("admission-8-unlent-2", VLLM_METAL_WORKLOAD),
+  /runs only with --workload=metal-long-context-v1/u,
+);
+const boundary8Moflux = vllmPoolDefinition("vllm-moflux", 15_000, { lending: true, policy: boundary8Policy });
+assert.equal(boundary8Moflux.globalMaxConcurrent, 8);
+assert.equal(boundary8Moflux.maxQueuePerAgent, 0, "a looser boundary still has no admission queue");
+assert.equal(boundary8Moflux.admissionClassLimits.interactive.globalUnlentProtectedConcurrent, 2);
+assert.equal(boundary8Moflux.admissionClassLimits.batch.globalUnlentProtectedConcurrent, undefined);
+const boundary8Static = vllmPoolDefinition("vllm-static", 15_000, { lending: false, policy: boundary8Policy });
+assert.equal(
+  boundary8Static.admissionClassLimits.interactive.globalProtectedConcurrent +
+    boundary8Static.admissionClassLimits.batch.globalProtectedConcurrent,
+  boundary8Static.globalMaxConcurrent,
+  "static floors fill the admission boundary, so the partition stays rigid",
+);
+assert.equal(
+  vllmArmDescription("static", boundary8Policy),
+  "fixed 6/2 protected admission partition, admitting up to 8 requests against max_num_seqs=4, " +
+    "in front of vLLM priority scheduling",
+);
+assert.equal(
+  vllmArmDescription("moflux", boundary8Policy),
+  "the same 6/2 partition, with four idle interactive slots lendable and restored",
+);
+assert.equal(vllmArmDescription("vllm-priority", boundary8Policy), vllmArm("vllm-priority").summary);
+{
+  const reasons = (proof) => Object.fromEntries(proof.gates
+    .filter(({ gate }) => ["concurrencyAdmissionExercised", "nativeUnlentFloor"].includes(gate))
+    .map(({ gate, reason }) => [gate, reason]));
+  assert.deepEqual(reasons(longContextProof), {
+    concurrencyAdmissionExercised:
+      "the 3/1 concurrency treatment must bind without turning into a token-budget experiment",
+    nativeUnlentFloor: "the one-slot allocation-enforced reserve must never disappear from a usable grant",
+  }, "the published profile's gate wording is unchanged");
+  const boundary8Proof = vllmSeedProof({
+    arms: longContextArms,
+    evidence: { moflux: { recovery: oneSlotRecovery, controlPlane: { ...controlPlane, unlentGauges: twoSlotGauges } } },
+    backend: "metal",
+    workload: longContext,
+    policy: boundary8Policy,
+  });
+  assert.deepEqual(reasons(boundary8Proof), {
+    concurrencyAdmissionExercised:
+      "the 6/2 concurrency treatment must bind without turning into a token-budget experiment",
+    nativeUnlentFloor: "the two-slot allocation-enforced reserve must never disappear from a usable grant",
+  });
+}
+// The preregistered manipulation check: a MoFlux contention queue of two in 60% of planned seeds.
+assert.deepEqual(VLLM_ADMISSION_BOUNDARY_CHECK, {
+  arm: "moflux",
+  phase: "contention",
+  minWaitingPeak: 2,
+  minSeedShare: 0.6,
+});
+assert.equal(
+  vllmAdmissionBoundaryCheck({ rows: [], seeds: [1], policy: VLLM_METAL_POLICY }),
+  null,
+  "no boundary check where admission equals max_num_seqs",
+);
+{
+  const queueRow = (seed, moflux, stat) => ({
+    seed,
+    arms: {
+      moflux: { vllm: { phases: { contention: { waiting: { max: moflux } } } } },
+      static: { vllm: { phases: { contention: { waiting: { max: stat } } } } },
+    },
+  });
+  const check = (rows, seeds) => vllmAdmissionBoundaryCheck({ rows, seeds, policy: boundary8Policy });
+  const sweep = check([queueRow(1, 2, 0), queueRow(2, 3, 1), queueRow(3, 1, 0), queueRow(4, 5, 0)], [1, 2, 3, 4, 5]);
+  assert.equal(sweep.requiredSeeds, 3);
+  assert.equal(sweep.seedsMeeting, 3);
+  assert.equal(sweep.passed, true);
+  assert.equal(sweep.metric, "arms.moflux.vllm.phases.contention.waiting.max");
+  assert.deepEqual(sweep.bySeed[1], { seed: 2, mofluxWaitingPeak: 3, staticWaitingPeak: 1, met: true });
+  assert.deepEqual(sweep.bySeed[4], { seed: 5, mofluxWaitingPeak: null, staticWaitingPeak: null, met: false },
+    "a planned seed with no row counts against the check");
+  assert.equal(check([1, 2, 3, 4, 5].map((seed) => queueRow(seed, seed <= 2 ? 2 : 1, 0)), [1, 2, 3, 4, 5]).passed,
+    false, "two of five seeds are not enough");
+  assert.equal(check([queueRow(3, 2, 0)], [3]).passed, true, "the one-seed pilot needs its seed");
+  assert.equal(check([queueRow(3, 1, 0)], [3]).passed, false);
+}
+
 const comparison = {
   priorityGoodputDeltaVsFcfsRps: 0.2,
   mofluxGoodputDeltaVsPriorityRps: 0,
@@ -989,6 +1102,21 @@ assert.match(unlent2Plan.stdout, /'unlent-concurrency-2' │ 2 /u);
 const refusedPlan = planRun("--policy-profile=unlent-concurrency-2");
 assert.equal(refusedPlan.status, 1);
 assert.match(refusedPlan.stderr, /runs only with --workload=metal-long-context-v1/u);
+const boundary8Plan = planRun("--workload=metal-long-context-v1", "--policy-profile=admission-8-unlent-2");
+assert.equal(boundary8Plan.status, 0, boundary8Plan.stderr);
+assert.match(boundary8Plan.stdout, /results\/runs\/vllm-metal-long-context-admission-8-unlent-2\//u);
+assert.match(boundary8Plan.stdout, /'admission-8-unlent-2' +│ 2 +│ 8 +│ '6\/2' /u);
+const boundary8Availability = planRun(
+  "--workload=metal-long-context-v1",
+  "--policy-profile=admission-8-unlent-2",
+  "--backend-availability",
+);
+assert.equal(boundary8Availability.status, 1);
+assert.match(boundary8Availability.stderr, /preregistered without --backend-availability/u);
+assert.ok(
+  runner.includes("vllmAdmissionBoundaryCheck({ rows, seeds: OPT.seeds, policy: POLICY })"),
+  "the summary must report the boundary manipulation check",
+);
 for (const config of ["tyr-static-metal.yaml", "tyr-moflux-metal.yaml"]) {
   const text = readFileSync(path.join(ROOT, "demo/vllm", config), "utf8");
   assert.ok(text.includes("baseUrl: http://host.docker.internal:18000"));

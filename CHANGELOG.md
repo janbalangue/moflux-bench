@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.50.0 - 2026-10-02
+
+### Added
+
+- Preregistered `admission-8-unlent-2` policy for the vLLM Metal
+  `metal-long-context-v1` workload. It admits up to eight requests against
+  four engine slots, with a 6/2 interactive/batch partition and two
+  never-lent interactive slots. Engine settings and token budgets stay fixed.
+- Separate admission-boundary run namespace, dry-run, pilot and five-seed
+  sweep commands, and a sampled engine-queue manipulation check. The profile
+  refuses other workloads and the backend-availability experiment.
+- Paired boundary-8/boundary-4 analyzer reporting interactive SLO counts,
+  admission rejections, batch completion yield, restoration and engine
+  diagnostics, and direct-arm drift. It verifies planned seed sets, trace
+  identity and runtime controls, preserves inconclusive readings, and refuses
+  to overwrite existing files or reviewed evidence.
+- Admission-boundary verification in the complete harness suite and
+  publication checks. See [preregistration](demo/ADMISSION-BOUNDARY.md).
+
+This release adds experiment and analysis tooling. It does not promote new
+benchmark results or change recorded runtime metadata in existing evidence.
+
 ## 0.49.0 - 2026-09-27
 
 ### Added

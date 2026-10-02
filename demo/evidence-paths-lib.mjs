@@ -89,6 +89,10 @@ export const REVIEWED_EVIDENCE = Object.freeze([
   // pass rather than over it, so both runs stay citable.
   "results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1.json",
   "results/vllm-metal-long-context-unlent-concurrency-2-v0.47.1/",
+  // The same long-context workload behind an admission boundary of 8 against
+  // max_num_seqs=4 (demo/ADMISSION-BOUNDARY.md). Protected before any run.
+  "results/vllm-metal-long-context-admission-8-unlent-2.json",
+  "results/vllm-metal-long-context-admission-8-unlent-2/",
 ]);
 
 /** Directory under the results root that holds generated runs. */

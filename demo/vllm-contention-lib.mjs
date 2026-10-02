@@ -76,13 +76,26 @@ function unlentReserveLabel(policy) {
   return `${COUNT_WORDS[policy.unlentProtectedConcurrent.interactive]}-slot`;
 }
 
+/** The managed arms' protected interactive/batch concurrency floors ("3/1"). */
+function partitionLabel(policy) {
+  return `${policy.classes.interactive.globalProtectedConcurrent}/` +
+    `${policy.classes.batch.globalProtectedConcurrent}`;
+}
+
 /** An arm's description under a policy; the lending arm states how many slots it may lend. */
 export function vllmArmDescription(id, policy = VLLM_POLICY) {
   const arm = vllmArm(id);
-  if (!arm.lending) return arm.summary;
+  if (!arm.managed) return arm.summary;
+  const partition = partitionLabel(policy);
+  if (!arm.lending) {
+    const boundary = policy.physical.maxConcurrent > VLLM_MAX_NUM_SEQS
+      ? `, admitting up to ${policy.physical.maxConcurrent} requests against max_num_seqs=${VLLM_MAX_NUM_SEQS},`
+      : "";
+    return `fixed ${partition} protected admission partition${boundary} in front of vLLM priority scheduling`;
+  }
   const lendable = policy.classes.interactive.globalProtectedConcurrent -
     policy.unlentProtectedConcurrent.interactive;
-  return `the same 3/1 partition, with ${COUNT_WORDS[lendable]} idle interactive ` +
+  return `the same ${partition} partition, with ${COUNT_WORDS[lendable]} idle interactive ` +
     `slot${lendable === 1 ? "" : "s"} lendable and restored`;
 }
 
@@ -306,6 +319,12 @@ export function vllmWorkloadByProfile(profile, backend) {
  * lends only one and keeps two unborrowable. It asks whether the one-slot
  * reserve is too small for the long-context repeat, which failed H2, so it is
  * registered for that workload only and writes its own corpus.
+ *
+ * `admission-8-unlent-2` is the preregistered looser admission boundary
+ * (demo/ADMISSION-BOUNDARY.md). `admissionScale` multiplies every admission
+ * concurrency of the published policy against the same engine: 8 admitted
+ * requests against `max_num_seqs=4`, floors of 6/2, and two of the six
+ * interactive slots never lent. Profiles without it keep a scale of 1.
  */
 export const VLLM_POLICY_PROFILES = Object.freeze({
   "unlent-concurrency-1": Object.freeze({
@@ -317,6 +336,12 @@ export const VLLM_POLICY_PROFILES = Object.freeze({
     interactiveUnlentConcurrent: 2,
     workloads: Object.freeze(["metal-long-context-v1"]),
     sweepSuffix: "-unlent-concurrency-2",
+  }),
+  "admission-8-unlent-2": Object.freeze({
+    interactiveUnlentConcurrent: 2,
+    admissionScale: 2,
+    workloads: Object.freeze(["metal-long-context-v1"]),
+    sweepSuffix: "-admission-8-unlent-2",
   }),
 });
 export const VLLM_DEFAULT_POLICY_PROFILE = "unlent-concurrency-1";
@@ -386,25 +411,29 @@ function makeVllmPolicy(tokenBudget, profile = VLLM_DEFAULT_POLICY_PROFILE) {
   if (!Object.hasOwn(VLLM_POLICY_PROFILES, profile)) {
     throw new Error(`unknown vLLM policy profile ${JSON.stringify(profile)}`);
   }
-  const { interactiveUnlentConcurrent } = VLLM_POLICY_PROFILES[profile];
+  const { interactiveUnlentConcurrent, admissionScale = 1 } = VLLM_POLICY_PROFILES[profile];
+  if (!Number.isSafeInteger(admissionScale) || admissionScale < 1) {
+    throw new Error(`vLLM policy profile ${profile} needs a positive integer admission scale`);
+  }
+  const admissionConcurrent = VLLM_MAX_NUM_SEQS * admissionScale;
   return Object.freeze({
     profile,
     physical: Object.freeze({
-      maxConcurrent: VLLM_MAX_NUM_SEQS,
+      maxConcurrent: admissionConcurrent,
       tokenBudget,
       minimumGrantMaxConcurrent: 1,
       minimumGrantTokenBudget: 4_096,
     }),
     classes: Object.freeze({
       interactive: Object.freeze({
-        globalProtectedConcurrent: 3,
-        globalMaxConcurrent: 4,
+        globalProtectedConcurrent: 3 * admissionScale,
+        globalMaxConcurrent: admissionConcurrent,
         globalProtectedInFlightTokens: VLLM_PROTECTED_TOKEN_FLOORS.interactive,
         globalMaxInFlightTokens: tokenBudget,
       }),
       batch: Object.freeze({
-        globalProtectedConcurrent: 1,
-        globalMaxConcurrent: 4,
+        globalProtectedConcurrent: 1 * admissionScale,
+        globalMaxConcurrent: admissionConcurrent,
         globalProtectedInFlightTokens: VLLM_PROTECTED_TOKEN_FLOORS.batch,
         globalMaxInFlightTokens: tokenBudget,
       }),
@@ -1414,7 +1443,7 @@ export function vllmSeedProof({
     concurrencyLimited > 0 && budgetLimited === 0,
     { concurrencyLimited, budgetLimited, budgetRejectionEvidence },
     "concurrencyLimited>0 and budgetLimited=0",
-    "the 3/1 concurrency treatment must bind without turning into a token-budget experiment",
+    `the ${partitionLabel(policy)} concurrency treatment must bind without turning into a token-budget experiment`,
   ));
   // Tyr reports these as budget_limit or concurrency_limit, but they were made
   // with a zero capacity envelope: the arm had no live Latchflo grant.
@@ -1435,7 +1464,7 @@ export function vllmSeedProof({
     grantUnavailableTotal === 0,
     { grantUnavailable: grantUnavailableTotal, byArm: grantUnavailable },
     "0 refusals with a zero capacity envelope",
-    "a managed arm that refuses work because it holds no live grant is measuring a control-plane gap, not the 3/1 treatment",
+    `a managed arm that refuses work because it holds no live grant is measuring a control-plane gap, not the ${partitionLabel(policy)} treatment`,
   ));
   const queuePeak = Math.max(
     0,
@@ -1691,5 +1720,58 @@ export function vllmSweepProof({ rows = [], armOrder = [], requiredSeeds = VLLM_
     validityGates,
     hypothesisGates,
     medians: { priorityGoodputDeltaVsFcfsRps: priorityDelta, mofluxGoodputDeltaVsPriorityRps: mofluxDelta, mofluxBatchBorrowDeltaVsStaticRps: borrowDelta },
+  });
+}
+
+/**
+ * Preregistered manipulation check for an admission boundary above
+ * `max_num_seqs` (demo/ADMISSION-BOUNDARY.md). The boundary question is
+ * answered only if the MoFlux arm's sampled vLLM queue reaches two during the
+ * contention phase in at least 60% of planned seeds: three of five, or the one
+ * pilot seed. Published boundary-4 MoFlux arms never queued more than one.
+ */
+export const VLLM_ADMISSION_BOUNDARY_CHECK = Object.freeze({
+  arm: "moflux",
+  phase: "contention",
+  minWaitingPeak: 2,
+  minSeedShare: 0.6,
+});
+
+/**
+ * Report the boundary manipulation check. It is not an H1-H5 proof gate: a
+ * failure leaves the boundary question inconclusive while the proof is still
+ * reported. Planned seeds with no row count as not meeting it. Returns null for
+ * a policy that admits no more than vLLM can run.
+ */
+export function vllmAdmissionBoundaryCheck({ rows = [], seeds = [], policy = VLLM_POLICY } = {}) {
+  if (policy.physical.maxConcurrent <= VLLM_MAX_NUM_SEQS) return null;
+  const { arm, phase, minWaitingPeak, minSeedShare } = VLLM_ADMISSION_BOUNDARY_CHECK;
+  const planned = seeds.length > 0 ? seeds : rows.map((row) => row?.seed);
+  const peak = (row, id) => observed(row?.arms?.[id]?.vllm?.phases?.[phase]?.waiting?.max);
+  const bySeed = planned.map((seed) => {
+    const row = rows.find((candidate) => candidate?.seed === seed);
+    const mofluxPeak = peak(row, arm);
+    return Object.freeze({
+      seed,
+      mofluxWaitingPeak: mofluxPeak,
+      staticWaitingPeak: peak(row, "static"),
+      met: mofluxPeak !== null && mofluxPeak >= minWaitingPeak,
+    });
+  });
+  const requiredSeeds = Math.ceil(planned.length * minSeedShare);
+  const seedsMeeting = bySeed.filter(({ met }) => met).length;
+  return Object.freeze({
+    admissionConcurrent: policy.physical.maxConcurrent,
+    maxNumSeqs: VLLM_MAX_NUM_SEQS,
+    partition: partitionLabel(policy),
+    metric: `arms.${arm}.vllm.phases.${phase}.waiting.max`,
+    threshold: `>=${minWaitingPeak}`,
+    requiredSeeds,
+    seedsMeeting,
+    passed: planned.length > 0 && seedsMeeting >= requiredSeeds,
+    bySeed,
+    note: "Preregistered in demo/ADMISSION-BOUNDARY.md. A failure means vLLM's scheduler did not take " +
+      "part and the boundary question is inconclusive; it does not change the H1-H5 proof. " +
+      "The static arm's queue is reported, not gated.",
   });
 }

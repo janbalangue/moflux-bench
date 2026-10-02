@@ -294,6 +294,16 @@ still clears 0.02 req/s over static with one lendable slot instead of two. A
 pass would be one five-seed run on one host. The one-slot corpus shows that a
 single pass may not reproduce, so a repeat is needed before drawing a conclusion.
 
+### Looser admission boundary (preregistered)
+
+Both managed arms admit at most `max_num_seqs` requests, so vLLM's own
+priority queue never orders their work: the static arm's sampled queue stayed
+at zero in all 20 published long-context seed-runs. A preregistered profile,
+`admission-8-unlent-2`, doubles every admission quantity against the same
+engine to test whether grant restoration still helps returning interactive
+work once vLLM's queue takes part. It has not been run yet; see
+[Looser admission boundary](ADMISSION-BOUNDARY.md).
+
 ## Measurements and proof
 
 The client records logical attempts, successful completions, TTFT, end-to-end

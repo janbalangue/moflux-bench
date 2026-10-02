@@ -1,5 +1,18 @@
 # MoFlux Bench verification
 
+## 0.50.0 admission boundary
+
+`npm run verify:admission-boundary` checks return-window request classification,
+the preregistered readings, complete planned seed sets, paired traces and
+runtime controls, and inconclusive results when required evidence is missing.
+`npm run verify:vllm` checks the boundary-8 policy, workload restrictions,
+unchanged engine and token settings, and the sampled queue manipulation check.
+
+Before this version bump, the pushed implementation passed GitHub CI on Node
+22 and 24. A clean local export passed publication hygiene, syntax checks,
+all 52 harness checks, and the simulator sweep. Version metadata changes are
+checked separately; no new inference run or evidence promotion is implied.
+
 ## 0.49.0 selectable availability protocol
 
 `npm run verify:backend-availability` checks that the dry-run defaults to

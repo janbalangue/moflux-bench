@@ -56,6 +56,10 @@ const required = [
   "demo/backend-availability-lib.mjs",
   "demo/backend-probe/sitecustomize.py",
   "demo/verify-backend-availability.mjs",
+  "demo/ADMISSION-BOUNDARY.md",
+  "demo/admission-boundary-lib.mjs",
+  "demo/admission-boundary-analysis.mjs",
+  "demo/verify-admission-boundary.mjs",
 ];
 const ignoredDirectories = new Set([".git", "node_modules", "coverage", ".tmp", "tmp"]);
 const forbiddenNames = new Set([".DS_Store", "Thumbs.db"]);
@@ -471,6 +475,17 @@ if (
 ) {
   findings.push("demo/vllm-contention-lib.mjs: unlent-concurrency-2 must keep its two-slot reserve, workload and corpus");
 }
+// Preregistered in demo/ADMISSION-BOUNDARY.md; a different boundary needs a new profile name.
+if (
+  JSON.stringify(VLLM_POLICY_PROFILES["admission-8-unlent-2"]) !== JSON.stringify({
+    interactiveUnlentConcurrent: 2,
+    admissionScale: 2,
+    workloads: ["metal-long-context-v1"],
+    sweepSuffix: "-admission-8-unlent-2",
+  })
+) {
+  findings.push("demo/vllm-contention-lib.mjs: admission-8-unlent-2 must keep its preregistered boundary, reserve, workload and corpus");
+}
 
 if (pkg.scripts?.demo !== "node demo/seed-sweep.mjs --seeds=1-5 --pause-ms=0 --provider-api=anthropic" ||
     pkg.scripts?.predemo !== "npm run demo:prepare" ||
@@ -534,8 +549,8 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.49.0") {
-  findings.push("package.json: the current benchmark release must be version 0.49.0");
+if (pkg.version !== "0.50.0") {
+  findings.push("package.json: the current benchmark release must be version 0.50.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.

@@ -108,6 +108,7 @@ import {
   summarizeProcessTelemetry,
   summarizeManagedRecovery,
   summarizeVllmTelemetry,
+  vllmAdmissionBoundaryCheck,
   vllmApiKeyArgument,
   vllmArm,
   vllmArmDescription,
@@ -253,6 +254,9 @@ try {
   if (args.has("availability-protocol") && !OPT.backendAvailability) {
     throw new Error("--availability-protocol requires --backend-availability");
   }
+  if (OPT.backendAvailability && (vllmPolicyProfileByName(policyProfile, DEFAULT_WORKLOAD).admissionScale ?? 1) > 1) {
+    throw new Error(`policy profile ${policyProfile} is preregistered without --backend-availability`);
+  }
   availabilityProtocol(OPT.availabilityProtocol);
   if (!["nvidia", "metal"].includes(OPT.backend)) {
     throw new Error("--backend must be nvidia or metal");
@@ -389,6 +393,8 @@ const plan = {
   workloadProfile: WORKLOAD.profile,
   policyProfile: POLICY.profile,
   interactiveUnlentConcurrent: POLICY.unlentProtectedConcurrent.interactive,
+  admissionConcurrent: POLICY.physical.maxConcurrent,
+  protectedFloors: `${POLICY.classes.interactive.globalProtectedConcurrent}/${POLICY.classes.batch.globalProtectedConcurrent}`,
   durationMs: WORKLOAD.durationMs,
   fixedOutputLength: true,
   minTokensSent: !IS_METAL,
@@ -1651,6 +1657,7 @@ if (OPT.doctor) {
     servedBeforeRestoration: availabilityEpisodes.filter((e) => e.status === "served_before_restoration").length,
     note: "Pilot distribution gate; does not establish a precise p99 or an improvement over controls.",
   } : null;
+  const admissionBoundary = vllmAdmissionBoundaryCheck({ rows, seeds: OPT.seeds, policy: POLICY });
   const summary = {
     schemaVersion: 1,
     reportingVersion: 2,
@@ -1730,6 +1737,7 @@ if (OPT.doctor) {
       byArm: Object.fromEntries(MANAGED_ARMS.filter((a) => OPT.arms.includes(a.id)).map((a) => [a.id,
         availabilityDistribution(allAvailabilityEpisodes.filter((e) => e.arm === a.id))])),
     } } : {}),
+    ...(admissionBoundary ? { admissionBoundary } : {}),
     proof,
     passed: proof.passed && (!availabilityProof || availabilityProof.passed),
     evidenceLimits: EVIDENCE_LIMITS,
@@ -1742,6 +1750,13 @@ if (OPT.doctor) {
     writeFileSync(
       pointerFile,
       `${JSON.stringify({ runId: OPT.runId, summary: repoRelative(summaryFile, ROOT) }, null, 2)}\n`,
+    );
+  }
+  if (admissionBoundary) {
+    console.log(
+      `admission boundary check: MoFlux contention queue ${admissionBoundary.threshold} in ` +
+        `${admissionBoundary.seedsMeeting}/${admissionBoundary.bySeed.length} seeds ` +
+        `(need ${admissionBoundary.requiredSeeds}): ${admissionBoundary.passed ? "PASS" : "FAIL"}`,
     );
   }
   console.log(`\nwrote ${repoRelative(summaryFile, ROOT)} (${proof.status})`);

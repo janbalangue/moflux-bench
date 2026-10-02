@@ -35,6 +35,7 @@ const tests = [
   ["demo/verify-local-contention-unlent.mjs", 30_000],
   ["demo/verify-vllm-contention.mjs", 30_000],
   ["demo/verify-backend-availability.mjs", 30_000],
+  ["demo/verify-admission-boundary.mjs", 30_000],
   ["demo/verify-diagnostics.mjs", 30_000],
   ["demo/verify-openai-overload.mjs", 30_000],
   ["demo/verify-openai-overload-sweep.mjs", 30_000],
