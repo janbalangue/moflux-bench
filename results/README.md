@@ -1,6 +1,14 @@
 # Results
 
-Generated benchmark output is written under this directory and ignored by Git unless it is explicitly designated as reviewed evidence. Curated historical cases live under `results/curated/`; the named `video-seed-sweep` corpus is also intentionally retained.
+Start with the [published evidence catalog](CATALOG.md) for every recorded
+summary, its seed count, proof outcome, runtime and limitations. The
+[correction record](CORRECTIONS.md) explains the organization and documentation
+changes made on 2026-10-02.
+
+Generated sweeps live under ignored `results/runs/`. Reviewed evidence occupies
+legacy top-level and `curated/` paths with equal review status. New publications
+use `results/published/<experiment>/<profile>/<UTC-run-id>/`; existing citation
+paths remain stable. Reserved paths without files are not published evidence.
 
 **A run never writes reviewed evidence.** Every sweep writes to
 `results/runs/<sweep>/<run-id>/` — generated, ignored, safe to delete. Reviewed
@@ -9,7 +17,10 @@ paths change only through an explicit promotion:
 ```
 npm run demo:hetero                              # writes results/runs/video-seed-sweep/<run-id>/
 npm run evidence:list                            # what runs exist
-node demo/publish-evidence.mjs --as=video-seed-sweep   # promote one, refuses to clobber without --force
+node demo/publish-evidence.mjs --run=results/runs/<sweep>/<run-id> \
+  --experiment=<experiment> --profile=<profile> --as=<run-id>
+# Legacy target promotion remains available:
+node demo/publish-evidence.mjs --as=video-seed-sweep
 ```
 
 `demo/evidence-paths-lib.mjs` is the single declaration of which paths are
@@ -52,7 +63,7 @@ A refund means unused safety reservation was returned for reuse; it is not newly
 
 ## Headroom-aware policy runs
 
-The current `adaptive-headroom-28-4` path retains the sustained active-demand lending semantics introduced with Latchflo 0.12.4 in MoFlux Bench 0.24.0. Under the current Latchflo 0.15.0 runtime, long-lived pressure-free interactive demand remains `demanding`, while `starved` is reserved for aged demand with pending/rejection pressure. MoFlux Bench 0.23.0 introduced the profile without replacing the existing
+The current `adaptive-headroom-28-4` path retains the sustained active-demand lending semantics introduced with Latchflo 0.12.4 in MoFlux Bench 0.24.0. From Latchflo 0.15.0 onward, long-lived pressure-free interactive demand remains `demanding`, while `starved` is reserved for aged demand with pending/rejection pressure. MoFlux Bench 0.23.0 introduced the profile without replacing the existing
 `adaptive-28-4` control policy. `npm run demo:hetero:headroom` writes an ordinary
 five-seed sweep for the new policy. `npm run demo:headroom:compare` runs the two
 policies over the same ordered seed set and verifies same-seed immutable trace
@@ -70,7 +81,7 @@ precedes a bounded Tyr applied-capacity transfer observed before the measured
 workload ends. `demo:headroom:compare` uses a dedicated 3-RPS uniform interactive
 trace for both policies so this sustained-slack state is intentionally exercised;
 the heterogeneous headroom command keeps the ordinary 6-RPS lognormal workload.
-The summary also retains exact successor-grant admission proof coverage, first added with Tyr 0.26.0 and exercised by current licensed runs on Tyr 0.30.0.
+The summary also retains exact successor-grant admission proof coverage, first added with Tyr 0.26.0; each published run retains its own recorded runtime.
 Seed-sweep schema version 7 carries the strict in-window evidence semantics;
 headroom-policy comparison schema version 4 adds the capacity-derived threshold
 basis and exercised-seed aggregates. A failed
@@ -137,10 +148,10 @@ proving the arms decoded identically. None of those hold here.
 
 `results/local-inference-contention.json` is the reviewed publication target for a
 five-seed `npm run demo:local:contention` run promoted with
-`npm run evidence:publish -- --as=local-inference-contention`. It is intentionally
-absent until a publication-quality run is explicitly promoted; 0.33.0 ships the
-harness and proof contract without manufacturing a workload-isolation result,
-and 0.34.0 corrects its instrumentation without manufacturing one either.
+`npm run evidence:publish -- --as=local-inference-contention`. The recorded five-seed 0.34.0 corpus is present and fails H1 interactive
+SLO-goodput preservation. The separate one-slot-reserve follow-ups at 0.35.0
+and 0.36.0 pass their recorded local-contention proof. See the catalog for
+all three cohorts; an existing file is evidence even when its hypothesis fails.
 
 **This is a separate corpus from `local-inference-compatibility.json` above and
 does not replace or reinterpret it.** The compatibility corpus measures a proxy
@@ -276,15 +287,17 @@ no NVIDIA utilization claim and no MoFlux GPU/KV-cache reclamation claim.
 
 ## Published evidence status
 
-`video-seed-sweep.json` and `video-seed-sweep/` hold the reviewed five-seed
-heterogeneous four-arm run published at 0.10.0. Each per-seed file records the
-runtime that produced it in its own `runtime` field; those read **Tyr 0.17.0 and
-Latchflo 0.5.1**. Read that field rather than any prose description — prose drifts,
-and an earlier revision of this file and of `.gitignore` both described this
-corpus as Tyr 0.16.0 / Latchflo 0.5.0, which the files themselves contradict.
+`video-seed-sweep.json` and `video-seed-sweep/` currently contain the
+**eight-seed** adaptive-28-4 corpus generated on 2026-08-26. Its eight raw
+MoFlux arms record **Tyr 0.27.0, Latchflo 0.12.4 and
+async-bulkhead-llm 3.16.0**; the summary has no runtime field. Earlier prose
+incorrectly described this location as the original five-seed 0.10.0 corpus
+on Tyr 0.17.0/Latchflo 0.5.1. The source artifacts, not that stale prose,
+define what is currently published at this path.
 
-New licensed runs use Tyr 0.30.0, Latchflo 0.16.0,
-async-bulkhead-llm 3.17.0, and async-bulkhead-ts 1.0.1. The main sweep retains
+Current licensed commands default to Tyr 0.33.0, Latchflo 0.19.0,
+async-bulkhead-llm 3.17.0 and async-bulkhead-ts 1.0.1. Those are command
+pins, not the runtime of every historical result. The main sweep retains
 one-hop capacity-aware routing, per-pool demand heartbeats, pool-level lending,
 and progressive reconciliation for Anthropic-shaped streams. Demand-aware pool
 lending now records the acknowledged restoration handoff and samples Tyr's
@@ -324,4 +337,4 @@ work. Promotion preserves their recorded runtime and outcomes.
 
 ## Public research replication
 
-`npm run replicate` writes public-arm runs under `replicates/` and aggregates them with `scripts/aggregate.mjs`. This is separate from the licensed video seed sweep.
+`npm run replicate` writes public-arm runs under `results/replicates/` and aggregates them with `scripts/aggregate.mjs`. This is separate from the licensed video seed sweep.

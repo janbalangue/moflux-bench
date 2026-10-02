@@ -158,6 +158,12 @@ check("every reviewed entry is under results/", () => {
   }
 });
 
+check("new publication layout is protected from run output", () => {
+  const dir = path.join(RESULTS, "published", "vllm-metal", "control", "20261002T000000Z");
+  assert.throws(() => assertSafeRunDir(dir, ROOT), /reviewed evidence/);
+  assert.throws(() => assertSafeOutputFile(path.join(dir, "summary.json"), ROOT), /reviewed evidence/);
+});
+
 console.log();
 if (failures.length > 0) {
   console.log(`${failures.length} check(s) failed.`);

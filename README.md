@@ -91,10 +91,11 @@ heartbeat. The benchmark generates one local-only shared routing secret in
 `demo/moflux/.env`; the secret is never committed or distributed by Latchflo.
 Latchflo remains off the synchronous request path.
 
-The committed `results/` corpus is deliberately unchanged. Those files are
-historical evidence and retain their recorded Tyr 0.17.0/Latchflo 0.5.1 runtime
-metadata. New licensed runs use Tyr 0.33.0/Latchflo 0.19.0 and should be compared
-as a new evidence set rather than silently relabeling the old one.
+Published results span multiple runtime cohorts. Read the
+[recorded evidence catalog](results/CATALOG.md), which distinguishes command
+pins from historical runtime metadata and passes from negative results.
+New licensed commands use Tyr 0.33.0/Latchflo 0.19.0; existing evidence retains
+the versions that produced it. See [documented corrections](results/CORRECTIONS.md).
 
 ### Current runtime pins and comparison limits
 
@@ -757,8 +758,10 @@ MoFlux arm lends one of its three protected interactive slots instead of two,
 and everything else about the long-context experiment is unchanged. It tests
 whether the published one-slot reserve is too small, after the long-context
 repeat failed H2 against native priority. Results go to their own corpus,
-`results/runs/vllm-metal-long-context-unlent-concurrency-2/`. No sweep has been
-run with this profile yet.
+`results/runs/vllm-metal-long-context-unlent-concurrency-2/`. Two reviewed
+five-seed sweeps, recorded at harness 0.46.0 and 0.47.1, pass their configured
+gates; H2's median sits exactly on the -0.04 req/s margin in both.
+See the [catalog](results/CATALOG.md) for the separate evidence paths.
 
 The harness measures client SLO goodput and TTFT alongside vLLM queue/running
 occupancy, KV-cache usage, preemptions, TTFT/ITL and queue/prefill/decode timing,

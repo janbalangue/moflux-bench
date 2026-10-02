@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** End-to-end seed-sweep orchestration regression using a fake single-pair presenter. */
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
@@ -13,6 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import { publishRun } from "./publish-evidence-lib.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -235,6 +236,7 @@ try {
   mkdirSync(path.join(sweepDir, "seed-1"), { recursive: true });
   writeFileSync(path.join(sweepDir, "seed-1", "summary.json"), "{}\n");
   writeFileSync(path.join(sweepDir, "seed-1", "tyr-overload.yaml"), "version: 1\n");
+  writeFileSync(path.join(sweepDir, "backend-events.jsonl"), '{"event":"scheduled"}\n');
 
   // Promotion is the only path to reviewed evidence, and it refuses to replace
   // an existing copy without --force.
@@ -251,12 +253,45 @@ try {
   assert.equal(existsSync(path.join(reviewedDir, "baseline-seed-2.json")), true);
   assert.equal(existsSync(path.join(reviewedDir, "seed-1", "summary.json")), true);
   assert.equal(existsSync(path.join(reviewedDir, "seed-1", "tyr-overload.yaml")), true);
+  assert.equal(readFileSync(path.join(reviewedDir, "backend-events.jsonl"), "utf8"), '{"event":"scheduled"}\n');
   const promoted = JSON.parse(readFileSync(reviewedSummary, "utf8"));
   const expectedBaseline = path
     .relative(ROOT, path.join(reviewedDir, "baseline-seed-2.json"))
     .split(path.sep)
     .join("/");
   assert.equal(promoted.runs[0].arms.baseline, expectedBaseline);
+  const nestedRoot = path.join(results, "published", "fixture", "control");
+  const runName = "20261002T000000Z";
+  const nested = publishRun({ root: ROOT, resultsRoot: nestedRoot, runDir: sweepDir, name: runName, layout: "run" });
+  const nestedDir = path.join(nestedRoot, runName);
+  assert.equal(nested.summary, path.relative(ROOT, path.join(nestedDir, "summary.json")).split(path.sep).join("/"));
+  assert.equal(readFileSync(path.join(nestedDir, "original-summary.json"), "utf8"), readFileSync(path.join(sweepDir, "summary.json"), "utf8"));
+  assert.equal(readFileSync(path.join(nestedDir, "raw", "backend-events.jsonl"), "utf8"), '{"event":"scheduled"}\n');
+  assert.equal(existsSync(path.join(nestedDir, "raw", "seed-1", "tyr-overload.yaml")), true);
+  const nestedSummary = JSON.parse(readFileSync(path.join(nestedDir, "summary.json"), "utf8"));
+  assert.equal(nestedSummary.runs[0].arms.baseline, path.relative(ROOT, path.join(nestedDir, "raw", "baseline-seed-2.json")).split(path.sep).join("/"));
+  const provenance = JSON.parse(readFileSync(path.join(nestedDir, "provenance.json"), "utf8"));
+  for (const [file, hash] of Object.entries(provenance.sha256)) {
+    const preserved = file === "summary.json" ? path.join(nestedDir, "original-summary.json") : path.join(nestedDir, "raw", file);
+    assert.equal(createHash("sha256").update(readFileSync(preserved)).digest("hex"), hash);
+  }
+  assert.throws(() => publishRun({ root: ROOT, resultsRoot: nestedRoot, runDir: sweepDir, name: runName, layout: "run" }), /already exists/);
+  assert.throws(() => publishRun({ root: ROOT, resultsRoot: nestedRoot, runDir: sweepDir, name: "..", layout: "run" }), /invalid evidence name/);
+  const cli = (args) => spawnSync(process.execPath, [path.join(ROOT, "demo", "publish-evidence.mjs"), `--run=${sweepDir}`, ...args], {
+    cwd: ROOT, encoding: "utf8", env: { ...process.env, MOFLUX_BENCH_RESULTS_DIR: results },
+  });
+  const cliResult = cli(["--experiment=fixture", "--profile=cli", `--as=${runName}`]);
+  assert.equal(cliResult.status, 0, cliResult.stderr);
+  assert.equal(existsSync(path.join(results, "published", "fixture", "cli", runName, "raw", "backend-events.jsonl")), true);
+  for (const [args, expectedError] of [
+    [["--experiment=fixture", `--as=${runName}`], /must be supplied together/],
+    [["--experiment=..", "--profile=cli", `--as=${runName}`], /invalid publication namespace/],
+    [["--experiment=fixture", "--profile=cli", "--as=not-a-date"], /UTC run ID/],
+  ]) {
+    const rejected = cli(args);
+    assert.equal(rejected.status, 1);
+    assert.match(rejected.stderr, expectedError);
+  }
   assert.equal(
     promoted.runs[0].scenario.trace.evidence,
     promoted.runs[0].arms.trace,

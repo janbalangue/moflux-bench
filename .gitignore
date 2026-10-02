@@ -21,11 +21,13 @@ npm-debug.log*
 results/*
 results/runs/
 !results/README.md
+!results/CATALOG.md
+!results/CORRECTIONS.md
 !results/curated/
 !results/curated/**
-# Reviewed five-seed heterogeneous sweep published at v0.10.0. Each per-seed
-# file records the runtime that produced it in its own `runtime` field; as
-# published those read Tyr 0.17.0 / Latchflo 0.5.1.
+!results/published/
+!results/published/**
+# Legacy reviewed sweep path; consult its recorded seeds and raw runtime.
 !results/video-seed-sweep.json
 !results/video-seed-sweep/
 !results/video-seed-sweep/**

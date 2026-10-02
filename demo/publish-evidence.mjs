@@ -102,11 +102,21 @@ try {
   }
 
   const runDir = resolveRun(name);
+  const experiment = args.get("experiment");
+  const profile = args.get("profile");
+  if (Boolean(experiment) !== Boolean(profile)) throw new Error("--experiment and --profile must be supplied together");
+  for (const value of [experiment, profile].filter(Boolean)) {
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(value) || value === "..") {
+      throw new Error(`invalid publication namespace ${JSON.stringify(value)}`);
+    }
+  }
+  if (experiment && !/^\d{8}T\d{6}Z$/.test(name)) throw new Error("new-layout --as must be the UTC run ID YYYYMMDDTHHMMSSZ");
   const report = publishRun({
     root: ROOT,
-    resultsRoot: RESULTS,
+    resultsRoot: experiment ? path.join(RESULTS, "published", experiment, profile) : RESULTS,
     runDir,
     name,
+    layout: experiment ? "run" : "legacy",
     force: args.get("force") === "true",
   });
 

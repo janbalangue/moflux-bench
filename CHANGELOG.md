@@ -2,6 +2,19 @@
 
 ## 0.50.0 - 2026-10-02
 
+### Evidence organization and corrections
+
+- Add a catalog of all 21 published summaries with source-derived dates,
+  seed counts, proof outcomes, runtimes and provenance coverage. Publication
+  verification detects stale catalog content and unindexed legacy summaries.
+- Correct stale corpus descriptions and runtime pins, including the current
+  eight-seed video corpus, the present negative local-contention baseline,
+  and both published two-slot vLLM reserve sweeps. See the dated
+  [correction record](results/CORRECTIONS.md).
+- Support `results/published/<experiment>/<profile>/<UTC-run-id>/` for future
+  promotions, with raw files, preserved original summary and SHA-256 provenance.
+  Preserve existing citation paths. Include scheduler JSONL in promotion.
+
 ### Added
 
 - Preregistered `admission-8-unlent-2` policy for the vLLM Metal

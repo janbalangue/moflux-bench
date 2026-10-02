@@ -1,6 +1,10 @@
 # Curated evidence
 
-Only intentionally reviewed evidence belongs here. Generated benchmark output elsewhere under `results/` is ignored by Git.
+This is a legacy location for reviewed evidence, with the same review status
+as the top-level result corpora. It contains both historical and recent runs.
+Use the [complete catalog](../CATALOG.md) as the entry point, and see the
+[organization/correction record](../CORRECTIONS.md) for the stable-path policy.
+Generated sweeps belong under ignored `results/runs/`.
 
 ## vLLM Metal long-context paired runs (0.45.0 / 0.45.1)
 
@@ -24,4 +28,11 @@ The profile was added on a wrong premise. The two-slot profile's p95 cost was at
 
 What the result does show: on this provider at this load, one extra batch stream during contention costs interactive roughly 10-15% p95. That includes the added load from interactive requests piling up.
 
-The historical artifacts above retain their recorded harness versions. The paired vLLM corpus includes a pass and a failed repeat; it is not a claim of reliable current performance. Current reviewed comparisons live under their explicitly published top-level `results/<evidence-name>.json` and companion directories, and new runs become reviewed evidence only through deliberate promotion.
+The historical artifacts above retain their recorded harness versions. The paired vLLM corpus includes a pass and a failed repeat; it is not a claim of reliable current performance. Reviewed comparisons occupy both top-level and curated legacy paths. New publications use `results/published/<experiment>/<profile>/<UTC-run-id>/`; every run becomes reviewed evidence only through deliberate promotion.
+
+## Backend availability v2 and v3
+
+[vllm-metal-backend-availability/](vllm-metal-backend-availability/README.md)
+retains the five-seed v2 control and valid negative v3 result separately. v3
+fails H2; neither meets the independent availability-distribution gate. Raw
+scheduler JSONL and source manifests are retained for both.

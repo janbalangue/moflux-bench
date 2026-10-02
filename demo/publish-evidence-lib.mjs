@@ -16,6 +16,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 
 import { isReviewedEvidence, repoRelative } from "./evidence-paths-lib.mjs";
 
@@ -81,7 +82,7 @@ export function evidenceFiles(runDir, relativeDir = "") {
     }
     if (!entry.isFile()) continue;
     if (relativeDir === "" && entry.name === "summary.json") continue;
-    if (!/\.(?:json|ya?ml)$/i.test(entry.name)) continue;
+    if (!/\.(?:jsonl?|ya?ml)$/i.test(entry.name)) continue;
     files.push(relative);
   }
   return files.sort();
@@ -94,17 +95,19 @@ export function evidenceFiles(runDir, relativeDir = "") {
  * the entire point: an accidental overwrite of cited evidence should cost a
  * deliberate flag, not happen as a side effect of running the demo.
  */
-export function publishRun({ root, resultsRoot, runDir, name, force = false, now = new Date() }) {
-  if (!name || /[^a-zA-Z0-9._-]/.test(name)) {
+export function publishRun({ root, resultsRoot, runDir, name, layout = "legacy", force = false, now = new Date() }) {
+  if (!name || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(name)) {
     throw new Error(`invalid evidence name ${JSON.stringify(name)}`);
   }
+  if (!["legacy", "run"].includes(layout)) throw new Error(`invalid publication layout ${JSON.stringify(layout)}`);
   const summaryFile = path.join(runDir, "summary.json");
   if (!existsSync(summaryFile)) {
     throw new Error(`no summary.json in ${repoRelative(runDir, root)}; is that a completed run?`);
   }
 
-  const targetSummary = path.join(resultsRoot, `${name}.json`);
   const targetDir = path.join(resultsRoot, name);
+  const targetSummary = layout === "run" ? path.join(targetDir, "summary.json") : path.join(resultsRoot, `${name}.json`);
+  const rawDir = layout === "run" ? path.join(targetDir, "raw") : targetDir;
   const targetSummaryRel = repoRelative(targetSummary, root);
   const targetDirRel = repoRelative(targetDir, root);
 
@@ -128,7 +131,7 @@ export function publishRun({ root, resultsRoot, runDir, name, force = false, now
   const retargeted = retargetSummary(
     summary,
     repoRelative(runDir, root),
-    targetDirRel,
+    repoRelative(rawDir, root),
   );
   // Multi-seed sweep summaries may retain convenience pointers back to their
   // generated run directory. Once promoted, those pointers must name the
@@ -138,7 +141,7 @@ export function publishRun({ root, resultsRoot, runDir, name, force = false, now
       ...retargeted.outputs,
       ...(Object.hasOwn(retargeted.outputs, "summary") ? { summary: targetSummaryRel } : {}),
       ...(Object.hasOwn(retargeted.outputs, "seedRunsDirectory")
-        ? { seedRunsDirectory: targetDirRel }
+        ? { seedRunsDirectory: repoRelative(rawDir, root) }
         : {}),
     };
   }
@@ -146,15 +149,29 @@ export function publishRun({ root, resultsRoot, runDir, name, force = false, now
   retargeted.publishedFrom = repoRelative(runDir, root);
 
   rmSync(targetDir, { recursive: true, force: true });
-  mkdirSync(targetDir, { recursive: true });
+  mkdirSync(rawDir, { recursive: true });
   for (const file of files) {
-    const destination = path.join(targetDir, file);
+    const destination = path.join(rawDir, file);
     mkdirSync(path.dirname(destination), { recursive: true });
     copyFileSync(path.join(runDir, file), destination);
   }
   // No trailing newline: matches every summary already published, so a
   // republish shows only the changes that are real.
   writeFileSync(targetSummary, JSON.stringify(retargeted, null, 2));
+  // Preserve the source summary and a complete hash manifest for new-layout
+  // publications. Legacy promotions retain their established artifact shape.
+  if (layout === "run") {
+    copyFileSync(summaryFile, path.join(targetDir, "original-summary.json"));
+    const sha256 = Object.fromEntries(["summary.json", ...files].map((file) => [
+      file, createHash("sha256").update(readFileSync(path.join(runDir, file))).digest("hex"),
+    ]));
+    writeFileSync(path.join(targetDir, "provenance.json"), JSON.stringify({
+      sourceRun: repoRelative(runDir, root), publishedAt: now.toISOString(),
+      originalRuntime: summary.runtime ?? null, sha256,
+      layout: "run", rawDirectory: "raw",
+      note: "Source summary preserved as original-summary.json; JSON, YAML and scheduler JSONL bytes preserved under raw/. Text process logs omitted.",
+    }, null, 2) + "\n");
+  }
 
   return {
     name,

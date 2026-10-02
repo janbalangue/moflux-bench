@@ -15,6 +15,9 @@ const required = [
   "CONTRIBUTING.md",
   "SECURITY.md",
   "VERIFICATION.md",
+  "results/CATALOG.md",
+  "results/CORRECTIONS.md",
+  "scripts/evidence-catalog.mjs",
   ".gitignore",
   ".github/workflows/ci.yml",
   "demo/moflux/.env.example",
@@ -121,10 +124,11 @@ for (const { full, rel } of files) {
   // Approved paths come from the same declaration the runtime guards use, so
   // this check and demo/evidence-paths-lib.mjs can never drift apart.
   const isPublishedResultJson = rel.endsWith(".json") && isReviewedEvidence(rel);
+  const isPublishedResultJsonl = rel.endsWith(".jsonl") && isReviewedEvidence(rel);
   const isGeneratedRun = rel.startsWith(`results/${RUNS_DIRNAME}/`);
   if (isGeneratedRun) {
     findings.push(`${rel}: generated run output must be deleted or published before release`);
-  } else if (rel.startsWith("results/") && rel.endsWith(".json") && !isPublishedResultJson) {
+  } else if (rel.startsWith("results/") && /\.jsonl?$/.test(rel) && !isPublishedResultJson && !isPublishedResultJsonl) {
     findings.push(`${rel}: generated JSON is not in an approved published-evidence path`);
   }
   if (rel === "scripts/verify-publication.mjs") continue;
@@ -137,6 +141,13 @@ for (const { full, rel } of files) {
   if (isPublishedResultJson) {
     try { JSON.parse(text); } catch (error) {
       findings.push(`${rel}: invalid published-evidence JSON (${error.message})`);
+    }
+  }
+  if (isPublishedResultJsonl) {
+    try {
+      for (const line of text.split("\n").filter((value) => value.trim())) JSON.parse(line);
+    } catch (error) {
+      findings.push(`${rel}: invalid published scheduler JSONL (${error.message})`);
     }
   }
 }
@@ -1059,6 +1070,11 @@ if (inRepo.status === 0 && inRepo.stdout.trim() === "true") {
 } else {
   console.log("SKIP  reviewed-evidence immutability (not a git work tree)");
 }
+
+const catalogCheck = spawnSync(process.execPath, [path.join(ROOT, "scripts/evidence-catalog.mjs"), "--check"], {
+  cwd: ROOT, encoding: "utf8",
+});
+if (catalogCheck.status !== 0) findings.push(`evidence catalog verification failed: ${catalogCheck.stderr || catalogCheck.stdout}`);
 
 if (findings.length > 0) {
   console.error("Publication verification failed:\n");

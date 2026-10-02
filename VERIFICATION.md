@@ -2,6 +2,13 @@
 
 ## 0.50.0 admission boundary
 
+Evidence organization checks: `verify:catalog` derives the catalog from all
+published summary sources and refuses omissions or stale content.
+`demo/verify-seed-sweep-runner.mjs` verifies the new publication layout, raw
+pointer retargeting, JSONL retention, exact preserved source-summary bytes,
+all generated source hashes and overwrite refusal. Evidence-path tests confirm
+that the new `published/` tree is unreachable from run output.
+
 `npm run verify:admission-boundary` checks return-window request classification,
 the preregistered readings, complete planned seed sets, paired traces and
 runtime controls, and inconclusive results when required evidence is missing.

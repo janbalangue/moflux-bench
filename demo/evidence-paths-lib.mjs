@@ -34,6 +34,7 @@ import path from "node:path";
  * historical. Promote it with publish-evidence.mjs if it should be citable.
  */
 export const REVIEWED_EVIDENCE = Object.freeze([
+  "results/published/",
   "results/curated/",
   "results/tenant-fairness.json",
   "results/tenant-fairness/",

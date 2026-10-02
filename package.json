@@ -9,6 +9,8 @@
     "node": ">=22"
   },
   "scripts": {
+    "evidence:catalog": "node scripts/evidence-catalog.mjs",
+    "verify:catalog": "node scripts/evidence-catalog.mjs --check",
     "check": "node scripts/check-syntax.mjs",
     "demo": "node demo/seed-sweep.mjs --seeds=1-5 --pause-ms=0 --provider-api=anthropic",
     "demo:arms": "node demo/ensure-env.mjs --quiet && node demo/seed-sweep.mjs --seeds=1-5 --pause-ms=0 --control-arms=all",
