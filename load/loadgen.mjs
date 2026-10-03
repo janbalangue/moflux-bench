@@ -767,7 +767,13 @@ async function issue(entry) {
           signal: runAbort.signal,
         });
 
-        if (attemptSample) attemptSample.httpStatus = response.status;
+        if (attemptSample) {
+          attemptSample.httpStatus = response.status;
+          attemptSample.admissionId = response.headers.get("x-admission-id");
+          attemptSample.admissionReason = response.headers.get("x-admission-reason");
+          attemptSample.responseHeadersAtMs = offsetMs();
+          attemptSample.responseHeadersAtEpochMs = Date.now();
+        }
         progress.lastStatus = response.status;
         const responseAdmissionClass = response.headers.get("x-admission-class") ?? "unclassified";
         s.admissionClassResponses[responseAdmissionClass] =
@@ -1015,6 +1021,7 @@ async function issue(entry) {
         // while iterating response.body rather than from fetch() itself. Treat
         // that as a retryable transport failure, not an unhandled rejection.
         let ttftMs = null;
+        let outputTokensReported = false;
         let outputTokens = 0;
         let inputTokens = null;
         let streamError = null;
@@ -1068,6 +1075,7 @@ async function issue(entry) {
               }
               if (parsed?.usage?.completion_tokens !== undefined) {
                 outputTokens = parsed.usage.completion_tokens;
+                outputTokensReported = true;
               } else if (
                 parsed?.type === "message_delta" &&
                 parsed?.usage?.output_tokens !== undefined
@@ -1130,7 +1138,12 @@ async function issue(entry) {
           }
           continue;
         }
-        if (attemptSample) attemptSample.outcome = "completed";
+        if (attemptSample) {
+          attemptSample.outcome = "completed";
+          attemptSample.outputTokens = outputTokens;
+          attemptSample.outputTokensReported = outputTokensReported;
+          attemptSample.inputTokens = inputTokens;
+        }
         s.success += 1;
         markSuccess(cls);
         s.outputTokens += outputTokens;

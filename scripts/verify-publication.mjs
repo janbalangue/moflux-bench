@@ -63,6 +63,15 @@ const required = [
   "demo/admission-boundary-lib.mjs",
   "demo/admission-boundary-analysis.mjs",
   "demo/verify-admission-boundary.mjs",
+  "demo/BURST-RECOVERY.md",
+  "demo/burst-recovery-lib.mjs",
+  "demo/burst-recovery-diagnostics-lib.mjs",
+  "demo/burst-recovery-run-lib.mjs",
+  "demo/burst-recovery.mjs",
+  "demo/burst-recovery-analysis.mjs",
+  "demo/verify-burst-recovery.mjs",
+  "demo/run-cancellation-lib.mjs",
+  "demo/verify-run-cancellation.mjs",
 ];
 const ignoredDirectories = new Set([".git", "node_modules", "coverage", ".tmp", "tmp"]);
 const forbiddenNames = new Set([".DS_Store", "Thumbs.db"]);
@@ -560,8 +569,8 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.50.0") {
-  findings.push("package.json: the current benchmark release must be version 0.50.0");
+if (pkg.version !== "0.51.0") {
+  findings.push("package.json: the current benchmark release must be version 0.51.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.

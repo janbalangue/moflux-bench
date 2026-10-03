@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.51.0 - 2026-10-03
+
+- Add the preregistered `burst-recovery-v3` paired Metal experiment: one unlent
+  interactive slot, two setup batch borrowers, a simultaneous protected burst
+  and 90s of sustained return traffic. Short/long variants change only the two
+  borrowers' output caps and measure their actual remaining lifetimes. A short
+  batch prime, staggered setup and owned-floor readiness gate establish the
+  intended pre-return state.
+- Capture exact Tyr admissions, client response/usage fields and scheduler
+  running/waiting IDs. Report fresh borrowing, protected-limit restoration,
+  borrowed-occupancy brackets and interactive SLO outcomes separately, retaining
+  rejected, failed, missing and censored requests.
+- Add descriptive clock-drift fits and residual ranges, outcomes after accounting
+  zero, original-borrower completion times, KV saturation observations,
+  preemption counters and borrower scheduler transitions. Preserve the raw 5ms
+  clock gates; these diagnostics do not establish service recovery or physical
+  engine reclamation.
+- Require continuous admission provenance and telemetry coverage through the
+  final observation endpoint, rejecting gaps over 750ms and empty return windows.
+  Retain sampler counts, endpoint coverage, errors, maximum gaps and oversized
+  gap brackets in validity diagnostics.
+  Add pilot, alternating five-pair sweep, dry-run and raw reanalysis commands;
+  retain v1/v2 traces and horizons and refuse pairs from different protocols.
+  Non-pilot runs require at least five pairs, stable runtime identity, matched
+  normalized traces and measured lifetime separation.
+- Extend regression coverage and document retained pilot outcomes. The latest
+  v3 pilot (`20261003T201440Z`) fails clock stability in both trials and sampler
+  integrity in long, leaving zero valid matched pairs. A valid v3 pilot and the
+  five-pair sweep remain pending. No new live result is published.
+- Document the approximately 30ppm fitted clock drift over 170s of capture,
+  raw error ranges of 5.1–5.6ms, and long-trial telemetry gaps of 1.108s and
+  1.134s. Measurement changes require preregistration and a new protocol
+  version; residual fits do not retroactively validate failed pilots.
+- Make burst-run cancellation cooperative: forward interruption to the active
+  trial, wait for cleanup of owned processes, stop before the next trial and
+  retain an explicitly invalid partial aggregate. Preserve incomplete telemetry
+  and cleanup diagnostics when a trial is interrupted.
+
 ## 0.50.0 - 2026-10-02
 
 ### Evidence organization and corrections

@@ -1788,3 +1788,52 @@ The opt-in [backend availability experiment](demo/BACKEND-AVAILABILITY.md) corre
 grant restoration with request-level scheduler service under sustained KV pressure.
 It retains timing bounds, tail percentiles, empirical CDFs, failures and censoring.
 Start with `npm run demo:vllm:metal:availability:dry-run`.
+
+### Protected burst recovery experiment
+
+The [preregistered paired experiment](demo/BURST-RECOVERY.md) tests current
+MoFlux with one never-lent interactive slot and two batch borrowers. Two
+protected requests return together, followed by sustained traffic from both
+classes. Short/long variants change only the two designated borrowers' output caps; exact
+admission records and scheduler IDs distinguish draining from fresh borrowing.
+
+```sh
+npm run demo:vllm:metal:burst-recovery:dry-run
+npm run demo:vllm:metal:burst-recovery:pilot
+npm run demo:vllm:metal:burst-recovery
+```
+
+The current protocol is `burst-recovery-v3` (MoFlux Bench 0.51.0). It retains
+v2's short prime, staggered setup and owned-floor readiness gate, and extends
+sustained post-return arrivals from 40s to 90s to observe long-borrower draining.
+Historical v1/v2 runs remain readable with their original trace and horizon.
+Run the v3 instrumentation pilot before the default alternating five-pair sweep;
+non-pilot runs require at least five seeds. Invalid, negative and censored trials
+are retained under `results/runs/vllm-metal-burst-recovery/`.
+
+The repeat v2 pilot passed all validity gates in both trials and recorded no new
+borrowing after return, but the long trial did not drain within 40s. Both trials
+completed 14/41 interactive requests; SLO successes were 12/41 and 14/41. This
+pilot does not establish a general performance effect. Report protected-limit
+restoration, borrower draining and interactive SLO outcomes separately; see the
+[protocol amendment](demo/BURST-RECOVERY.md#successful-v2-pilot-and-v3-amendment).
+The latest v3 seed-3 pilot `20261003T201440Z` is invalid: both trials fail
+clock stability, and long also has telemetry gaps above 750ms. There are zero
+valid matched pairs and no formal paired estimates. It records no fresh borrowed
+batch admissions after return. Descriptively, short completes 38/91 interactive
+requests and long 31/91; SLO successes are 30/91 and 29/91. Short still rejects
+40/75 requests sent after sampled accounting zero. These observations do not
+establish a general performance effect or a service-recovery timestamp.
+
+Diagnostics report clock drift and residual ranges, outcomes after accounting
+zero, completion of the original borrowers, KV saturation samples, preemption
+counters and scheduler transitions. They preserve the existing validity gates
+and distinguish accounting from continuing engine work. Diagnose the timing and
+sampling failures, obtain a valid v3 pilot, then run the five-pair sweep; see the
+[latest pilot record](demo/BURST-RECOVERY.md#latest-v3-pilot-and-descriptive-diagnostics).
+Clock fits are about 30ppm: over roughly 170s of backend capture this accumulates
+about 5.1ms, already beyond the existing 5ms raw-range limit. Any measurement
+revision must be preregistered and versioned before new collection; fitted
+residuals do not validate these failed pilots. Long also has 1.108s and 1.134s
+telemetry gaps above the 750ms limit.
+No results from this experiment have been published.

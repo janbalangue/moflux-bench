@@ -15,6 +15,7 @@ import time
 
 TARGET = "vllm.v1.core.sched.scheduler"
 OUTPUT = os.environ.get("MOFLUX_BACKEND_EVENTS")
+BURST_RECOVERY = os.environ.get("MOFLUX_BURST_RECOVERY") == "true"
 # vLLM wraps the body's request_id as chatcmpl-<id>-<8 hex>. Stop at the first
 # attempt suffix: a hex tail such as "a0173829" must not be read as the attempt.
 BENCH_ID = re.compile(r"moflux-bench-(?:interactive|batch)-[A-Za-z0-9_-]+?-a[0-9]+(?=-|$)")
@@ -58,7 +59,14 @@ def install(module):
         # Observe pressure before allocations/reclamation in this step.
         now = time.monotonic_ns() / 1e6
         if now - last_sample[0] >= 100:
-            emit("pressure", kvUsage=self.kv_cache_manager.usage,
+            identities = {}
+            if BURST_RECOVERY:
+                identities = dict(
+                    runningRequestIds=[rid for request in self.running
+                                       if (rid := bench_id(request.request_id))],
+                    waitingRequestIds=[rid for request in self.waiting
+                                       if (rid := bench_id(request.request_id))])
+            emit("pressure", **identities, kvUsage=self.kv_cache_manager.usage,
                  running=len(self.running), waiting=len(self.waiting))
             last_sample[0] = now
         result = schedule(self, *args, **kwargs)
@@ -74,7 +82,7 @@ def install(module):
     cls.schedule = observed_schedule
     with open(module.__file__, "rb") as source:
         digest = hashlib.sha256(source.read()).hexdigest()
-    emit("installed", schemaVersion=2, clockBasis="realtime", schedulerSourceSha256=digest)
+    emit("installed", schemaVersion=3 if BURST_RECOVERY else 2, clockBasis="realtime", schedulerSourceSha256=digest)
 
 
 class ObserverLoader(importlib.abc.Loader):

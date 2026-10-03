@@ -42,7 +42,8 @@ const OUTPUT_CHARS = 2000;
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function fetchWithTimeout(url, options = {}, timeoutMs = 1500) {
-  return fetch(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return fetch(url, { ...options, signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout });
 }
 
 /**
@@ -55,13 +56,13 @@ export async function fetchWithTimeout(url, options = {}, timeoutMs = 1500) {
  * connectivity, not test the state of an unrelated connection pool, so it
  * disables connection pooling explicitly.
  */
-export function probeHttp(url, timeoutMs = 1200) {
+export function probeHttp(url, timeoutMs = 1200, signal = undefined) {
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
     const get = parsed.protocol === "https:" ? httpsGet : httpGet;
     const request = get(
       parsed,
-      { agent: false, headers: { connection: "close" } },
+      { agent: false, headers: { connection: "close" }, signal },
       (response) => {
         const status = response.statusCode ?? 0;
         response.resume();
@@ -113,6 +114,17 @@ export function fetchTextFresh(url, timeoutMs = 2000, headers = {}) {
 }
 
 export const hostChildren = new Set();
+
+function ownedGroupAlive(child) {
+  if (!child?.hostProcessGroup) return false;
+  try { process.kill(-child.hostProcessGroup, 0); return true; }
+  catch (error) {
+    if (error.code !== "ESRCH") throw error;
+    // Once the owned group is gone, retire its identifier permanently.
+    child.hostProcessGroup = null;
+    return false;
+  }
+}
 
 export function killChildTree(child, signal = "SIGTERM") {
   if (!child?.pid) return;
@@ -197,6 +209,8 @@ export function launchCommand(
     detached: process.platform !== "win32",
   });
   child.label = label;
+  child.hostProcessGroup = process.platform !== "win32" ? child.pid ?? null : null;
+  child.hostClosed = false;
   child.recentOutput = [];
   child.startedAt = Date.now();
   child.outputLogFile = logFile ? path.resolve(logFile) : null;
@@ -223,7 +237,12 @@ export function launchCommand(
     process.stderr.write(`${RED}[${label}] ${sanitizeOutput(child, chunk)}${OFF}`);
   });
   hostChildren.add(child);
-  child.on("close", () => hostChildren.delete(child));
+  child.on("close", () => {
+    child.hostClosed = true;
+    // A detached worker may ignore SIGTERM and have no inherited stdio. Its
+    // leader's close event therefore does not end ownership of the group.
+    if (!ownedGroupAlive(child)) hostChildren.delete(child);
+  });
   return child;
 }
 
@@ -288,18 +307,19 @@ export async function waitForChildOutput(child, marker, {
 
 export async function terminateHostChild(child, graceMs = 1500) {
   if (!child) return;
-  if (child.exitCode === null && child.signalCode === null) killChildTree(child, "SIGTERM");
-  const closed = await Promise.race([
-    new Promise((resolve) => child.once("close", () => resolve(true))),
-    sleep(graceMs).then(() => false),
-  ]);
-  if (!closed && child.exitCode === null) {
+  const owned = Boolean(child.hostProcessGroup);
+  const running = () => owned ? ownedGroupAlive(child) : !child.hostClosed;
+  if (running()) killChildTree(child, "SIGTERM");
+  const deadline = Date.now() + graceMs;
+  while (running() && Date.now() < deadline) await sleep(25);
+  if (running()) {
+    // Escalate only this launchCommand's recorded group, even when its leader
+    // closed already and the surviving workers have no inherited pipes.
     killChildTree(child, "SIGKILL");
-    await Promise.race([
-      new Promise((resolve) => child.once("close", resolve)),
-      sleep(500),
-    ]);
+    const forceDeadline = Date.now() + 500;
+    while (running() && Date.now() < forceDeadline) await sleep(25);
   }
+  child.hostProcessGroup = null;
   child.stdout?.destroy();
   child.stderr?.destroy();
   hostChildren.delete(child);
@@ -322,11 +342,13 @@ export async function waitFor(url, {
   statuses = [200],
   label = url,
   child = null,
+  signal = undefined,
 } = {}) {
   const startedAt = Date.now();
   const deadline = startedAt + timeoutMs;
   let last = "no response";
   while (Date.now() < deadline) {
+    signal?.throwIfAborted();
     const ended = describeChildExit(child);
     if (ended) {
       throw new Error(
@@ -334,10 +356,11 @@ export async function waitFor(url, {
       );
     }
     try {
-      const response = await probeHttp(url, 1200);
+      const response = await probeHttp(url, 1200, signal);
       last = `HTTP ${response.status}`;
       if (statuses.includes(response.status)) return response;
     } catch (error) {
+      signal?.throwIfAborted();
       last = error instanceof Error ? error.message : String(error);
     }
     await sleep(500);
@@ -388,9 +411,11 @@ export async function assertHostPortFree(port, {
   label = `port ${port}`,
   timeoutMs = 5000,
   host = "0.0.0.0",
+  signal = undefined,
 } = {}) {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
+    signal?.throwIfAborted();
     if (await isHostPortFree(port, host)) return;
     if (Date.now() >= deadline) break;
     await sleep(250);

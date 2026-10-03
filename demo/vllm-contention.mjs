@@ -46,16 +46,16 @@ import {
   runId as newRunId,
 } from "./evidence-paths-lib.mjs";
 import {
-  assertHostPortFree,
+  assertHostPortFree as hostAssertHostPortFree,
   childOutputTail,
   fetchTextFresh,
-  fetchWithTimeout,
+  fetchWithTimeout as hostFetchWithTimeout,
   launchCommand,
   launchNode,
-  sleep,
+  sleep as hostSleep,
   stopHostChildren,
   terminateHostChild,
-  waitFor,
+  waitFor as hostWaitFor,
 } from "./host-process-lib.mjs";
 import { startIdentityFixture } from "./identity-fixture-lib.mjs";
 import {
@@ -73,7 +73,6 @@ import {
 } from "./restoration-enforceability-lib.mjs";
 import {
   assertDockerAvailable,
-  composeCommand,
   ensureRuntimeImage,
   parseEnvFile,
 } from "./runtime-image-lib.mjs";
@@ -127,7 +126,9 @@ import {
 } from "./vllm-contention-lib.mjs";
 
 import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, VALID_AVAILABILITY_STATUSES, availabilityProtocol, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
+import { BURST_PROTOCOL, BURST_WORKLOAD, burstTrace, analyzeBurstTrial } from "./burst-recovery-lib.mjs";
 import { summarizeBorrowAccounting, correlateReturnEvidence } from "./vllm-reporting-lib.mjs";
+import { installRunCancellation, runCooperativeChild } from "./run-cancellation-lib.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const execFileAsync = promisify(execFile);
@@ -180,7 +181,7 @@ function parseSeeds(raw) {
 function parseArms(raw) {
   const unique = [...new Set(String(raw).split(",").map((value) => value.trim()).filter(Boolean))];
   for (const id of unique) vllmArm(id);
-  if (unique.length < 2) throw new Error("--arms must name at least two arms");
+  if (unique.length < (args.has("burst-recovery") ? 1 : 2)) throw new Error("--arms must name at least two arms");
   return unique;
 }
 
@@ -197,7 +198,8 @@ try {
   vllmPolicyProfileByName(policyProfile, DEFAULT_WORKLOAD);
   OPT = Object.freeze({
     seeds: parseSeeds(str("seeds", `1-${VLLM_PUBLICATION_SEED_COUNT}`)),
-    arms: parseArms(str("arms", VLLM_ARM_IDS.join(","))),
+    arms: parseArms(str("arms", args.has("burst-recovery") ? "moflux" : VLLM_ARM_IDS.join(","))),
+    burstRecovery: args.has("burst-recovery") ? str("burst-recovery", "") : null,
     backend,
     policyProfile,
     image: str("image", process.env.MOFLUX_VLLM_IMAGE ?? DEFAULT_VLLM_IMAGE),
@@ -210,7 +212,7 @@ try {
       "served-model",
       process.env.MOFLUX_VLLM_SERVED_MODEL ?? DEFAULT_VLLM_SERVED_MODEL,
     ),
-    durationMs: num("duration-ms", DEFAULT_WORKLOAD.durationMs),
+    durationMs: num("duration-ms", args.has("burst-recovery") ? BURST_WORKLOAD.durationMs : DEFAULT_WORKLOAD.durationMs),
     warmupRequestsPerClass: num(
       "warmup-requests-per-class",
       VLLM_WARMUP_REQUESTS_PER_CLASS,
@@ -228,7 +230,7 @@ try {
     telemetryIntervalMs: num("telemetry-interval-ms", DEFAULT_SAMPLING.vllmIntervalMs),
     managedTelemetryIntervalMs: num(
       "managed-telemetry-interval-ms",
-      flag("backend-availability") ? AVAILABILITY_MANAGED_INTERVAL_MS : DEFAULT_SAMPLING.managedIntervalMs,
+      (flag("backend-availability") || args.has("burst-recovery")) ? AVAILABILITY_MANAGED_INTERVAL_MS : DEFAULT_SAMPLING.managedIntervalMs,
     ),
     platformTelemetryIntervalMs: num(
       "platform-telemetry-interval-ms",
@@ -248,6 +250,12 @@ try {
     runId: str("run-id", newRunId()),
     out: args.has("out") ? path.resolve(str("out", "")) : null,
   });
+  if (OPT.burstRecovery !== null && (!["short", "long"].includes(OPT.burstRecovery) ||
+      OPT.backend !== "metal" || DEFAULT_WORKLOAD.profile !== "metal-long-context-v1" ||
+      OPT.policyProfile !== "unlent-concurrency-1" || OPT.arms.join(",") !== "moflux" ||
+      OPT.backendAvailability || OPT.durationMs !== BURST_WORKLOAD.durationMs || OPT.doctor)) {
+    throw new Error(`--burst-recovery=short|long requires Metal long-context, unlent-concurrency-1, only moflux, ${BURST_WORKLOAD.durationMs}ms, no availability/doctor`);
+  }
   if (OPT.backendAvailability && (OPT.backend !== "metal" || !DEFAULT_WORKLOAD.engine)) {
     throw new Error("--backend-availability requires --backend=metal --workload=metal-long-context-v1");
   }
@@ -302,7 +310,7 @@ try {
 }
 
 const WORKLOAD = Object.freeze({
-  ...DEFAULT_WORKLOAD,
+  ...(OPT.burstRecovery ? BURST_WORKLOAD : DEFAULT_WORKLOAD),
   durationMs: OPT.durationMs,
   windowMs: OPT.durationMs,
 });
@@ -315,7 +323,7 @@ const SAMPLING = Object.freeze({
   platformIntervalMs: OPT.platformTelemetryIntervalMs,
 });
 const IS_METAL = OPT.backend === "metal";
-const SWEEP_NAME = vllmSweepNameFor(OPT.backend, WORKLOAD, OPT.policyProfile) +
+const SWEEP_NAME = OPT.burstRecovery ? `vllm-metal-burst-recovery-${OPT.burstRecovery}` : vllmSweepNameFor(OPT.backend, WORKLOAD, OPT.policyProfile) +
   (OPT.backendAvailability ? `-backend-availability-${OPT.availabilityProtocol}` : "");
 /** The selected return request's prompt size: enlarged under v3, class size under v2. */
 const AVAILABILITY_RETURN_INPUT_CHARS =
@@ -387,6 +395,7 @@ const plan = {
   gpuIndex: IS_METAL ? "not-applicable" : OPT.gpuIndex,
   arms: OPT.arms.join(","),
   seeds: OPT.seeds.join(","),
+  burstRecovery: OPT.burstRecovery,
   backendAvailability: OPT.backendAvailability,
   availabilityProtocol: OPT.backendAvailability ? OPT.availabilityProtocol : null,
   availabilityReturnInputChars: OPT.backendAvailability ? AVAILABILITY_RETURN_INPUT_CHARS : null,
@@ -424,6 +433,14 @@ if (OPT.dryRun) {
   process.exit(0);
 }
 
+const cancellation = installRunCancellation({ onInterrupt: () => stopHostChildren() });
+const sleep = (ms) => cancellation.sleep(ms);
+const waitFor = (url, options) => hostWaitFor(url, { ...options, signal: cancellation.signal });
+const assertHostPortFree = (port, options) => hostAssertHostPortFree(port, { ...options, signal: cancellation.signal });
+const fetchWithTimeout = (url, options = {}, timeoutMs) => hostFetchWithTimeout(
+  url, { ...options, signal: Object.hasOwn(options, "signal") ? options.signal : cancellation.signal }, timeoutMs,
+);
+
 let env = { ...process.env };
 let ADMIN_TOKEN = process.env.LATCHFLO_ADMIN_TOKEN ?? null;
 let identity = null;
@@ -435,17 +452,19 @@ let dockerVmMemoryBytes = null;
 let metalLaunchCount = 0;
 const VLLM_API_KEY = IS_METAL ? `moflux-${randomBytes(32).toString("base64url")}` : "";
 
-function compose(composeArgs, { inherit = false, allowFailure = false, doctor = false } = {}) {
-  return composeCommand({
-    project: PROJECT,
-    envFile: doctor ? ENV_EXAMPLE : ENV_FILE,
-    composeFile: COMPOSE_FILE,
-    args: composeArgs,
+async function compose(composeArgs, { inherit = false, allowFailure = false, doctor = false, cleanup = false } = {}) {
+  const result = await runCooperativeChild("docker", [
+    "compose", "-p", PROJECT, "--env-file", doctor ? ENV_EXAMPLE : ENV_FILE,
+    "-f", COMPOSE_FILE, ...composeArgs,
+  ], {
     cwd: path.dirname(COMPOSE_FILE),
     env,
     inherit,
-    allowFailure,
+    cancellation: cleanup ? null : cancellation,
   });
+  if (!cleanup) cancellation.throwIfInterrupted();
+  if (!allowFailure && result.status !== 0) throw new Error(`Docker Compose failed: ${(result.stderr || result.stdout || result.signal || result.status).toString().trim()}`);
+  return result;
 }
 
 async function captureDiagnostics(label) {
@@ -457,10 +476,10 @@ async function captureDiagnostics(label) {
       ], { cwd: ROOT, env, encoding: "utf8", timeout: 20_000, maxBuffer: 32 * 1024 * 1024 });
       return stdout + stderr;
     },
-    "grants.json": async () => (await jsonRequest(`${LATCHFLO}/v1/grants?limit=1000`)).body,
-    "events.json": async () => (await jsonRequest(`${LATCHFLO}/v1/events?limit=1000`)).body,
+    "grants.json": async () => (await jsonRequest(`${LATCHFLO}/v1/grants?limit=1000`, { signal: null })).body,
+    "events.json": async () => (await jsonRequest(`${LATCHFLO}/v1/events?limit=1000`, { signal: null })).body,
   };
-  for (const arm of MANAGED_ARMS) collectors[`${arm.id}-stats.json`] = () => readPoolStats(arm);
+  for (const arm of MANAGED_ARMS) collectors[`${arm.id}-stats.json`] = () => readPoolStats(arm, { signal: null });
   const secrets = [VLLM_API_KEY, ADMIN_TOKEN, ...Object.values(identity?.tokens ?? {}),
     ...Object.entries(env).filter(([key]) => /TOKEN|SECRET|PASSWORD|API_KEY/iu.test(key)).map(([, value]) => value)];
   const manifest = await retainDiagnostics({
@@ -472,12 +491,14 @@ async function captureDiagnostics(label) {
 }
 
 function runCommand(command, commandArgs, { allowFailure = false, timeoutMs = 30_000 } = {}) {
+  cancellation.throwIfInterrupted();
   const result = spawnSync(command, commandArgs, {
     cwd: ROOT,
     env,
     encoding: "utf8",
     timeout: timeoutMs,
   });
+  cancellation.throwIfInterrupted();
   if (result.error) throw result.error;
   if (!allowFailure && result.status !== 0) {
     throw new Error(
@@ -593,11 +614,12 @@ async function resolveModelRevision(model, requested) {
   return body.sha.toLowerCase();
 }
 
-async function jsonRequest(url, { method = "GET", body, token = ADMIN_TOKEN, allowed = [200] } = {}) {
+async function jsonRequest(url, { method = "GET", body, token = ADMIN_TOKEN, allowed = [200], signal = cancellation.signal } = {}) {
   const response = await fetchWithTimeout(
     url,
     {
       method,
+      signal,
       headers: {
         ...(token ? { authorization: `Bearer ${token}` } : {}),
         ...(body ? { "content-type": "application/json" } : {}),
@@ -637,6 +659,7 @@ async function waitForAgents() {
   const deadline = Date.now() + 60_000;
   let last = [];
   while (Date.now() < deadline) {
+    cancellation.throwIfInterrupted();
     const response = await jsonRequest(`${LATCHFLO}/v1/agents`);
     last = Array.isArray(response.body?.agents) ? response.body.agents : [];
     if (last.length >= MANAGED_ARMS.length) {
@@ -654,10 +677,10 @@ async function waitForAgents() {
   throw new Error(`Latchflo saw only ${last.length}/${MANAGED_ARMS.length} Tyr agents`);
 }
 
-async function readPoolStats(arm) {
+async function readPoolStats(arm, { signal = cancellation.signal } = {}) {
   const response = await fetchWithTimeout(
     `http://127.0.0.1:${arm.port}/stats`,
-    { headers: { "x-tyr-identity-token": `Bearer ${identity.tokens.operator}` } },
+    { headers: { "x-tyr-identity-token": `Bearer ${identity.tokens.operator}` }, signal },
     SAMPLING.managedTimeoutMs,
   );
   if (!response.ok) throw new Error(`Tyr ${arm.id} /stats returned HTTP ${response.status}`);
@@ -778,6 +801,7 @@ async function sampleManagedArm(arm, startedAt) {
       grant: pool?.tyr?.provenance?.current ?? null,
     },
     classes,
+    ...(OPT.burstRecovery ? { admissionProvenance: pool?.tyr?.admissionProvenance ?? pool?.admissionProvenance ?? null } : {}),
   };
 }
 
@@ -793,6 +817,7 @@ async function waitForUsableGrant(arm, { interactiveFloor = false, timeoutMs = 6
   const deadline = Date.now() + timeoutMs;
   let last = null;
   while (Date.now() < deadline) {
+    cancellation.throwIfInterrupted();
     last = await sampleManagedArm(arm, Date.now()).catch(() => null);
     const interactive = last?.classes?.interactive?.limits;
     if (
@@ -814,16 +839,20 @@ function startManagedSampler(arm, startedAt, initial = null) {
   const errors = [];
   let running = true;
   const loop = (async () => {
-    while (running) {
+    while (running && !cancellation.interrupted) {
       try { samples.push(await sampleManagedArm(arm, startedAt)); }
       catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
-      await sleep(SAMPLING.managedIntervalMs);
+      if (running && !cancellation.interrupted) await hostSleep(SAMPLING.managedIntervalMs);
     }
   })();
   return {
     async stop() {
       running = false;
       await loop;
+      if (OPT.burstRecovery && !cancellation.interrupted) {
+        try { samples.push(await sampleManagedArm(arm, startedAt)); }
+        catch (error) { errors.push(error.message); }
+      }
       return { samples, errors };
     },
   };
@@ -918,7 +947,7 @@ async function startTelemetry(startedAt) {
   let running = true;
   let lastGpuAt = -Infinity;
   const loop = (async () => {
-    while (running) {
+    while (running && !cancellation.interrupted) {
       const loopStarted = performance.now();
       const atMs = +(Date.now() - startedAt);
       try { vllmSamples.push({ atMs, snapshot: await scrapeVllm() }); }
@@ -947,14 +976,17 @@ async function startTelemetry(startedAt) {
         }
       }
       const remaining = Math.max(0, SAMPLING.vllmIntervalMs - (performance.now() - loopStarted));
-      if (running) await sleep(remaining);
+      if (running && !cancellation.interrupted) await hostSleep(remaining);
     }
   })();
   return {
     async stop() {
       running = false;
       await loop;
-      const end = await scrapeVllm();
+      const end = cancellation.interrupted ? null : await scrapeVllm();
+      const raw = { start, end, vllmSamples, vllmErrors, gpuSamples, gpuErrors, processSamples,
+        processErrors, hostPressureSamples, hostPressureErrors, dcgmSamples, dcgmErrors };
+      if (cancellation.interrupted) return { raw };
       return {
         raw: {
           start,
@@ -989,7 +1021,7 @@ function commandOption(command, flag) {
   return index >= 0 && index + 1 < command.length ? command[index + 1] : null;
 }
 
-function runtimeIdentity(arm, gpu) {
+async function runtimeIdentity(arm, gpu) {
   if (IS_METAL) {
     if (!metalRuntime) throw new Error("native vLLM Metal runtime identity was not inspected");
     return {
@@ -1015,7 +1047,7 @@ function runtimeIdentity(arm, gpu) {
       authenticatedHostBridge: true,
     };
   }
-  const service = compose(["ps", "-q", "vllm"]);
+  const service = await compose(["ps", "-q", "vllm"]);
   const containerId = service.stdout.trim();
   if (!containerId) throw new Error("could not identify the vLLM container");
   const inspected = JSON.parse(runCommand("docker", ["inspect", containerId]).stdout)[0];
@@ -1096,6 +1128,7 @@ function parseWarmupStream(raw) {
 }
 
 async function warmupRequest(arm, seed, workload, index) {
+  cancellation.throwIfInterrupted();
   const isBatch = workload === "batch";
   const body = {
     model: OPT.servedModel,
@@ -1118,7 +1151,7 @@ async function warmupRequest(arm, seed, workload, index) {
         : {}),
     },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(300_000),
+    signal: AbortSignal.any([cancellation.signal, AbortSignal.timeout(300_000)]),
   });
   const raw = await response.text();
   const bytes = Buffer.byteLength(raw);
@@ -1162,6 +1195,7 @@ async function warmupArm(arm, seed) {
           lastError = null;
           break;
         } catch (error) {
+          cancellation.throwIfInterrupted();
           lastError = error;
           if (!arm.managed || attempt === 8) break;
           await waitForUsableGrant(arm);
@@ -1175,6 +1209,7 @@ async function warmupArm(arm, seed) {
 }
 
 function runLoadgen({ arm, seed, traceFile, outFile }) {
+  cancellation.throwIfInterrupted();
   const target = `http://127.0.0.1:${arm.port}`;
   const diagnosticsFile = outFile.replace(/\.json$/u, ".loadgen.log");
   const child = launchNode("loadgen", "load/loadgen.mjs", [
@@ -1222,15 +1257,16 @@ function runLoadgen({ arm, seed, traceFile, outFile }) {
         ]
       : []),
     "--emit-phase-samples=true",
-    ...(OPT.backendAvailability ? ["--backend-availability=true"] : []),
+    ...((OPT.backendAvailability || OPT.burstRecovery) ? ["--backend-availability=true"] : []),
     `--drain-idle-ms=${WORKLOAD.drainIdleMs}`,
     `--drain-max-ms=${WORKLOAD.drainMaxMs}`,
-    `--drain-timeout-mode=${arm.managed && !OPT.backendAvailability ? "fail" : "censor"}`,
+    `--drain-timeout-mode=${arm.managed && !OPT.backendAvailability && !OPT.burstRecovery ? "fail" : "censor"}`,
     `--trace-file=${traceFile}`,
     "--metrics-port=0",
     `--out=${outFile}`,
   ], { logFile: diagnosticsFile, redactions: VLLM_API_KEY ? [VLLM_API_KEY] : [] });
   return new Promise((resolve, reject) => {
+    child.once("error", reject);
     child.once("close", (code, signal) => {
       if (code !== 0) {
         reject(new Error(
@@ -1247,18 +1283,20 @@ function runLoadgen({ arm, seed, traceFile, outFile }) {
 }
 
 async function recreateVllm(arm) {
+  cancellation.throwIfInterrupted();
   if (!IS_METAL) {
     env = { ...env, MOFLUX_VLLM_SCHEDULING_POLICY: arm.schedulingPolicy };
-    compose(["up", "-d", "--force-recreate", "--wait", "vllm"], { inherit: true });
+    await compose(["up", "-d", "--force-recreate", "--wait", "vllm"], { inherit: true });
     return;
   }
   if (metalProcess) await terminateHostChild(metalProcess, 10_000);
+  cancellation.throwIfInterrupted();
   metalLaunchCount += 1;
   const logFile = path.join(
     runOutputDir,
     `vllm-metal-${String(metalLaunchCount).padStart(2, "0")}-${arm.id}.log`,
   );
-  backendEventsFile = OPT.backendAvailability
+  backendEventsFile = (OPT.backendAvailability || OPT.burstRecovery)
     ? path.join(runOutputDir, `backend-events-${metalLaunchCount}-${arm.id}.jsonl`) : null;
   metalProcess = launchCommand(
     `vllm-metal-${arm.id}`,
@@ -1270,6 +1308,7 @@ async function recreateVllm(arm) {
         ...env,
         ...(backendEventsFile ? {
           MOFLUX_BACKEND_EVENTS: backendEventsFile,
+          MOFLUX_BURST_RECOVERY: OPT.burstRecovery ? "true" : "false",
           PYTHONPATH: [path.join(ROOT, "demo", "backend-probe"), env.PYTHONPATH].filter(Boolean).join(path.delimiter),
         } : {}),
         VLLM_METAL_USE_PAGED_ATTENTION: "1",
@@ -1298,6 +1337,7 @@ const rows = [];
 const availabilityTrials = [];
 
 try {
+  cancellation.throwIfInterrupted();
   assertDockerAvailable();
   const openssl = runCommand("openssl", ["version"], { allowFailure: true });
   if (openssl.status !== 0) throw new Error("OpenSSL is required for the local identity fixture");
@@ -1318,7 +1358,7 @@ try {
       MOFLUX_VLLM_SCHEDULING_POLICY: "priority",
       MOFLUX_VLLM_GPU_MEMORY_UTILIZATION: String(OPT.gpuMemoryUtilization),
     };
-    compose(["config", "--quiet"], { doctor: true });
+    await compose(["config", "--quiet"], { doctor: true });
     console.log(
       IS_METAL
         ? `PASS vLLM Metal prerequisites: macOS ${metalRuntime.macosVersion}, native arm64 ` +
@@ -1356,7 +1396,7 @@ try {
 
     createFreshRunDirectory();
     if (!IS_METAL) runCommand("docker", ["volume", "create", HF_CACHE_VOLUME]);
-    compose(["down", "--volumes", "--remove-orphans"], { allowFailure: true });
+    await compose(["down", "--volumes", "--remove-orphans"], { allowFailure: true });
     for (const [port, label] of [
       [VLLM_IDENTITY_PORT, "identity fixture"],
       [VLLM_PORT, "vLLM"],
@@ -1382,8 +1422,9 @@ try {
       label: "Tyr",
     });
     identity = await startIdentityFixture(IDENTITY_RUNTIME, { port: VLLM_IDENTITY_PORT });
+    cancellation.throwIfInterrupted();
     stackStarted = true;
-    compose(["up", "-d", "--force-recreate", "--wait", "latchflo"], { inherit: true });
+    await compose(["up", "-d", "--force-recreate", "--wait", "latchflo"], { inherit: true });
     await waitFor(`${LATCHFLO}/readyz`, { timeoutMs: 60_000, label: "Latchflo readiness" });
     await configurePools(POLICY.lending.enrollmentTtlMs, { allowCreate: true });
 
@@ -1395,7 +1436,7 @@ try {
       label: "vLLM readiness",
       child: IS_METAL ? metalProcess : null,
     });
-    compose(["up", "-d", "--force-recreate", "tyr-static", "tyr-moflux"], { inherit: true });
+    await compose(["up", "-d", "--force-recreate", "tyr-static", "tyr-moflux"], { inherit: true });
     for (const arm of MANAGED_ARMS) {
       await waitFor(`http://127.0.0.1:${arm.port}/healthz`, {
         timeoutMs: 60_000,
@@ -1417,9 +1458,10 @@ try {
     }
 
     for (const [seedIndex, seed] of OPT.seeds.entries()) {
+      cancellation.throwIfInterrupted();
       const order = ORDER_PLAN[seedIndex].order;
       const baseTrace = buildTrace({ ...WORKLOAD, seed });
-      const trace = OPT.backendAvailability
+      const trace = OPT.burstRecovery ? burstTrace(seed, OPT.burstRecovery) : OPT.backendAvailability
         ? availabilityTrace(baseTrace, WORKLOAD, OPT.availabilityProtocol) : baseTrace;
       const traceFile = path.join(runOutputDir, `trace-seed-${seed}.json`);
       writeFileSync(traceFile, `${JSON.stringify(trace, null, 2)}\n`);
@@ -1427,6 +1469,7 @@ try {
       const evidence = {};
 
       for (const armId of order) {
+        cancellation.throwIfInterrupted();
         const arm = vllmArm(armId);
         const availabilityTrial = OPT.backendAvailability && arm.managed
           ? { seed, arm: armId, episode: null } : null;
@@ -1455,10 +1498,10 @@ try {
         samplerClockOrigin = { epoch: Date.now(), mono: performance.now() };
         const startedAt = samplerClockOrigin.epoch;
         const managedInitial = arm.managed ? await sampleManagedArm(arm, startedAt) : null;
+        const telemetry = await startTelemetry(startedAt);
         const managedSampler = arm.managed
           ? startManagedSampler(arm, startedAt, managedInitial)
           : null;
-        const telemetry = await startTelemetry(startedAt);
         console.log(`seed ${seed} arm ${armId}: measured trace`);
         let loadgenSummary = null;
         let measured = null;
@@ -1482,6 +1525,15 @@ try {
             armError ??= error;
           }
         }
+        if (cancellation.interrupted) armError = cancellation.signal.reason;
+        if (armError) {
+          // A cancelled loadgen may have no summary. Keep sampled evidence with
+          // an explicit incomplete marker; the trial/aggregate still fail closed.
+          writeFileSync(path.join(runOutputDir, `${armId}-telemetry-seed-${seed}.json`),
+            `${JSON.stringify({ seed, arm: armId, sampling: SAMPLING,
+              incomplete: true, error: armError.message, vllm: measured?.raw ?? null,
+              managed: arm.managed ? managed : null }, null, 2)}\n`);
+        }
         if (armError) throw armError;
         measured.vllm = summarizeVllmTelemetry({
           samples: measured.raw.vllmSamples,
@@ -1497,7 +1549,7 @@ try {
           managed: arm.managed,
           pool: arm.pool,
           trace: { hash: loadgenSummary?.trace?.hash ?? trace.hash },
-          runtimeIdentity: runtimeIdentity(arm, measured.gpu),
+          runtimeIdentity: await runtimeIdentity(arm, measured.gpu),
           warmup: {
             requestsPerClass: OPT.warmupRequestsPerClass,
             completed: warmup.length,
@@ -1532,10 +1584,12 @@ try {
             nominalGrant: NOMINAL_CLASS_GRANT,
           });
           const controlPlane = await collectControlPlaneEvidence(arm, startedAt);
-          const backendEvents = OPT.backendAvailability && existsSync(backendEventsFile)
+          const backendEvents = (OPT.backendAvailability || OPT.burstRecovery) && existsSync(backendEventsFile)
             ? readFileSync(backendEventsFile, "utf8").trim().split("\n").filter(Boolean).map(JSON.parse) : [];
 
           evidence[armId] = {
+            ...(OPT.burstRecovery ? { burstRecovery: analyzeBurstTrial({ seed, variant: OPT.burstRecovery,
+              trace, loadgen: loadgenSummary, managed, backendEvents, arm, armSummary }) } : {}),
             lending: summarizeLendingEpisodes(managed.samples, {
               restorationSloMs: POLICY.lending.restorationSloMs,
               nominalGrant: NOMINAL_CLASS_GRANT,
@@ -1598,8 +1652,10 @@ try {
         if (OPT.pauseMs > 0) await sleep(OPT.pauseMs);
       }
 
-      const comparison = compareVllmArms(arms);
-      const proof = vllmSeedProof({
+      const comparison = OPT.burstRecovery ? {} : compareVllmArms(arms);
+      const proof = OPT.burstRecovery
+        ? { valid: evidence.moflux?.burstRecovery?.valid === true, gates: evidence.moflux?.burstRecovery?.gates ?? [] }
+        : vllmSeedProof({
         arms,
         evidence,
         backend: OPT.backend,
@@ -1614,6 +1670,7 @@ try {
         `${JSON.stringify(row, null, 2)}\n`,
       );
       console.log(
+        OPT.burstRecovery ? `seed ${seed}: burst recovery trial valid=${proof.valid}` :
         `seed ${seed}: priority-fcfs ${comparison.priorityGoodputDeltaVsFcfsRps} req/s; ` +
           `moflux-priority ${comparison.mofluxGoodputDeltaVsPriorityRps} req/s; ` +
           `moflux-static batch arrival-cohort goodput ${comparison.mofluxBatchBorrowDeltaVsStaticRps} req/s; ` +
@@ -1625,26 +1682,33 @@ try {
   caughtError = error instanceof Error ? error : new Error(String(error));
   console.error(`\n${caughtError.message}`);
 } finally {
+  if (cancellation.interrupted) caughtError ??= cancellation.signal.reason;
   if (stackStarted && existsSync(runOutputDir)) {
     try { await captureDiagnostics("before-cleanup"); }
     catch (error) { console.warn(`diagnostic capture failed: ${error.message}`); }
   }
-  await stopHostChildren();
+  await cancellation.waitForOwnedChildren().catch((error) => { caughtError ??= error; });
+  await stopHostChildren().catch((error) => { caughtError ??= error; });
   if (identity) await identity.close().catch(() => {});
   if (stackStarted && !OPT.keepStack) {
-    compose(["down", "--volumes", "--remove-orphans"], { allowFailure: true });
+    await compose(["down", "--volumes", "--remove-orphans"], { allowFailure: true, cleanup: true })
+      .catch((error) => { caughtError ??= error; });
   }
   if (!OPT.keepStack) rmSync(IDENTITY_RUNTIME, { recursive: true, force: true });
 }
 
+// A signal may arrive while diagnostics or Compose cleanup are still awaited.
+if (cancellation.interrupted) caughtError ??= cancellation.signal.reason;
 if (OPT.doctor) {
   process.exitCode = caughtError ? 1 : 0;
 } else if (existsSync(runOutputDir)) {
-  const proof = vllmSweepProof({
+  let proof = OPT.burstRecovery ? { passed: rows.length === OPT.seeds.length && rows.every((r) => r.proof.valid),
+    status: "burst_recovery_trial_validity", requiredSeeds: OPT.seeds.length } : vllmSweepProof({
     rows,
     armOrder: ORDER_PLAN,
     requiredSeeds: VLLM_PUBLICATION_SEED_COUNT,
   });
+  if (caughtError) proof = { ...proof, passed: false, ...(cancellation.interrupted ? { status: "interrupted" } : {}) };
   const allAvailabilityEpisodes = availabilityTrials.map((t) => t.episode ?? {
     seed: t.seed, arm: t.arm, status: "inconclusive", reasons: ["arm_did_not_finish"],
   });
@@ -1664,7 +1728,7 @@ if (OPT.doctor) {
     benchmark: SWEEP_NAME,
     backend: OPT.backend,
     generatedAt: new Date().toISOString(),
-    question: WORKLOAD.engine
+    question: OPT.burstRecovery ? "Does current MoFlux stop new borrowing after simultaneous protected demand returns, and how does remaining borrower work affect recovery?" : WORKLOAD.engine
       ? "On one Apple-Silicon vLLM Metal server whose KV pool three long batch requests nearly fill, " +
         "how do FCFS, native priority, a static protected partition, and MoFlux lending compare on " +
         "SLO goodput, batch completion yield, and sampled admission and engine states?"
@@ -1697,6 +1761,7 @@ if (OPT.doctor) {
       note: "Inference, control-plane, and optional DCGM endpoints must all be local/private.",
     },
     experiment: {
+      ...(OPT.burstRecovery ? { protocol: BURST_PROTOCOL, variant: OPT.burstRecovery } : {}),
       arms: OPT.arms,
       armDescriptions: Object.fromEntries(OPT.arms.map((id) => [id, vllmArmDescription(id, POLICY)])),
       seeds: OPT.seeds,
@@ -1705,7 +1770,7 @@ if (OPT.doctor) {
       workload: { ...WORKLOAD, fixedOutputMinTokens: !IS_METAL },
       sampling: SAMPLING,
       policy: POLICY,
-      thresholds: VLLM_HYPOTHESIS_THRESHOLDS,
+      thresholds: OPT.burstRecovery ? { burstDispatchMaxSkewMs: 25, maxPreReturnObservationAgeMs: 500 } : VLLM_HYPOTHESIS_THRESHOLDS,
       engine: {
         maxNumSeqs: VLLM_MAX_NUM_SEQS,
         maxModelLen: 4_096,
@@ -1739,7 +1804,7 @@ if (OPT.doctor) {
     } } : {}),
     ...(admissionBoundary ? { admissionBoundary } : {}),
     proof,
-    passed: proof.passed && (!availabilityProof || availabilityProof.passed),
+    passed: !caughtError && proof.passed && (!availabilityProof || availabilityProof.passed),
     evidenceLimits: EVIDENCE_LIMITS,
     results: rows,
     ...(caughtError ? { error: caughtError.message } : {}),
@@ -1764,3 +1829,5 @@ if (OPT.doctor) {
 } else {
   process.exitCode = 1;
 }
+if (cancellation.interrupted) process.exitCode = cancellation.exitCode;
+cancellation.dispose();

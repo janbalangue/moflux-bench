@@ -1,5 +1,70 @@
 # MoFlux Bench verification
 
+## 0.51.0 protected burst recovery experiment
+
+`npm run verify:burst-recovery` verifies matched short/long traces, trace replay,
+the simultaneous burst, exact borrowed-slot attribution, pre-return running
+request IDs, admission-ring continuity, missing records, clock steps, censoring,
+unfavorable outcomes and the measured lifetime-separation gate. It exercises
+real local HTTP streaming for admission IDs and reported token usage, a mocked
+scheduler for schema-3 request IDs, raw-file reanalysis, and dry-run/path guards.
+V2 coverage checks the short prime, restored batch floor before owned admission,
+earlier setup schedule, the original v1 trace hash and raw reanalysis routing,
+and rejection of mixed-protocol pairs.
+Clock diagnostics coverage checks the 5ms range boundary, constant offsets,
+missing/empty streams, and the separate absolute load-generator error rule;
+failed sources and measured ranges are retained in the gate's observed fields.
+Telemetry coverage regressions check the final observation endpoint for v1,
+v2 and v3, rejecting missing return-window telemetry and endpoint gaps above
+750ms while accepting the exact 750ms boundary. Failed coverage diagnostics
+retain sample counts, return-window counts, endpoint presence, sampler errors,
+the maximum gap, the 750ms limit and oversized gap brackets.
+
+V3 coverage checks the 90s sustained return window, a borrower drain 44s after
+return, the protocol-specific goodput denominator, rejection of undersized
+non-pilot sweeps, and preservation of the historical v2 trace hash and 40s
+horizon. SLO diagnostics distinguish rejections, TTFT and latency misses,
+failed requests, missing timings and censoring. Outcomes after accounting zero
+use actual sends at or after its sampled upper bound; missing send times or
+insufficient telemetry make that diagnostic inconclusive.
+
+Diagnostic regressions also retain censored and missing original-borrower
+outcomes, distinguish missing KV and scheduler identity samples from observed
+zero values, enforce the return-window boundaries, and fit a known linear
+clock drift without changing the raw-range validity decision.
+
+`demo/verify-run-cancellation.mjs` exercises the real burst wrapper with local
+trial doubles. SIGINT and SIGTERM must wait for the trial's cleanup, terminate
+owned detached descendants, skip the next planned trial, retain an invalid
+partial aggregate, and exit with interruption status. Separate checks abort
+readiness and HTTP operations and remove installed signal handlers. These
+regressions require neither Docker nor inference.
+
+The complete v0.51.0 release candidate passed `npm run verify:all` on a clean
+export using Node 24.18.0 locally: publication hygiene checked 1,709 files,
+syntax checks covered all 127 modules, and all 54 registered verification
+checks passed, including hardened cancellation cleanup. The simulator sweep's
+worst deviation from the analytic curve was 4.0%, below its 8% threshold. This
+local validation does not imply a completed CI run or valid live benchmark evidence.
+Publication checks on the working directory reject retained local runs and
+environment files; keep those files intact and verify a clean release export.
+
+Live outcomes are separate from harness verification. The v1 pilot failed its
+setup gates; the first v2 pilot (`20261003T063429Z`) had an invalid long trial.
+The repeat v2 pilot (`20261003T070225Z`) passed all 18 gates in both trials.
+The first v3 pilot (`20261003T073341Z`) failed clock stability in both trials.
+The latest v3 pilot (`20261003T201440Z`) also fails clock stability in both
+trials and sampler integrity in long, leaving zero valid matched pairs.
+Its clock fits and borrower/engine diagnostics are descriptive and do not
+override these failures. Fitted drift is about 30ppm over roughly 170s of
+backend capture, enough to accumulate about 5.1ms against the existing 5ms
+raw-range limit. Long also has 1.108s and 1.134s telemetry gaps against the
+750ms limit. Any measurement revision must be preregistered and versioned
+before new collection; existing artifacts remain invalid under their original
+protocol. A valid pilot and the five-pair sweep remain pending;
+no result from this experiment is published. Commands, retained outcomes and
+measurement limits are documented in [BURST-RECOVERY.md](demo/BURST-RECOVERY.md).
+
 ## 0.50.0 admission boundary
 
 Evidence organization checks: `verify:catalog` derives the catalog from all
