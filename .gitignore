@@ -23,6 +23,8 @@ results/runs/
 !results/README.md
 !results/CATALOG.md
 !results/CORRECTIONS.md
+!results/RESTORATION.md
+!results/RESTORATION-cover.png
 !results/curated/
 !results/curated/**
 !results/published/
@@ -88,3 +90,6 @@ results/runs/
 # Python scheduler observer bytecode
 __pycache__/
 *.pyc
+
+!results/RESTORATION.md
+!results/RESTORATION-cover.png

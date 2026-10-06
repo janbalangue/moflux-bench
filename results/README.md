@@ -5,6 +5,10 @@ summary, its seed count, proof outcome, runtime and limitations. The
 [correction record](CORRECTIONS.md) explains the organization and documentation
 changes made on 2026-10-02.
 
+The [restoration write-up](RESTORATION.md) summarizes what the published vLLM
+Metal runs show about grant restoration, borrowed-occupancy settling and engine
+scheduling. It is a narrative summary, not additional evidence.
+
 Generated sweeps live under ignored `results/runs/`. Reviewed evidence occupies
 legacy top-level and `curated/` paths with equal review status. New publications
 use `results/published/<experiment>/<profile>/<UTC-run-id>/`; existing citation

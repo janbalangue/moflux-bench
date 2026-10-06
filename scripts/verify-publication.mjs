@@ -70,6 +70,15 @@ const required = [
   "demo/burst-recovery.mjs",
   "demo/burst-recovery-analysis.mjs",
   "demo/verify-burst-recovery.mjs",
+  "demo/burst-clock-lib.mjs",
+  "demo/burst-clock-probe.mjs",
+  "demo/burst-host-preflight-lib.mjs",
+  "demo/burst-runtime-lib.mjs",
+  "demo/burst-v4-analysis-lib.mjs",
+  "demo/verify-burst-clock.mjs",
+  "demo/verify-burst-host-preflight.mjs",
+  "load/burst-replay-lib.mjs",
+  "load/verify-burst-replay.mjs",
   "demo/run-cancellation-lib.mjs",
   "demo/verify-run-cancellation.mjs",
 ];
@@ -569,8 +578,8 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.51.0") {
-  findings.push("package.json: the current benchmark release must be version 0.51.0");
+if (pkg.version !== "0.52.0") {
+  findings.push("package.json: the current benchmark release must be version 0.52.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.

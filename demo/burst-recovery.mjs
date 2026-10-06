@@ -56,6 +56,11 @@ try {
         const result = await runCooperativeChild(process.execPath, command.args, { cwd: ROOT, cancellation });
         if (result.status !== 0) console.error(`Trial exited ${result.status ?? result.signal}; retained for analysis`);
       } catch (error) { console.error(error.message); }
+      // Name what failed now, while the operator can still act on it.
+      const trial = readBurstRun(output).results.find((t) => t.seed === command.seed && t.variant === command.variant);
+      const failed = trial?.analysis?.gates?.filter((g) => !g.passed).map((g) => g.name) ?? [];
+      console.log(`${command.variant}, seed ${command.seed}: valid=${trial?.analysis?.valid === true}` +
+        (failed.length ? `; failed gates: ${failed.join(", ")}` : "") + (trial?.error ? `; ${trial.error}` : ""));
     }
     const summary = readBurstRun(output);
     if (cancellation.interrupted) {

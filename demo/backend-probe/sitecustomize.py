@@ -11,11 +11,13 @@ import json
 import os
 import re
 import sys
+import threading
 import time
 
 TARGET = "vllm.v1.core.sched.scheduler"
 OUTPUT = os.environ.get("MOFLUX_BACKEND_EVENTS")
 BURST_RECOVERY = os.environ.get("MOFLUX_BURST_RECOVERY") == "true"
+BURST_V4 = BURST_RECOVERY and os.environ.get("MOFLUX_BURST_PROTOCOL") == "burst-recovery-v4"
 # vLLM wraps the body's request_id as chatcmpl-<id>-<8 hex>. Stop at the first
 # attempt suffix: a hex tail such as "a0173829" must not be read as the attempt.
 BENCH_ID = re.compile(r"moflux-bench-(?:interactive|batch)-[A-Za-z0-9_-]+?-a[0-9]+(?=-|$)")
@@ -30,19 +32,36 @@ def install(module):
     last_sample = [float("-inf")]
     seen = set()
     fd = os.open(OUTPUT, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    write_lock = threading.Lock() if BURST_V4 else None
 
     def emit(event, **fields):
         # Wall time is the clock the harness samples grants with on this host,
         # so events need no cross-process mapping. clockErrorMs is wall-clock
         # slew since install; the analysis gates its change inside the window.
-        now = time.monotonic_ns() / 1e6
-        wall = time.time_ns() / 1e6
-        row = dict(event=event, atEpochMs=wall, monotonicMs=now,
-                   clockErrorMs=wall - (epoch + now - origin),
-                   pid=os.getpid(), **fields)
-        data = (json.dumps(row, separators=(",", ":")) + "\n").encode()
-        if os.write(fd, data) != len(data):
-            raise RuntimeError("Incomplete backend observation write")
+        if write_lock:
+            # Capture and write under one lock so scheduler and heartbeat rows
+            # remain in monotonic capture order and cannot interleave JSON.
+            with write_lock:
+                before = time.monotonic_ns() / 1e6
+                wall = time.time_ns() / 1e6
+                after = time.monotonic_ns() / 1e6
+                now = (before + after) / 2
+                row = dict(event=event, atEpochMs=wall, monotonicMs=now,
+                           clockErrorMs=wall - (epoch + now - origin),
+                           clockReadSpanMs=after - before, pid=os.getpid(), **fields)
+                data = (json.dumps(row, separators=(",", ":")) + "\n").encode()
+                if os.write(fd, data) != len(data):
+                    raise RuntimeError("Incomplete backend observation write")
+        else:
+            # Keep the historical v1-v3 event fields and sampling unchanged.
+            now = time.monotonic_ns() / 1e6
+            wall = time.time_ns() / 1e6
+            row = dict(event=event, atEpochMs=wall, monotonicMs=now,
+                       clockErrorMs=wall - (epoch + now - origin),
+                       pid=os.getpid(), **fields)
+            data = (json.dumps(row, separators=(",", ":")) + "\n").encode()
+            if os.write(fd, data) != len(data):
+                raise RuntimeError("Incomplete backend observation write")
 
     def bench_id(request_id):
         match = BENCH_ID.search(request_id)
@@ -82,7 +101,21 @@ def install(module):
     cls.schedule = observed_schedule
     with open(module.__file__, "rb") as source:
         digest = hashlib.sha256(source.read()).hexdigest()
-    emit("installed", schemaVersion=3 if BURST_RECOVERY else 2, clockBasis="realtime", schedulerSourceSha256=digest)
+    emit("installed", schemaVersion=4 if BURST_V4 else 3 if BURST_RECOVERY else 2,
+         clockBasis="realtime", schedulerSourceSha256=digest)
+    if BURST_V4:
+        # Scheduler callbacks stop when idle. A v4-only heartbeat supplies
+        # independent coverage, including prime/setup and the drain window.
+        def clock_heartbeat():
+            while True:
+                try:
+                    emit("clock")
+                except (OSError, RuntimeError):
+                    # Incomplete evidence fails the analysis clock gate.
+                    return
+                time.sleep(0.25)
+
+        threading.Thread(target=clock_heartbeat, name="moflux-clock", daemon=True).start()
 
 
 class ObserverLoader(importlib.abc.Loader):

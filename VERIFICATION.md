@@ -1,5 +1,35 @@
 # MoFlux Bench verification
 
+## 0.52.0 burst-recovery-v4 clock and host preflights
+
+`burst-recovery-v4` keeps the v3 trace and replaces the clock measurement, adds
+clock and host preflights, and observes setup readiness explicitly with
+arrivals fixed. `npm run verify:burst-recovery` now also runs
+`demo/verify-burst-clock.mjs`, `demo/verify-burst-host-preflight.mjs` and
+`load/verify-burst-replay.mjs`. Together they check known drift, jumps, missing
+samples, container alignment, the readiness checkpoint, both preflights and
+unchanged v1–v3 reanalysis.
+
+The complete v0.52.0 release candidate passed `npm run verify:all` on a clean
+export using Node 24.18.0 locally: publication hygiene checked 1,720 files,
+syntax checks covered all 136 modules, and all 57 registered verification
+checks passed. The simulator sweep's worst deviation from the analytic curve
+was 4.0%, below its 8% threshold. This local validation does not imply a
+completed CI run or valid live benchmark evidence.
+
+Live outcomes are separate from harness verification. The first v4 pilot
+`20261004T185842Z` is invalid: the host preflight refused to start short, and
+long swapped 1353 MiB during its trace. Its summary records harness 0.51.0
+because it ran before this version was assigned; the recorded runtime is not
+edited. A valid v4 pilot and the five-pair sweep remain pending; no result from
+this experiment is published. Commands, retained outcomes and measurement
+limits are documented in [BURST-RECOVERY.md](demo/BURST-RECOVERY.md).
+
+This release also adds a narrative
+[restoration write-up](results/RESTORATION.md) with a cover image. It is not
+evidence and no verification check depends on it. Its figures were read from
+the published summaries listed in the [catalog](results/CATALOG.md).
+
 ## 0.51.0 protected burst recovery experiment
 
 `npm run verify:burst-recovery` verifies matched short/long traces, trace replay,
@@ -61,9 +91,13 @@ backend capture, enough to accumulate about 5.1ms against the existing 5ms
 raw-range limit. Long also has 1.108s and 1.134s telemetry gaps against the
 750ms limit. Any measurement revision must be preregistered and versioned
 before new collection; existing artifacts remain invalid under their original
-protocol. A valid pilot and the five-pair sweep remain pending;
-no result from this experiment is published. Commands, retained outcomes and
-measurement limits are documented in [BURST-RECOVERY.md](demo/BURST-RECOVERY.md).
+protocol. The v3 pilot `20261004T173611Z` is also invalid: both trials fail
+clock stability, and short additionally misses setup readiness (an 8.2s prime)
+and exceeds the 256 MiB swap-out limit. `burst-recovery-v4` and its first pilot
+are covered under 0.52.0 above. A valid pilot and the five-pair sweep remain
+pending; no result from this experiment is published. Commands, retained
+outcomes and measurement limits are documented in
+[BURST-RECOVERY.md](demo/BURST-RECOVERY.md).
 
 ## 0.50.0 admission boundary
 

@@ -1,6 +1,6 @@
 {
   "name": "moflux-bench",
-  "version": "0.51.0",
+  "version": "0.52.0",
   "description": "Synthetic, self-hosted, GPU-backed vLLM and live-provider benchmark harness for LLM admission control, including reproducible simulator sweeps, dynamic fleet-membership checks, local workload-contention benchmarks, and budget-capped OpenAI experiments.",
   "license": "Apache-2.0",
   "type": "module",
@@ -117,7 +117,7 @@
     "demo:vllm:metal:burst-recovery:dry-run": "node demo/burst-recovery.mjs --dry-run",
     "demo:vllm:metal:burst-recovery:pilot": "node demo/burst-recovery.mjs --pilot",
     "demo:vllm:metal:burst-recovery:analyze": "node demo/burst-recovery-analysis.mjs",
-    "verify:burst-recovery": "node demo/verify-burst-recovery.mjs"
+    "verify:burst-recovery": "node demo/verify-burst-recovery.mjs && node demo/verify-burst-clock.mjs && node demo/verify-burst-host-preflight.mjs && node load/verify-burst-replay.mjs"
   },
   "keywords": [
     "llm",

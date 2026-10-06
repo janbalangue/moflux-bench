@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { analyzeBurstTrial, BURST_PROTOCOL, BURST_PROTOCOLS, summarizeBurstPairs } from "./burst-recovery-lib.mjs";
 import { fileURLToPath } from "node:url";
@@ -14,10 +14,12 @@ export function readBurstTrial(directory, seed, variant, protocol = BURST_PROTOC
   const eventsFiles = readdirSync(directory).filter((f) => /^backend-events-\d+-moflux\.jsonl$/u.test(f));
   if (eventsFiles.length !== 1) throw new Error("expected exactly one scheduler event file");
   const backendEvents = readFileSync(path.join(directory, eventsFiles[0]), "utf8").split("\n").filter(Boolean).map(JSON.parse);
+  const preflightFile = path.join(directory, `burst-preflight-seed-${seed}.json`);
   const analysis = analyzeBurstTrial({ seed, variant,
     trace: read(path.join(directory, `trace-seed-${seed}.json`)),
     loadgen: read(path.join(directory, `moflux-seed-${seed}.json`)),
-    managed: raw.managed, backendEvents, arm: vllmArm("moflux"), armSummary: summary.results?.[0]?.arms?.moflux, protocol });
+    managed: raw.managed, backendEvents, arm: vllmArm("moflux"), armSummary: summary.results?.[0]?.arms?.moflux,
+    preflight: existsSync(preflightFile) ? read(preflightFile) : null, protocol });
   // Deliberately exclude per-process PIDs, preserving pinned versions/model/host.
   const { generatedAt, ...runtime } = summary.runtime;
   return { seed, variant, runtime, analysis, ...(summary.error ? { error: summary.error } : {}) };
@@ -35,8 +37,14 @@ export function readBurstRun(directory) {
   for (const { seed, order } of manifest.plan) for (const variant of order) {
     const relative = `trials/${variant}-seed-${seed}`;
     try { trials.push(readBurstTrial(path.join(directory, relative), seed, variant, manifest.protocol)); }
-    catch (error) { trials.push({ seed, variant, error: error.message,
-      analysis: { valid: false, gates: [{ name: "rawTrialReadable", passed: false, observed: error.message }] } }); }
+    catch (error) {
+      // A trial stopped by a preflight never writes telemetry. Report why it
+      // stopped, not only which file its absence left unreadable.
+      let stopped = null;
+      try { stopped = read(path.join(directory, relative, "summary.json")).error ?? null; } catch { /* no summary either */ }
+      trials.push({ seed, variant, error: stopped ?? error.message,
+        analysis: { valid: false, gates: [{ name: "rawTrialReadable", passed: false, observed: error.message }] } });
+    }
   }
   return { schemaVersion: 1, benchmark: "vllm-metal-burst-recovery", generatedAt: new Date().toISOString(),
     question: "Does current MoFlux stop new borrowing on protected return, and how does remaining borrower work affect recovery?",

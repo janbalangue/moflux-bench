@@ -127,6 +127,7 @@ import {
 
 import { AVAILABILITY_BURST, AVAILABILITY_MANAGED_INTERVAL_MS, AVAILABILITY_PROTOCOL, VALID_AVAILABILITY_STATUSES, availabilityProtocol, availabilityTrace, backendAvailabilityEpisode, availabilityDistribution, lendingReopenings } from "./backend-availability-lib.mjs";
 import { BURST_PROTOCOL, BURST_WORKLOAD, burstTrace, analyzeBurstTrial } from "./burst-recovery-lib.mjs";
+import { startBurstRuntime } from "./burst-runtime-lib.mjs";
 import { summarizeBorrowAccounting, correlateReturnEvidence } from "./vllm-reporting-lib.mjs";
 import { installRunCancellation, runCooperativeChild } from "./run-cancellation-lib.mjs";
 
@@ -446,6 +447,7 @@ let ADMIN_TOKEN = process.env.LATCHFLO_ADMIN_TOKEN ?? null;
 let identity = null;
 let metalProcess = null;
 let backendEventsFile = null;
+let burstRuntime = null;
 let samplerClockOrigin = { epoch: Date.now(), mono: performance.now() };
 let metalRuntime = null;
 let dockerVmMemoryBytes = null;
@@ -1213,6 +1215,8 @@ function runLoadgen({ arm, seed, traceFile, outFile }) {
   const target = `http://127.0.0.1:${arm.port}`;
   const diagnosticsFile = outFile.replace(/\.json$/u, ".loadgen.log");
   const child = launchNode("loadgen", "load/loadgen.mjs", [
+    ...(OPT.burstRecovery ? [`--burst-recovery-protocol=${BURST_PROTOCOL}`,
+      `--burst-setup-readiness-url=${burstRuntime.readinessUrl}`] : []),
     `--targets=${target}`,
     `--interactive-targets=${target}`,
     `--batch-targets=${target}`,
@@ -1309,6 +1313,7 @@ async function recreateVllm(arm) {
         ...(backendEventsFile ? {
           MOFLUX_BACKEND_EVENTS: backendEventsFile,
           MOFLUX_BURST_RECOVERY: OPT.burstRecovery ? "true" : "false",
+          ...(OPT.burstRecovery ? { MOFLUX_BURST_PROTOCOL: BURST_PROTOCOL } : {}),
           PYTHONPATH: [path.join(ROOT, "demo", "backend-probe"), env.PYTHONPATH].filter(Boolean).join(path.delimiter),
         } : {}),
         VLLM_METAL_USE_PAGED_ATTENTION: "1",
@@ -1491,8 +1496,23 @@ try {
 
         console.log(`seed ${seed} arm ${armId}: excluded warm-up`);
         const warmup = await warmupArm(arm, seed);
+        let burstPreflight = null;
+        if (OPT.burstRecovery) {
+          // Both preflights follow warm-up and must pass before any trace request.
+          burstRuntime = await startBurstRuntime({
+            dockerArgs: ["compose", "-p", PROJECT, "--env-file", ENV_FILE, "-f", COMPOSE_FILE],
+            cwd: path.dirname(COMPOSE_FILE), env, signal: cancellation.signal, sleep,
+            readPressure: readHostPressure, readPoolStats: () => readPoolStats(arm),
+            onProgress: (message) => console.log(`seed ${seed} arm ${armId}: ${message}`),
+            writePreflight: (data) => writeFileSync(path.join(runOutputDir, `burst-preflight-seed-${seed}.json`),
+              `${JSON.stringify(data, null, 2)}\n`),
+          });
+          burstPreflight = burstRuntime.preflight;
+        }
+        // The burst preflights outlast lending's idle threshold, so that trace
+        // starts from the idle lending state; its own early traffic restores the floor.
         const startingGrant = arm.managed
-          ? await waitForUsableGrant(arm, { interactiveFloor: true })
+          ? await waitForUsableGrant(arm, { interactiveFloor: !OPT.burstRecovery })
           : null;
         // Do not charge this arm for clock drift during setup or previous arms.
         samplerClockOrigin = { epoch: Date.now(), mono: performance.now() };
@@ -1519,6 +1539,10 @@ try {
           armError = error;
         } finally {
           if (managedSampler) managed = await managedSampler.stop();
+          if (burstRuntime) {
+            managed.burstTiming = await burstRuntime.stop();
+            burstRuntime = null;
+          }
           try {
             measured = await telemetry.stop();
           } catch (error) {
@@ -1589,7 +1613,7 @@ try {
 
           evidence[armId] = {
             ...(OPT.burstRecovery ? { burstRecovery: analyzeBurstTrial({ seed, variant: OPT.burstRecovery,
-              trace, loadgen: loadgenSummary, managed, backendEvents, arm, armSummary }) } : {}),
+              trace, loadgen: loadgenSummary, managed, backendEvents, arm, armSummary, preflight: burstPreflight }) } : {}),
             lending: summarizeLendingEpisodes(managed.samples, {
               restorationSloMs: POLICY.lending.restorationSloMs,
               nominalGrant: NOMINAL_CLASS_GRANT,
@@ -1670,7 +1694,8 @@ try {
         `${JSON.stringify(row, null, 2)}\n`,
       );
       console.log(
-        OPT.burstRecovery ? `seed ${seed}: burst recovery trial valid=${proof.valid}` :
+        OPT.burstRecovery ? `seed ${seed}: burst recovery trial valid=${proof.valid}` +
+          (proof.valid ? "" : `; failed gates: ${proof.gates.filter((g) => !g.passed).map((g) => g.name).join(", ") || "none recorded"}`) :
         `seed ${seed}: priority-fcfs ${comparison.priorityGoodputDeltaVsFcfsRps} req/s; ` +
           `moflux-priority ${comparison.mofluxGoodputDeltaVsPriorityRps} req/s; ` +
           `moflux-static batch arrival-cohort goodput ${comparison.mofluxBatchBorrowDeltaVsStaticRps} req/s; ` +
@@ -1683,6 +1708,7 @@ try {
   console.error(`\n${caughtError.message}`);
 } finally {
   if (cancellation.interrupted) caughtError ??= cancellation.signal.reason;
+  if (burstRuntime) await burstRuntime.stop().catch((error) => { caughtError ??= error; });
   if (stackStarted && existsSync(runOutputDir)) {
     try { await captureDiagnostics("before-cleanup"); }
     catch (error) { console.warn(`diagnostic capture failed: ${error.message}`); }

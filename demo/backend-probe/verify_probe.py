@@ -3,12 +3,23 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 from types import SimpleNamespace
 
-output = Path(sys.argv[1]) / "events.jsonl"
+if len(sys.argv) == 2:
+    # Isolate the daemon heartbeat and observer environment between protocols.
+    for mode in ("standard", "v3", "v4"):
+        subprocess.run([sys.executable, __file__, sys.argv[1], mode], check=True)
+    sys.exit(0)
+
+mode = sys.argv[2]
+output = Path(sys.argv[1]) / f"events-{mode}.jsonl"
+output.unlink(missing_ok=True)
 os.environ["MOFLUX_BACKEND_EVENTS"] = str(output)
+os.environ["MOFLUX_BURST_RECOVERY"] = "false" if mode == "standard" else "true"
+os.environ["MOFLUX_BURST_PROTOCOL"] = f"burst-recovery-{mode}" if mode != "standard" else ""
 spec = importlib.util.spec_from_file_location("probe", Path(__file__).with_name("sitecustomize.py"))
 probe = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(probe)
@@ -44,12 +55,31 @@ scheduler.schedule()
 scheduler.result.num_scheduled_tokens = {rid: 12}
 assert scheduler.schedule(throttle_prefills=True) is scheduler.result
 scheduler.schedule()
+if mode == "v4":
+    # No scheduler activity: the independent heartbeat must keep sampling.
+    time.sleep(0.55)
 rows = [json.loads(line) for line in output.read_text().splitlines()]
-assert [r["event"] for r in rows] == ["installed", "enqueued", "pressure", "first_scheduled"]
-assert rows[0]["schemaVersion"] == 2 and rows[0]["clockBasis"] == "realtime"
-assert rows[1]["requestId"] == rows[-1]["requestId"] == "moflux-bench-interactive-1-a1"
-assert rows[-1]["scheduledTokens"] == 12
-assert rows[-1]["atEpochMs"] >= rows[1]["atEpochMs"]
+events = [row for row in rows if row["event"] != "clock"]
+assert [r["event"] for r in events] == ["installed", "enqueued", "pressure", "first_scheduled"]
+assert events[0]["schemaVersion"] == {"standard": 2, "v3": 3, "v4": 4}[mode]
+assert events[0]["clockBasis"] == "realtime"
+assert events[1]["requestId"] == events[-1]["requestId"] == "moflux-bench-interactive-1-a1"
+assert events[-1]["scheduledTokens"] == 12
+assert events[-1]["atEpochMs"] >= events[1]["atEpochMs"]
 # Events carry the shared wall clock directly, not a startup-mapped monotonic.
 assert abs(rows[-1]["atEpochMs"] - time.time_ns() / 1e6) < 1000
 assert abs(rows[-1]["clockErrorMs"]) < 5
+if mode == "standard":
+    assert "runningRequestIds" not in events[2]
+else:
+    assert events[2]["runningRequestIds"] == []
+    assert events[2]["waitingRequestIds"] == ["moflux-bench-interactive-1-a1"]
+if mode == "v4":
+    clocks = [row for row in rows if row["event"] == "clock"]
+    assert len(clocks) >= 3
+    assert all(0 <= row["clockReadSpanMs"] < 100 for row in rows)
+    assert all(a["monotonicMs"] <= b["monotonicMs"] for a, b in zip(rows, rows[1:]))
+    assert clocks[-1]["monotonicMs"] - clocks[0]["monotonicMs"] >= 450
+else:
+    assert all("clockReadSpanMs" not in row for row in rows)
+    assert not any(row["event"] == "clock" for row in rows)

@@ -2,9 +2,10 @@ import { buildTrace, traceHash } from "../load/trace-lib.mjs";
 import { VLLM_METAL_LONG_CONTEXT_WORKLOAD } from "./vllm-contention-lib.mjs";
 import { summarizeAdmissionProvenance } from "./admission-provenance-lib.mjs";
 import { summarizeOriginalBorrowers, summarizeBurstEnginePressure } from "./burst-recovery-diagnostics-lib.mjs";
+import { BURST_V4_UNCERTAINTY_MS, burstV4ClockGates, burstV4Preflight, burstV4Setup, widenBracket } from "./burst-v4-analysis-lib.mjs";
 
-export const BURST_PROTOCOL = "burst-recovery-v3";
-export const BURST_PROTOCOLS = Object.freeze(["burst-recovery-v1", "burst-recovery-v2", BURST_PROTOCOL]);
+export const BURST_PROTOCOL = "burst-recovery-v4";
+export const BURST_PROTOCOLS = Object.freeze(["burst-recovery-v1", "burst-recovery-v2", "burst-recovery-v3", BURST_PROTOCOL]);
 export const BURST_VARIANTS = Object.freeze({ short: 64, long: 192 });
 export const BURST_WORKLOAD = Object.freeze({
   ...VLLM_METAL_LONG_CONTEXT_WORKLOAD,
@@ -14,9 +15,10 @@ export const BURST_WORKLOAD = Object.freeze({
 });
 export function burstWorkload(protocol = BURST_PROTOCOL) {
   if (!BURST_PROTOCOLS.includes(protocol)) throw new Error("unsupported burst recovery protocol");
-  return protocol === BURST_PROTOCOL ? BURST_WORKLOAD : {
+  // V4 changes measurement and start conditions only; its trace is v3's.
+  return ["burst-recovery-v1", "burst-recovery-v2"].includes(protocol) ? {
     ...BURST_WORKLOAD, durationMs: 105_000, interactiveResumeDurationMs: 40_000, batchDurationMs: 75_000,
-  };
+  } : BURST_WORKLOAD;
 }
 const finite = (n) => typeof n === "number" && Number.isFinite(n);
 const SLO_TTFT_MS = 5_000;
@@ -126,9 +128,9 @@ function transitionBracket(samples, predicate, fromEpoch) {
     grant: current.pool.grant ?? null };
 }
 
-function refillCounts(events, bracket, returnEpoch, horizon) {
+function refillCounts(events, bracket, returnEpoch, horizon, uncertaintyMs = 0) {
   if (!bracket) return null;
-  const relevant = events.filter((e) => e.atEpochMs >= returnEpoch && e.atEpochMs < horizon);
+  const relevant = events.filter((e) => e.atEpochMs >= returnEpoch - uncertaintyMs && e.atEpochMs < horizon + uncertaintyMs);
   return { definitelyBefore: relevant.filter((e) => e.atEpochMs < bracket.lowerEpochMs).length,
     withinBracket: relevant.filter((e) => e.atEpochMs >= bracket.lowerEpochMs && e.atEpochMs <= bracket.upperEpochMs).length,
     definitelyAfter: relevant.filter((e) => e.atEpochMs > bracket.upperEpochMs).length };
@@ -160,8 +162,38 @@ function summaryOutcomes(rows) {
       failed: summary.failed, censored: summary.censored, missing: summary.missing } };
 }
 
+/** The v2/v3 sampler-based readiness gate, spelled out reason by reason. */
+function sampledSetupReadiness({ prime, owned, ready }) {
+  const reasons = [];
+  if (!prime) reasons.push("prime_attempt_missing");
+  else if (prime.outcome !== "completed" || prime.outputTokensReported !== true || prime.outputTokens !== 1) {
+    reasons.push("prime_not_completed_with_one_reported_token");
+  }
+  const sentAt = owned?.attempt?.sentAtEpochMs;
+  if (!finite(sentAt)) reasons.push("setup_send_missing");
+  else if (prime && !(prime.endedAtEpochMs < sentAt)) reasons.push("prime_completed_after_setup_send");
+  if (!ready) reasons.push("no_sample_within_500ms_before_setup_admission");
+  else {
+    if (ready.classes?.batch?.inFlight !== 0) reasons.push("batch_request_in_flight");
+    if (ready.classes?.batch?.limits?.protectedConcurrent !== 1) reasons.push("batch_protected_floor_not_one");
+  }
+  const admissionGrantBatchFloor = owned?.admission?.limits?.admissionClasses?.batch?.protectedConcurrent ?? null;
+  if (admissionGrantBatchFloor !== 1) reasons.push("setup_admission_grant_floor_not_one");
+  return { method: "sampler", ready: reasons.length === 0, reasons,
+    primeDurationMs: finite(prime?.endedAtEpochMs) && finite(prime?.sentAtEpochMs) ? prime.endedAtEpochMs - prime.sentAtEpochMs : null,
+    primeEndedBeforeSetupMs: finite(prime?.endedAtEpochMs) && finite(sentAt) ? sentAt - prime.endedAtEpochMs : null,
+    sampledBatchInFlight: ready?.classes?.batch?.inFlight ?? null,
+    sampledBatchFloor: ready?.classes?.batch?.limits?.protectedConcurrent ?? null, admissionGrantBatchFloor };
+}
+
 /** Pure, fail-closed trial analysis. Validity is independent of favorable outcomes. */
-export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, backendEvents, arm, armSummary, protocol = BURST_PROTOCOL }) {
+export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, backendEvents, arm, armSummary,
+  preflight = null, protocol = BURST_PROTOCOL }) {
+  // V4 carries its timing budget into every bracket and into each comparison
+  // of a container-clock admission with a host-clock observation.
+  const v4 = protocol === "burst-recovery-v4";
+  const uncertaintyMs = v4 ? BURST_V4_UNCERTAINTY_MS : 0;
+  const bracketed = (bracket) => v4 ? widenBracket(bracket, uncertaintyMs) : bracket;
   const samples = (managed?.samples ?? []).map((s) => ({ ...s,
     epochMs: Date.parse(s.observedAt),
     sampleStartEpochMs: Date.parse(s.observedAt) - (s.offsetMs - s.sampleStartedAtMs),
@@ -186,7 +218,7 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
     return { requestId, attempt: a, admission: event ?? null,
       remainingStreamMs: a?.outcome === "completed" && finite(returnedAt) && finite(a.endedAtEpochMs)
         ? a.endedAtEpochMs - returnedAt : null,
-      runningExitBracket: firstAbsent ? { lowerEpochMs: lastRunning.atEpochMs, upperEpochMs: firstAbsent.atEpochMs } : null };
+      runningExitBracket: firstAbsent ? bracketed({ lowerEpochMs: lastRunning.atEpochMs, upperEpochMs: firstAbsent.atEpochMs }) : null };
   });
   const pressureAtReturn = backendEvents.filter((e) => e.event === "pressure" && finite(returnedAt) &&
     e.atEpochMs < returnedAt && e.atEpochMs >= returnedAt - 500).at(-1);
@@ -194,10 +226,10 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
     s.sampleStartEpochMs >= returnedAt - 500).at(-1);
   const borrowedEvents = provenance.events.filter((e) => e.admissionClass === "batch" &&
     e.resources?.borrowedConcurrency === true).map((e) => ({ ...e, atEpochMs: Date.parse(e.admittedAt) }));
-  const recognition = finite(returnedAt) ? transitionBracket(samples,
-    (s) => ["demanding", "protected"].includes(s.classes?.interactive?.demandState), returnedAt) : null;
-  const restoration = finite(returnedAt) ? transitionBracket(samples,
-    (s) => s.classes?.interactive?.limits?.protectedConcurrent >= 3, returnedAt) : null;
+  const recognition = finite(returnedAt) ? bracketed(transitionBracket(samples,
+    (s) => ["demanding", "protected"].includes(s.classes?.interactive?.demandState), returnedAt)) : null;
+  const restoration = finite(returnedAt) ? bracketed(transitionBracket(samples,
+    (s) => s.classes?.interactive?.limits?.protectedConcurrent >= 3, returnedAt)) : null;
   const returnSamples = samples.filter((s) => finite(returnedAt) && s.epochMs >= returnedAt && s.epochMs < horizon);
   // Require coverage through the end of the offered-demand window.
   const endpoint = finite(horizon) ? samples.find((s) => s.epochMs >= horizon) : null;
@@ -232,7 +264,13 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
     poolAtReturn.classes.batch.borrowedConcurrent === 2 && poolAtReturn.classes.interactive?.inFlight === 0 &&
     poolAtReturn.classes.interactive?.limits?.protectedConcurrent === 1 && poolAtReturn.pool.maxConcurrent === 4,
     poolAtReturn ?? null);
-  if (protocol !== "burst-recovery-v1") {
+  let setupReadiness = null;
+  if (v4) {
+    // Fixed arrivals with an explicit checkpoint: the load generator observed
+    // the required state itself, immediately before it sent setup request 1.
+    setupReadiness = burstV4Setup({ loadgen, attemptById, admission: setup[0]?.admission });
+    gate("batchFloorReadyBeforeSetup", setupReadiness.ready, setupReadiness);
+  } else if (protocol !== "burst-recovery-v1") {
     const prime = attemptById.get(idFor("batch-prime-1"));
     const owned = setup[0];
     const admittedAt = Date.parse(owned?.admission?.admittedAt);
@@ -243,6 +281,7 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
       owned?.admission?.limits?.admissionClasses?.batch?.protectedConcurrent === 1,
       { primeEndedAtEpochMs: prime?.endedAtEpochMs ?? null, setupAdmittedAtEpochMs: finite(admittedAt) ? admittedAt : null,
         sampledBatchFloor: ready?.classes?.batch?.limits?.protectedConcurrent ?? null });
+    setupReadiness = sampledSetupReadiness({ prime, owned, ready });
   }
   gate("exactBorrowAttribution", setup[0]?.admission?.resources?.borrowedConcurrency === false &&
     setup.slice(1).every((s) => s.admission?.resources?.borrowedConcurrency === true));
@@ -251,14 +290,24 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
   gate("provenanceComplete", provenance.complete && provenance.events.every((e) => finite(Date.parse(e.admittedAt)) &&
     e.grant?.grantId && typeof e.resources?.borrowedConcurrency === "boolean"),
     { complete: provenance.complete, sequenceContinuous: provenance.sequenceContinuous, reason: provenance.reason });
-  const clocks = {
-    managed: clockDiagnostics(samples, "clockErrorMs", "epochMs"),
-    backend: clockDiagnostics(backendEvents.filter((e) => e.event !== "installed"), "clockErrorMs", "atEpochMs"),
-    loadgen: { backendClockErrorMs: finite(loadgen?.backendClockErrorMs) ? loadgen.backendClockErrorMs : null,
-      maxAbsoluteErrorMs: 5, passed: finite(loadgen?.backendClockErrorMs) && Math.abs(loadgen.backendClockErrorMs) <= 5 },
-  };
-  const failedSources = Object.keys(clocks).filter((source) => !clocks[source].passed);
-  gate("clockStable", failedSources.length === 0, { ...clocks, failedSources });
+  if (v4) {
+    // The capture must cover every client timestamp the analysis reads.
+    const lastEnd = Math.max(...attempts.map((a) => a.endedAtEpochMs).filter(finite), -Infinity);
+    const clocks = burstV4ClockGates({ managed, loadgen, backendEvents, startEpochMs: loadgen?.startedAtEpochMs,
+      endEpochMs: finite(horizon) ? Math.max(horizon, lastEnd) : null, clientEndEpochMs: finite(lastEnd) ? lastEnd : null });
+    gate("clockStable", clocks.passed, clocks);
+    const ready = burstV4Preflight(preflight);
+    gate("preflightReady", ready.passed, ready);
+  } else {
+    const clocks = {
+      managed: clockDiagnostics(samples, "clockErrorMs", "epochMs"),
+      backend: clockDiagnostics(backendEvents.filter((e) => e.event !== "installed"), "clockErrorMs", "atEpochMs"),
+      loadgen: { backendClockErrorMs: finite(loadgen?.backendClockErrorMs) ? loadgen.backendClockErrorMs : null,
+        maxAbsoluteErrorMs: 5, passed: finite(loadgen?.backendClockErrorMs) && Math.abs(loadgen.backendClockErrorMs) <= 5 },
+    };
+    const failedSources = Object.keys(clocks).filter((source) => !clocks[source].passed);
+    gate("clockStable", failedSources.length === 0, { ...clocks, failedSources });
+  }
   // Check the same coverage used for sustained occupancy, including the final
   // endpoint. An existing endpoint alone cannot close an unobserved tail gap.
   const samplerIntegrity = finite(returnedAt) && finite(horizon) && horizon > returnedAt &&
@@ -275,7 +324,7 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
     maxGapMs: samplingGaps.length ? Math.max(...samplingGaps.map((g) => g.gapMs)) : null,
     gapsOverLimit: samplingGaps.filter((g) => g.gapMs > 750),
   });
-  gate("observerInstalled", backendEvents.some((e) => e.event === "installed" && e.schemaVersion === 3 && e.schedulerSourceSha256));
+  gate("observerInstalled", backendEvents.some((e) => e.event === "installed" && e.schemaVersion === (v4 ? 4 : 3) && e.schedulerSourceSha256));
   gate("runtimeAndEngine", armSummary?.runtimeIdentity?.schedulingPolicy === "priority" &&
     armSummary.vllm?.cacheConfig?.numGpuBlocks === 320 && armSummary.vllm.cacheConfig?.blockSize === 16);
   gate("generatorHeadroom", loadgen?.generatorSaturated === 0);
@@ -296,8 +345,10 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
   const missingSendCount = outcomes.filter((o) => !finite(o.sentAtEpochMs)).length;
   const afterZeroObservable = samplerIntegrity && zero != null && missingSendCount === 0;
   const diagnostics = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     interpretation: "Descriptive observations; analysis.valid and the original validity gates still apply. Accounting zero is not service recovery or physical reclamation.",
+    // Why the prime/setup sequence was or was not ready; it restates the gate.
+    setupReadiness,
     afterSustainedZeroBorrowed: {
       status: !samplerIntegrity || missingSendCount ? "inconclusive" : zero ? "observed" : "right_censored",
       selection: "Return-cohort actual sends at or after the accounting-zero upper bound and before the arrival horizon.",
@@ -317,12 +368,15 @@ export function analyzeBurstTrial({ seed, variant, trace, loadgen, managed, back
     traceHash: trace.hash, normalizedTraceHash: normalizedBurstHash(trace), returnedAtEpochMs: returnedAt,
     horizonEpochMs: horizon, remainingLifetimeMedianMs: median(setup.filter((s) => s.admission?.resources?.borrowedConcurrency === true).map((s) => s.remainingStreamMs)),
     setup, recognitionBracket: recognition, restorationBracket: restoration,
+    ...(v4 ? { timingUncertaintyMs: uncertaintyMs } : {}),
+    // Admissions carry the container clock; one within the budget of the return
+    // or horizon is counted rather than assumed to fall outside the window.
     borrowedAdmissionsAfterReturn: finite(returnedAt) && provenance.complete ? borrowedEvents.filter((e) =>
-      e.atEpochMs >= returnedAt && e.atEpochMs < horizon) : null,
-    borrowedAdmissionsByRecognition: provenance.complete ? refillCounts(borrowedEvents, recognition, returnedAt, horizon) : null,
-    borrowedAdmissionsByRestoration: provenance.complete ? refillCounts(borrowedEvents, restoration, returnedAt, horizon) : null,
+      e.atEpochMs >= returnedAt - uncertaintyMs && e.atEpochMs < horizon + uncertaintyMs) : null,
+    borrowedAdmissionsByRecognition: provenance.complete ? refillCounts(borrowedEvents, recognition, returnedAt, horizon, uncertaintyMs) : null,
+    borrowedAdmissionsByRestoration: provenance.complete ? refillCounts(borrowedEvents, restoration, returnedAt, horizon, uncertaintyMs) : null,
     sustainedZeroBorrowed: { status: !finite(returnedAt) || !endpoint ? "inconclusive" : zero ? "observed" : "right_censored",
-      bracket: zero ? { lowerEpochMs: zeroPrevious?.sampleStartEpochMs ?? returnedAt, upperEpochMs: zero.epochMs } : null,
+      bracket: zero ? bracketed({ lowerEpochMs: zeroPrevious?.sampleStartEpochMs ?? returnedAt, upperEpochMs: zero.epochMs }) : null,
       upperDelayMs: zero ? zero.epochMs - returnedAt : null },
     initialBurst: summaryOutcomes(outcomes.filter((o) => burstIds.includes(o.requestId))),
     returnCohort: { ...summaryOutcomes(outcomes), arrivalWindowMs,

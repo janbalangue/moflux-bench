@@ -1803,11 +1803,20 @@ npm run demo:vllm:metal:burst-recovery:pilot
 npm run demo:vllm:metal:burst-recovery
 ```
 
-The current protocol is `burst-recovery-v3` (MoFlux Bench 0.51.0). It retains
-v2's short prime, staggered setup and owned-floor readiness gate, and extends
-sustained post-return arrivals from 40s to 90s to observe long-borrower draining.
-Historical v1/v2 runs remain readable with their original trace and horizon.
-Run the v3 instrumentation pilot before the default alternating five-pair sweep;
+The current protocol is `burst-recovery-v4` (MoFlux Bench 0.52.0). Its trace
+is byte-identical to v3 (MoFlux Bench 0.51.0): v2's short prime and staggered
+setup, and 90s of
+sustained post-return arrivals to observe long-borrower draining. V4 changes
+start conditions and measurement only. Each trial first passes a 180s clock
+preflight and a host memory preflight. Clock validity uses paired wall and
+monotonic readings with bracketed container alignment; gradual drift within
+100ppm is allowed, jumps are not, and a 10ms budget widens every reported
+bracket. Setup readiness is observed explicitly before setup request 1, with
+arrivals fixed. See the [v4 amendment](demo/BURST-RECOVERY.md#final-v3-pilot-and-v4-amendment).
+Historical v1–v3 runs remain readable with their original trace, horizon and gates.
+The first v4 pilot `20261004T185842Z` is invalid: the host preflight stopped
+short at `warn` memory pressure, and long swapped 1353 MiB during its trace.
+Run a valid v4 instrumentation pilot before the default alternating five-pair sweep;
 non-pilot runs require at least five seeds. Invalid, negative and censored trials
 are retained under `results/runs/vllm-metal-burst-recovery/`.
 

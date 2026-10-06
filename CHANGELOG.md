@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.52.0 - 2026-10-06
+
+- Add `burst-recovery-v4`, documented before collection. The trace is unchanged
+  from v3 and arrivals stay fixed. Each trial now starts only after a 180s
+  clock preflight and a host preflight requiring ten seconds of normal memory
+  pressure without swap-out growth; the during-run host gate is unchanged.
+- Replace v4's clock gate with paired wall/monotonic readings in the runner,
+  load generator and scheduler probe, plus bracketed clock probes in the Tyr
+  and Latchflo containers. Gradual drift within 100ppm and 10ms per 90s passes;
+  jumps, backward clocks, excessive sample loss and proven container
+  misalignment fail. No offset is fitted or applied. A 10ms budget widens every
+  reported bracket. V1–v3 analyses keep their original raw 5ms rules.
+- Observe setup readiness explicitly in v4: the load generator reads batch
+  in-flight and protected-floor state before setup request 1 and reports a
+  missed condition immediately. It never delays or moves an arrival. Historical
+  v2/v3 analyses list the reasons their readiness gate failed.
+- Record the invalid v3 pilot `20261004T173611Z` and the invalid first v4 pilot
+  `20261004T185842Z`, which host memory pressure stopped or invalidated. A
+  valid v4 pilot and the five-pair sweep remain pending; nothing is published.
+- The retained v4 pilot `20261004T185842Z` records harness 0.51.0: it ran on
+  this code before the version was advanced. Its recorded runtime is not
+  edited. Later v4 collection records 0.52.0.
+- Add a [restoration write-up](results/RESTORATION.md) and cover image that
+  summarize the eight published vLLM Metal runs. Sampled grant restoration,
+  borrowed-occupancy settling and engine scheduling are reported as separate
+  events. It adds no evidence and changes no published summary, verdict or
+  catalog entry.
+- Credit Yash Karecha (inference-x) in
+  [BURST-RECOVERY.md](demo/BURST-RECOVERY.md) for the idea that reopening
+  lending should consider unsettled borrowed occupancy. No reopening rule is
+  tested.
+
 ## 0.51.0 - 2026-10-03
 
 - Add the preregistered `burst-recovery-v3` paired Metal experiment: one unlent

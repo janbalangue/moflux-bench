@@ -27,6 +27,8 @@ import { buildTrace, traceHash, validateTrace } from "./trace-lib.mjs";
 import { redactDiagnostic } from "./diagnostics-lib.mjs";
 import { zeroCapacityEnvelope } from "./rejection-lib.mjs";
 import { chooseRetryDelay } from "./retry-policy.mjs";
+import { BURST_PRIME_REQUEST_ID, BURST_SETUP_REQUEST_ID, observeBurstSetup, pairedClockSample,
+  validateBurstReplayOptions } from "./burst-replay-lib.mjs";
 
 // ── args ─────────────────────────────────────────────────────────────
 
@@ -176,6 +178,10 @@ const CONFIG = Object.freeze({
    */
   emitPhaseSamples: bool("emit-phase-samples", false),
   backendAvailability: bool("backend-availability", false),
+  ...(args.has("burst-recovery-protocol") || args.has("burst-setup-readiness-url") ? {
+    burstRecoveryProtocol: str("burst-recovery-protocol", ""),
+    burstSetupReadinessUrl: str("burst-setup-readiness-url", ""),
+  } : {}),
   traceFile: str("trace-file", ""),
   traceOut: str("trace-out", ""),
   out: str("out", ""),
@@ -239,6 +245,7 @@ const loadedTrace = CONFIG.traceFile
   : buildTrace(CONFIG);
 const TRACE = validateTrace(loadedTrace, CONFIG);
 const TRACE_HASH = traceHash(TRACE);
+const BURST_REPLAY_ENABLED = validateBurstReplayOptions(CONFIG, TRACE);
 if (CONFIG.traceOut) {
   writeFileSync(CONFIG.traceOut, JSON.stringify({ ...TRACE, hash: TRACE_HASH }, null, 2));
 }
@@ -349,6 +356,12 @@ let inFlight = 0;
 let generatorSaturated = 0;
 const startedAt = Date.now();
 const startedAtMonotonic = performance.now();
+let burstSetup = null;
+const clockSamples = BURST_REPLAY_ENABLED ? [pairedClockSample()] : null;
+const clockSampleTimer = BURST_REPLAY_ENABLED
+  ? setInterval(() => clockSamples.push(pairedClockSample()), 250)
+  : null;
+clockSampleTimer?.unref();
 let metricsRelayPushFailures = 0;
 const runAbort = new AbortController();
 const MAX_REQUEST_ERROR_SNAPSHOTS = 20;
@@ -1435,7 +1448,38 @@ console.log(
     `duration=${CONFIG.durationMs}ms`,
 );
 
+// Observe-only: the checkpoint reads admission state beside the fixed arrival
+// replay and reports its verdict the moment setup request 1 has been sent.
+const burstSetupCheckpoint = BURST_REPLAY_ENABLED ? (async () => {
+  const batchAttempt = (requestId) => stats.batch.attemptSamples.find((row) => row.requestId === requestId);
+  const readiness = (init) => fetch(CONFIG.burstSetupReadinessUrl, { redirect: "error", ...init });
+  let result;
+  try {
+    result = await observeBurstSetup({ offsetMs, sleep,
+      getPrimeAttempt: () => batchAttempt(BURST_PRIME_REQUEST_ID),
+      getSetupAttempt: () => batchAttempt(BURST_SETUP_REQUEST_ID),
+      readReadiness: async (timeoutMs) => {
+        const response = await readiness({ signal: AbortSignal.timeout(timeoutMs) });
+        if (!response.ok) throw new Error(`readiness HTTP ${response.status}`);
+        return response.json();
+      },
+    });
+  } catch (error) {
+    result = { schemaVersion: 1, status: "missed", reasons: ["checkpoint_error"],
+      error: error instanceof Error ? error.message : String(error), observations: [] };
+  }
+  const line = `burst setup readiness ${result.status} at +${Math.round(offsetMs())}ms` +
+    (result.reasons.length ? `: ${result.reasons.join(", ")}` : "");
+  if (result.status === "ready") console.log(line); else console.error(`${line}; trial is invalid, arrivals continue unchanged`);
+  // Best effort: let the runner show the verdict now, not after the trace.
+  await readiness({ method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ status: result.status, reasons: result.reasons }),
+    signal: AbortSignal.timeout(1_000) }).catch(() => {});
+  return result;
+})() : null;
+
 await Promise.all(TRACE.entries.map(scheduleEntry));
+if (burstSetupCheckpoint) burstSetup = await burstSetupCheckpoint;
 
 /**
  * Let outstanding work settle so the summary is not truncated mid-stream.
@@ -1544,6 +1588,8 @@ const {
   providerApiKey,
   ...publicConfig
 } = CONFIG;
+if (clockSampleTimer) clearInterval(clockSampleTimer);
+if (clockSamples) clockSamples.push(pairedClockSample());
 const summary = {
   arm: CONFIG.armLabel,
   seed: CONFIG.seed,
@@ -1580,6 +1626,7 @@ const summary = {
   },
   config: {
     ...publicConfig,
+    ...(BURST_REPLAY_ENABLED ? { burstSetupReadinessUrl: "provided" } : {}),
     interactiveIdentityToken: interactiveIdentityToken ? "provided" : "",
     batchIdentityToken: batchIdentityToken ? "provided" : "",
     providerCredentialConfigured: Boolean(providerApiKey),
@@ -1592,6 +1639,7 @@ const summary = {
   startedAt: new Date(startedAt).toISOString(),
   startedAtEpochMs: startedAt,
   ...(CONFIG.backendAvailability ? { backendClockErrorMs: Date.now() - (startedAt + offsetMs()) } : {}),
+  ...(BURST_REPLAY_ENABLED ? { burstSetup, clockSamples } : {}),
   wallClockMs: Date.now() - startedAt,
   trace: {
     version: TRACE.version,
