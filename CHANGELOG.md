@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.53.0 - 2026-11-26
+
+- Pin licensed benchmark runs, including vLLM, to Tyr 0.35.0 and Latchflo
+  0.20.0. async-bulkhead-llm is now 3.18.0, which Tyr 0.34.1 adopted;
+  async-bulkhead-ts remains 1.0.1 and vLLM remains 0.18.0. `demo:prepare`
+  migrates standard local image tags and preserves custom registry references.
+- No benchmark config enables Tyr's new opt-in `responsesState` or `stop`
+  settings. All 14 Tyr configs pass `tyr validate` on the 0.35.0 build.
+- Two Tyr 0.35.0 fixes reach these runs. A streamed request that fails before
+  its first chunk gets a `502` or `504` status instead of a closed connection.
+  A request whose output cap is below `outputSafetyMarginTokens` holds fewer
+  tokens while it runs, which applies to the vLLM and Ollama contention
+  workloads.
+- Latchflo 0.20.0 writes one `grant.applied` event per acknowledgment instead
+  of one per poll, so the newest-1,000 `/v1/events` page reaches further back.
+  No command reads those events or restarts the controller.
+- Saved evidence retains its original runtime metadata. Compare new
+  0.35.0/0.20.0 runs with 0.33.0/0.19.0 runs as separate runtime cohorts. No
+  run has been made on the new pins.
+
 ## 0.52.0 - 2026-10-06
 
 - Add `burst-recovery-v4`, documented before collection. The trace is unchanged

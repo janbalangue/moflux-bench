@@ -87,9 +87,9 @@ try {
   ].join("\n"));
   assert.equal(ensureDemoEnv(file, { quiet: true }).updated, true);
   const upgraded = readFileSync(file, "utf8");
-  assert.match(upgraded, /^MOFLUX_TYR_IMAGE=tyr-admission-controller:0\.33\.0$/m);
-  assert.match(upgraded, /^MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0\.19\.0$/m);
-  assert.match(upgraded, /^# Runtime compatibility: Tyr 0\.33\.0, Latchflo 0\.19\.0\.$/m);
+  assert.match(upgraded, /^MOFLUX_TYR_IMAGE=tyr-admission-controller:0\.35\.0$/m);
+  assert.match(upgraded, /^MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0\.20\.0$/m);
+  assert.match(upgraded, /^# Runtime compatibility: Tyr 0\.35\.0, Latchflo 0\.20\.0\.$/m);
   assert.match(upgraded, /^LATCHFLO_ADMIN_TOKEN=preserve-admin$/m);
   assert.match(upgraded, /^LATCHFLO_AGENT_BOOTSTRAP_TOKEN=preserve-bootstrap$/m);
   assert.match(upgraded, /^TYR_ROUTING_SECRET=preserve-routing-secret-at-least-32-characters$/m);

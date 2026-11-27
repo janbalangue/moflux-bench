@@ -427,6 +427,120 @@ under a clean run.
 
 Repeat the v4 pilot on a host with memory headroom before the sweep.
 
+## Valid v4 instrumentation pilot
+
+Two v4 attempts earlier on 2026-10-07 Pacific time sent no trace request and
+are retained. `20261007T183930Z` holds a plan and an aggregate only: neither
+trial wrote a summary, and the retained files do not record why. In
+`20261007T184248Z` both trials passed the clock preflight and were stopped by
+the host preflight, which read `warn` memory pressure in all 59 samples across
+60s with the swap-out counter flat.
+
+The retained seed-3 v4 pilot `20261007T205608Z` ran later that day, short
+first and long second. Both trials pass all 19 validity gates, with stable
+runtime identity and matching normalized traces: one valid matched pair. The
+aggregate still reports `passed=false` with status `pilot`, because a pilot
+cannot satisfy the five-pair proof. The read-only analysis command reproduces
+the aggregate from the retained raw files. No rule, threshold, workload or
+protocol identity was changed in response.
+
+| Observation | Short | Long | Rule |
+| --- | ---: | ---: | ---: |
+| Host preflight ready | At 10.3s | At 10.3s | 10s at `normal` within 60s |
+| Host pressure samples at `normal` during the arm | 32 of 32 | 33 of 33 | No `critical` |
+| Swap-out during the arm | 0 MiB | 0 MiB | 256 MiB |
+| Prime duration | 0.400s | 0.408s | Complete before setup 1 |
+| Setup readiness verdict | Ready, observed 10ms before send | Ready, 9ms before send | Ready, at most 500ms |
+| Largest managed-telemetry gap in the return window | 345ms | 271ms | 750ms |
+| Runner / load generator / scheduler fitted slew | 29.4 / 29.1 / 29.0ppm | 29.2 / 29.1 / 29.0ppm | 100ppm |
+| Their largest wall-minus-monotonic change in 90s | 3.6 / 3.6 / 2.7ms | 3.6 / 3.6 / 2.6ms | 10ms |
+| Their raw residual range over the capture | 5.4 / 5.2 / 4.5ms | 5.3 / 5.2 / 4.5ms | Descriptive |
+| Jumps between consecutive readings | 0 | 0 | 0 |
+| Tyr / Latchflo probes too slow to prove alignment | 15 / 11 of 618 | 7 / 6 of 633 | Counted as missing |
+| Tyr / Latchflo alignment proven within | 10 / 10ms | 9 / 9ms | 10ms |
+| Tyr / Latchflo largest gap between usable probes | 0.842s / 0.796s | 1.726s / 1.774s | 2s |
+
+Long's largest probe gaps come from five consecutive slow probes in each
+container about 12s into the trace; a sixth would have brought the gap to
+about the 2s limit, which the 2026-10-04 pilot exceeded. Short's container
+alignment was proven at exactly the 10ms budget. Both pass under the unchanged
+rules. One clean pair does not show that ten sweep trials will each clear
+these gates.
+
+| Descriptive observation | Short | Long |
+| --- | ---: | ---: |
+| Recognition bracket after return | −0.011 to 0.277s | 0.208 to 0.492s |
+| Protected-limit restoration bracket after return | −0.011 to 0.277s | 0.466 to 0.750s |
+| Fresh borrowed batch admissions after return | 0 | 0 |
+| Accounting-zero bracket after return | 19.209–19.496s | 48.761–49.046s |
+| Median remaining borrowed-stream lifetime | 20.486s | 49.062s |
+| Last original borrower completes after return | 21.566s | 49.168s |
+| Last original borrower completes after accounting zero | 2.080s | 0.132s |
+| Initial burst completed / rejected | 1 / 1 | 1 / 1 |
+| Return cohort completed / offered | 32 / 91 | 33 / 91 |
+| Return cohort concurrency-limit rejections | 59 | 58 |
+| Return cohort SLO successes / offered | 27 / 91 | 30 / 91 |
+| Completed requests missing the SLO through TTFT | 5 | 3 |
+| SLO goodput per 90s arrival window | 0.300 requests/s | 0.333 requests/s |
+| Post-return batch admissions / attempts, none borrowed | 3 / 44 | 2 / 44 |
+
+Brackets include the 10ms widening on each side. Short's lower bounds precede
+the return because the preceding sample began 1ms before it. No failed,
+missing or censored return-cohort requests were observed.
+
+For this one matched pair the aggregate reports long-minus-short differences
+of 28.576s in median remaining lifetime, above the 5s manipulation
+requirement; 29.550s in the accounting-zero upper bound; and 0.033 requests/s
+in SLO goodput, three more successes of 91 in long. The summary names the
+second `recoveryDelayDeltaMs`. It measures sampled accounting only; no
+service-recovery timestamp is defined. Earlier retained pilots recorded the
+SLO difference with either sign. One pair supports no claim about the effect
+of remaining borrower work on SLO goodput.
+
+Batch held its three-request maximum until setup request 1 completed, 18.899s
+(short) and 14.585s (long) after return, and the first post-return batch
+request was sent 2.08s after return, later than both restoration brackets. No
+batch request could be admitted inside a recognition or restoration bracket,
+so their zero counts do not test borrowing before application. The zero count
+after return covers 44 batch attempts per trial under continuous interactive
+demand. Each trial's complete admission record holds three borrowed
+admissions, all before return: the prime, admitted while batch had no
+protected floor, and setup requests 2 and 3.
+
+Between the two accounting-zero upper bounds, 19.486–49.036s after each
+trial's return, sampled interactive occupancy averaged 2.68 in short and 1.83
+in long, never above two in long. Each trial completed 13 and rejected 17 of
+the 30 interactive requests sent in that interval; 10 and 13 met the SLO.
+Batch admitted 2 of its 15 attempts there in short and none in long, where the
+two original borrowers were its only requests in flight. Long admitted no
+batch request until 50.093s after return; short's first was at 22.054s. After
+its own accounting-zero upper bound short still rejects 42 of 70 interactive
+requests sent and long 24 of 40; 24 and 14 meet the SLO.
+
+The misses through TTFT fall in two groups. Every completed return-cohort
+request whose wait for a first token overlapped a post-return batch
+admission's own wait for its first token missed the 5s threshold: 4 of 4 in
+short and 2 of 2 in long. Those five 1,607-token batch requests waited
+6.7–7.6s. The remaining miss in each trial is the request sent 10s after
+return, with TTFT 9.964s and 5.786s. Short's engine preemption counter rose by
+one, and setup borrower 3 was observed waiting from 7.987–8.202s until
+9.268–15.585s after return; long recorded no preemption and no such
+transition. Peak KV usage was 0.997 in both trials, below the saturation
+threshold of 1.
+
+These groupings are post hoc and descriptive. They do not establish that batch
+prefill caused the misses, GPU preemption, physical KV reclamation or a
+service-recovery timestamp. In this trace long's borrowers both held
+interactive to two slots and displaced batch admissions, and the pair does not
+separate the two. A paired SLO-goodput difference near zero would therefore
+not show that remaining borrower work is harmless.
+
+This pilot meets the v4 requirement that every gate pass in both trials before
+the alternating five-pair sweep, which remains pending. It is one seed with
+short first, so order and seed effects are not separable. No measure, gate or
+threshold is added by this record. Artifacts are retained locally under
+`results/runs/`; no result from this experiment has been published.
+
 ## Pilot, freeze and sweep
 
 Run a seed-3 pair first to check capture, overlap and dispatch. Retain failed

@@ -179,8 +179,8 @@ if (lock.packages?.[""]?.version !== pkg.version || lock.version !== pkg.version
 }
 const example = readFileSync(path.join(ROOT, "demo/moflux/.env.example"), "utf8");
 for (const expected of [
-  "MOFLUX_TYR_IMAGE=tyr-admission-controller:0.33.0",
-  "MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0.19.0",
+  "MOFLUX_TYR_IMAGE=tyr-admission-controller:0.35.0",
+  "MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0.20.0",
   "MOFLUX_VLLM_IMAGE=vllm/vllm-openai:v0.18.0",
 ]) {
   if (!example.includes(expected)) {
@@ -266,8 +266,8 @@ if (!compose.includes("TYR_ROUTING_SECRET: ${TYR_ROUTING_SECRET:?Set TYR_ROUTING
 for (let replica = 1; replica <= 4; replica += 1) {
   const rel = `demo/moflux/tyr-r${replica}.yaml`;
   const yaml = readFileSync(path.join(ROOT, rel), "utf8");
-  if (!/^    version: 0\.33\.0$/m.test(yaml)) {
-    findings.push(`${rel}: control-plane metadata must identify Tyr 0.33.0`);
+  if (!/^    version: 0\.35\.0$/m.test(yaml)) {
+    findings.push(`${rel}: control-plane metadata must identify Tyr 0.35.0`);
   }
   if (!/^  anthropic:\n    baseUrl: http:\/\/host\.docker\.internal:9000$/m.test(yaml)) {
     findings.push(`${rel}: Anthropic simulator upstream is missing`);
@@ -312,7 +312,7 @@ for (let replica = 1; replica <= 4; replica += 1) {
     "pools: [sim-shared, sim-ceilings, sim-protected, sim-adaptive, sim-unlent, sim-deadline]",
     "name: sim-unlent",
     "name: sim-deadline",
-    "version: 0.33.0",
+    "version: 0.35.0",
   ]) {
     if (!yaml.includes(required)) findings.push(`${rel}: missing ${required}`);
   }
@@ -578,18 +578,18 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.52.0") {
-  findings.push("package.json: the current benchmark release must be version 0.52.0");
+if (pkg.version !== "0.53.0") {
+  findings.push("package.json: the current benchmark release must be version 0.53.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.
 const envLibSource = readFileSync(path.join(ROOT, "demo/env-lib.mjs"), "utf8");
-if (!envLibSource.includes('VLLM_LATCHFLO_VERSION = "0.19.0"')) {
-  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Latchflo 0.19.0");
+if (!envLibSource.includes('VLLM_LATCHFLO_VERSION = "0.20.0"')) {
+  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Latchflo 0.20.0");
 }
 // Tyr 0.31.0 names the transport cause of a 502, which the 0.38.0 diagnostics read.
-if (!envLibSource.includes('VLLM_TYR_VERSION = "0.33.0"')) {
-  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Tyr 0.33.0");
+if (!envLibSource.includes('VLLM_TYR_VERSION = "0.35.0"')) {
+  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Tyr 0.35.0");
 }
 if (
   !pkg.scripts?.["demo:restoration"]?.includes("--restoration-ladder") ||
