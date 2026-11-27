@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.54.0 - 2026-11-26
+
+- Pin licensed benchmark runs, including vLLM, to Latchflo 0.20.1. Tyr remains
+  0.35.0, async-bulkhead-llm 3.18.0, async-bulkhead-ts 1.0.1 and vLLM 0.18.0.
+  `demo:prepare` migrates standard local image tags and preserves custom
+  registry references.
+- Latchflo 0.20.1 changes what happens when the 0.19.0 recheck cancels a
+  prepared headroom loan that also restores a borrower's floor: the floor
+  restoration is staged again in the same transaction with the lender held at
+  its full guarantee. No database schema or agent protocol change.
+- Record the unpublished `demo:hetero:adaptive` findings that prompted it. On
+  Latchflo 0.19.0 (`20260924T210918Z`) and 0.20.0 (`20261127T052645Z`), seed 4
+  prepared and canceled the same interactive-to-batch headroom loan three
+  times and committed the batch floor at 36.3 to 36.4 s. No seed recorded
+  headroom lending, so both sweeps fail `--require-adaptive-proof`. Every sweep
+  on 0.17.1 and 0.18.0 recorded it on at least one seed.
+- 0.20.1 still cancels the loan, so the headroom proof is not expected to pass
+  on this workload. No run has been made on 0.20.1. Compare its runs with
+  0.20.0 runs as a separate runtime cohort.
+
 ## 0.53.0 - 2026-11-26
 
 - Pin licensed benchmark runs, including vLLM, to Tyr 0.35.0 and Latchflo

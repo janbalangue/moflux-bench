@@ -557,7 +557,7 @@ const runtimeRecords = structuredClone(records);
 for (const record of runtimeRecords) {
   record.moflux.runtime = {
     tyr: { version: "0.35.0", image: "tyr-admission-controller:0.35.0" },
-    latchflo: { version: "0.20.0", image: "latchflo-control-plane:0.20.0" },
+    latchflo: { version: "0.20.1", image: "latchflo-control-plane:0.20.1" },
   };
 }
 assert.deepEqual(
@@ -568,7 +568,7 @@ assert.equal(aggregate.runtime, null);
 runtimeRecords[1].moflux.runtime.latchflo = { version: "0.19.0", image: "latchflo-control-plane:0.19.0" };
 assert.throws(
   () => buildSweepSummary({ mode: "compare", fault: false, seeds: [1, 2], records: runtimeRecords }),
-  /seed 2 ran MoFlux on Tyr 0\.35\.0 \/ Latchflo 0\.19\.0, not Tyr 0\.35\.0 \/ Latchflo 0\.20\.0/,
+  /seed 2 ran MoFlux on Tyr 0\.35\.0 \/ Latchflo 0\.19\.0, not Tyr 0\.35\.0 \/ Latchflo 0\.20\.1/,
 );
 
 // Fixtures predating the field read as the rolling window; a sweep reports the

@@ -180,7 +180,7 @@ if (lock.packages?.[""]?.version !== pkg.version || lock.version !== pkg.version
 const example = readFileSync(path.join(ROOT, "demo/moflux/.env.example"), "utf8");
 for (const expected of [
   "MOFLUX_TYR_IMAGE=tyr-admission-controller:0.35.0",
-  "MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0.20.0",
+  "MOFLUX_LATCHFLO_IMAGE=latchflo-control-plane:0.20.1",
   "MOFLUX_VLLM_IMAGE=vllm/vllm-openai:v0.18.0",
 ]) {
   if (!example.includes(expected)) {
@@ -578,14 +578,14 @@ if (
     "package.json: the unlent-concurrency contention dry-run, single-seed and verify commands are required",
   );
 }
-if (pkg.version !== "0.53.0") {
-  findings.push("package.json: the current benchmark release must be version 0.53.0");
+if (pkg.version !== "0.54.0") {
+  findings.push("package.json: the current benchmark release must be version 0.54.0");
 }
 // Latchflo 0.17.0 still failed closed at lending transitions; the vLLM
 // experiment's grant-continuity gate needs 0.17.1.
 const envLibSource = readFileSync(path.join(ROOT, "demo/env-lib.mjs"), "utf8");
-if (!envLibSource.includes('VLLM_LATCHFLO_VERSION = "0.20.0"')) {
-  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Latchflo 0.20.0");
+if (!envLibSource.includes('VLLM_LATCHFLO_VERSION = "0.20.1"')) {
+  findings.push("demo/env-lib.mjs: the vLLM experiment must pin Latchflo 0.20.1");
 }
 // Tyr 0.31.0 names the transport cause of a 502, which the 0.38.0 diagnostics read.
 if (!envLibSource.includes('VLLM_TYR_VERSION = "0.35.0"')) {
