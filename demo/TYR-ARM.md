@@ -1,7 +1,7 @@
 # Wiring the Tyr and Latchflo arms (Latchflo license required)
 
 Tyr is open source under Apache-2.0 at
-[mofluxhq/tyr-admission-controller](https://github.com/mofluxhq/tyr-admission-controller). Latchflo is
+[janbalangue/tyr-admission-controller](https://github.com/janbalangue/tyr-admission-controller). Latchflo is
 proprietary and is not redistributed here. Users with a Latchflo license can run the integrated video path with `npm run demo`; the command creates
 its ignored local environment file automatically. The public arms remain
 independently reproducible.

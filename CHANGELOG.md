@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- The README is now an overview: the reproducibility table, how to run the
+  public arms, a table of experiments and an index of the documentation. Its
+  reference text moved to 18 topical guides under `guides/`. The text is
+  unchanged apart from headings, relative links and ten words changed from
+  British to American spelling.
+- Tyr repository links name `janbalangue/tyr-admission-controller`, where the
+  repository lives, instead of `mofluxhq/tyr-admission-controller`. The
+  `repository`, `bugs` and `homepage` links in `package.json` name
+  `janbalangue/moflux-bench` for the same reason.
+- A link to a section of the README, such as `README.md#coordinator-distance`,
+  no longer lands on that section. The sections are now in `guides/`.
+- No benchmark code, configuration, command or published evidence changed.
+
 ## 0.54.0 - 2026-11-26
 
 - Pin licensed benchmark runs, including vLLM, to Latchflo 0.20.1. Tyr remains

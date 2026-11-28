@@ -132,10 +132,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mofluxhq/moflux-bench.git"
+    "url": "git+https://github.com/janbalangue/moflux-bench.git"
   },
   "bugs": {
-    "url": "https://github.com/mofluxhq/moflux-bench/issues"
+    "url": "https://github.com/janbalangue/moflux-bench/issues"
   },
-  "homepage": "https://github.com/mofluxhq/moflux-bench#readme"
+  "homepage": "https://github.com/janbalangue/moflux-bench#readme"
 }
